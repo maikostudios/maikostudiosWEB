@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+:root {
+  --color-background: #0a0a0a;
+  --color-primary: #0066ff;
+  --color-secondary: #00cccc;
+  --color-accent: #33ff99;
+  --color-text: #ffffff;
+}
+html, body, #app {
+  font-family: 'Montserrat', sans-serif; /* o 'Poppins', sans-serif; */
+  color: #ffffff; /* Color general de los textos */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: none;  /* eliminar cualquier borde */
+  outline: none; /* eliminar cualquier outline */
+  
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif; /* o 'Poppins', sans-serif; */
+  font-weight: 700; /* más negrita para los títulos */
+  color: #ffffff;
+}
+
+p {
+  font-family: 'Montserrat', sans-serif; /* o 'Poppins', sans-serif; */
+  font-weight: 400; /* texto normal */
+  color: #dddddd;
+}
