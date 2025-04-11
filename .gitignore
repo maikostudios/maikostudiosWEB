@@ -7,18 +7,40 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Output directories
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.vite-cache/
 *.local
 
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Firebase Studio (proyección futura)
+.project/
+.cache/
+
+# Environment files
+.env
+.env.*
+
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Optional OS metadata
+Thumbs.db
+
+# Git
+*.swp
+*.swo
