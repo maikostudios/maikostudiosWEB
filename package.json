@@ -9,14 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/js": "^7.4.47",
     "maikostudios": "file:",
     "pinia": "^3.0.2",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0",
-    "vuetify": "^3.8.1"
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.2.0"
+    "sass": "^1.86.3",
+    "unplugin-auto-import": "^19.1.2",
+    "unplugin-vue-components": "^28.4.1",
+    "vite": "^6.2.0",
+    "vuetify": "^3.8.1"
   }
 }

@@ -1,0 +1,1 @@
+<template>proyecto estrella</template>
