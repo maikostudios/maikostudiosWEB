@@ -1,44 +1,16 @@
 <template>
-    <v-container>
-        <h1 class="text-h4">Currículum Vitae</h1>
-        <aside>
-            <img src="https://avatars.githubusercontent.com/u/68249859?v=4" alt="Foto Michael">
-
-            <h1>Michael Esteban<br>Sáez Contreras</h1>
-            <p class="tagline">
-                Desarrollador Full Stack<br>Javascript | Nodejs | Express | Vue | React | Java | Python<br>Facilitador y
-                Mentor Tecnológico
-            </p>
-
-        </aside>
-        <main>
-            <section>
-                <DatosContactoCv />
-            </section>
-            <section>
-                <PresentacionCv />
-            </section>
-        </main>
-
-        <ExperienciaLaboralCv />
-        <EducacionCv />
-        <HabilidadesCv />
-        <CertificacionesCv />
-    </v-container>
-
-
-
-    <button class="btn-download" onclick="window.print()">Descargar como PDF</button>
+    <section>
+        <h2>Contacto</h2>
+        <p><strong>Email:</strong> m.esteban.saez@gmail.com</p>
+        <p><strong>Dirección:</strong> Temuco, IX Región, Chile</p>
+        <p><strong>Teléfono:</strong> +56983833148</p>
+        <p><strong>Fecha de nacimiento:</strong> 19 Oct, 1994</p>
+        <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/me-saezc/">linkedin.com/in/me-saezc</a></p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/maikostudios">github.com/maikostudios</a></p>
+        <p><strong>Portafolio:</strong> <a href="https://www.maikostudios.com">www.maikostudios.com</a></p>
+    </section>
 </template>
 
-<script setup>
-import CertificacionesCv from '../components/cv_components/CertificacionesCv.vue';
-import EducacionCv from '../components/cv_components/EducacionCv.vue';
-import HabilidadesCv from '../components/cv_components/HabilidadesCv.vue';
-import DatosContactoCv from '../components/cv_components/DatosContactoCv.vue';
-import PresentacionCv from '../components/cv_components/PresentacionCv.vue';
-import ExperienciaLaboralCv from '../components/cv_components/ExperienciaLaboralCv.vue';
-</script>
 
 <style scoped>
 :root {
@@ -105,6 +77,20 @@ h2 {
     padding-bottom: 0.25rem;
     color: var(--azul);
     margin-bottom: 1rem;
+}
+
+p {
+    margin: 0.5rem 0;
+    color: var(--gris-texto);
+}
+
+a {
+    color: var(--azul);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .section-block {

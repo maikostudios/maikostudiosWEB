@@ -11,7 +11,10 @@
             <v-row class="d-none d-md-flex" align="center">
                 <v-btn to="/" text>Inicio</v-btn>
                 <v-btn to="/portafolio" text>Portafolio</v-btn>
-                <v-btn to="/cv" text>Mi CV</v-btn>
+                <RouterLink to="/cv" class="ml-2">
+                    <span class="text-h6 font-weight-bold">Mi CV</span>
+                </RouterLink>
+
                 <v-btn to="/contacto" text>Contacto</v-btn>
             </v-row>
 

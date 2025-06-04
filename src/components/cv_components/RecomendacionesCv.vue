@@ -1,46 +1,18 @@
 <template>
-    <v-container>
-        <h1 class="text-h4">Currículum Vitae</h1>
-        <aside>
-            <img src="https://avatars.githubusercontent.com/u/68249859?v=4" alt="Foto Michael">
-
-            <h1>Michael Esteban<br>Sáez Contreras</h1>
-            <p class="tagline">
-                Desarrollador Full Stack<br>Javascript | Nodejs | Express | Vue | React | Java | Python<br>Facilitador y
-                Mentor Tecnológico
-            </p>
-
-        </aside>
-        <main>
-            <section>
-                <DatosContactoCv />
-            </section>
-            <section>
-                <PresentacionCv />
-            </section>
-        </main>
-
-        <ExperienciaLaboralCv />
-        <EducacionCv />
-        <HabilidadesCv />
-        <CertificacionesCv />
-    </v-container>
-
-
-
-    <button class="btn-download" onclick="window.print()">Descargar como PDF</button>
+    <section>
+        <h2>Recomendaciones</h2>
+        <ul>
+            <li>Christian Calderón: "Proactivo, buen gestor en equipo y liderazgo técnico destacado."</li>
+            <li>Laura Rosas: "Se adapta a nuevas tecnologías, muy confiable."</li>
+            <li>Jorge Salgado: "Responsable, empático, con alto compromiso al aprendizaje."</li>
+            <li>Edric Polía: "Comunicación clara, perseverancia y habilidades blandas sobresalientes."</li>
+            <li>Camila Bañares: "Ético, profesional, con habilidades humanas y enfoque en resultados."</li>
+        </ul>
+    </section>
 </template>
 
-<script setup>
-import CertificacionesCv from '../components/cv_components/CertificacionesCv.vue';
-import EducacionCv from '../components/cv_components/EducacionCv.vue';
-import HabilidadesCv from '../components/cv_components/HabilidadesCv.vue';
-import DatosContactoCv from '../components/cv_components/DatosContactoCv.vue';
-import PresentacionCv from '../components/cv_components/PresentacionCv.vue';
-import ExperienciaLaboralCv from '../components/cv_components/ExperienciaLaboralCv.vue';
-</script>
 
-<style scoped>
+<style>
 :root {
     --azul: #2a60c4;
     --gris-fondo: #f4f4f4;
@@ -107,6 +79,16 @@ h2 {
     margin-bottom: 1rem;
 }
 
+ul {
+    padding-left: 1rem;
+    list-style-type: disc;
+}
+
+li {
+    margin-bottom: 0.5rem;
+    color: var(--gris-texto);
+}
+
 .section-block {
     margin-bottom: 1rem;
 }
@@ -120,10 +102,6 @@ h2 {
 .section-block p {
     margin: 0.2rem 0;
     font-size: 0.9rem;
-}
-
-ul {
-    padding-left: 1rem;
 }
 
 .skills,

@@ -1,44 +1,19 @@
 <template>
-    <v-container>
-        <h1 class="text-h4">Currículum Vitae</h1>
-        <aside>
-            <img src="https://avatars.githubusercontent.com/u/68249859?v=4" alt="Foto Michael">
-
-            <h1>Michael Esteban<br>Sáez Contreras</h1>
-            <p class="tagline">
-                Desarrollador Full Stack<br>Javascript | Nodejs | Express | Vue | React | Java | Python<br>Facilitador y
-                Mentor Tecnológico
-            </p>
-
-        </aside>
-        <main>
-            <section>
-                <DatosContactoCv />
-            </section>
-            <section>
-                <PresentacionCv />
-            </section>
-        </main>
-
-        <ExperienciaLaboralCv />
-        <EducacionCv />
-        <HabilidadesCv />
-        <CertificacionesCv />
-    </v-container>
-
-
-
-    <button class="btn-download" onclick="window.print()">Descargar como PDF</button>
+    <section>
+        <h2>Habilidades Técnicas</h2>
+        <ul class="skills">
+            <li>Desarrollo Web Full Stack</li>
+            <li>Mentorías Técnicas</li>
+            <li>Scrum / Kanban</li>
+            <li>Node.js, Vue, React, Express</li>
+            <li>SQL, PostgreSQL, MongoDB</li>
+            <li>Spring Boot, Java 8+, Python</li>
+            <li>GIT, Jira, MVC</li>
+            <li>Automatización con herramientas IA</li>
+        </ul>
+    </section>
 </template>
 
-<script setup>
-import CertificacionesCv from '../components/cv_components/CertificacionesCv.vue';
-import EducacionCv from '../components/cv_components/EducacionCv.vue';
-import HabilidadesCv from '../components/cv_components/HabilidadesCv.vue';
-import DatosContactoCv from '../components/cv_components/DatosContactoCv.vue';
-import PresentacionCv from '../components/cv_components/PresentacionCv.vue';
-import ExperienciaLaboralCv from '../components/cv_components/ExperienciaLaboralCv.vue';
-</script>
 
 <style scoped>
 :root {
@@ -107,6 +82,17 @@ h2 {
     margin-bottom: 1rem;
 }
 
+ul.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.skills li {
+    width: 45%;
+    color: var(--gris-texto);
+}
+
 .section-block {
     margin-bottom: 1rem;
 }
@@ -126,14 +112,12 @@ ul {
     padding-left: 1rem;
 }
 
-.skills,
 .languages {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 }
 
-.skills li,
 .languages li {
     width: 45%;
 }
