@@ -1,137 +1,208 @@
 <template>
-  <v-app-bar app color="background" class="navbar" elevation="0">
-    <v-container class="d-flex align-center px-4">
+  <nav class="navbar">
+    <div class="navbar-container">
       <!-- Logo -->
       <RouterLink to="/" class="navbar-brand">
         <img src="/logo/logo_maikostudio.png" alt="Maiko Studios Logo" class="navbar-logo" />
       </RouterLink>
 
-      <!-- Mobile Menu Button -->
-      <v-btn
-        icon
-        class="d-md-none ml-auto"
-        @click="mobileMenu = !mobileMenu"
-      >
-        <v-icon>{{ mobileMenu ? 'mdi-close' : 'mdi-menu' }}</v-icon>
-      </v-btn>
-
       <!-- Desktop Navigation -->
-      <nav class="navbar-nav d-none d-md-flex ml-auto">
-        <v-btn to="/" text>Inicio</v-btn>
-        <v-btn to="/sobre-mi" text>Sobre Mí</v-btn>
-        <v-btn to="/servicios" text>Servicios</v-btn>
-        <v-btn to="/portafolio" text>Portafolio</v-btn>
-        <v-btn to="/cv" text>CV</v-btn>
-        <v-btn to="/contacto" text color="primary">Contacto</v-btn>
-      </nav>
-    </v-container>
-
-    <!-- Mobile Navigation Menu -->
-    <v-navigation-drawer
-      v-model="mobileMenu"
-      location="right"
-      temporary
-      class="mobile-menu"
-    >
-      <v-list>
-        <v-list-item to="/" @click="mobileMenu = false">
-          <v-list-item-title>Inicio</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/sobre-mi" @click="mobileMenu = false">
-          <v-list-item-title>Sobre Mí</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/servicios" @click="mobileMenu = false">
-          <v-list-item-title>Servicios</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/portafolio" @click="mobileMenu = false">
-          <v-list-item-title>Portafolio</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/cv" @click="mobileMenu = false">
-          <v-list-item-title>CV</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/contacto" @click="mobileMenu = false">
-          <v-list-item-title>Contacto</v-list-item-title>
-        </v-list-item>
-      </v-list>
-
-      <!-- Social Links in Mobile Menu -->
-      <div class="mobile-social-links pa-4">
-        <v-btn
-          href="https://github.com/maikostudios"
-          target="_blank"
-          icon="mdi-github"
-          variant="text"
-        />
-        <v-btn
-          href="https://linkedin.com/in/me-saezc"
-          target="_blank"
-          icon="mdi-linkedin"
-          variant="text"
-        />
-        <v-btn
-          href="https://wa.me/56949475207"
-          target="_blank"
-          icon="mdi-whatsapp"
-          variant="text"
-          color="success"
-        />
+      <div class="nav-links">
+        <RouterLink to="/sobre-mi" class="nav-link">Sobre Mí</RouterLink>
+        <RouterLink to="/servicios" class="nav-link">Servicios</RouterLink>
+        <RouterLink to="/portafolio" class="nav-link">Portafolio</RouterLink>
+        <RouterLink to="/cv" class="nav-link">CV</RouterLink>
       </div>
-    </v-navigation-drawer>
-  </v-app-bar>
+
+      <!-- Social Links -->
+      <div class="social-links">
+        <a href="https://github.com/maikostudios" target="_blank" class="social-link">
+          <v-icon>mdi-github</v-icon>
+        </a>
+        <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link">
+          <v-icon>mdi-linkedin</v-icon>
+        </a>
+        <RouterLink to="/contacto" class="contact-button">
+          Contacto
+        </RouterLink>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="menu-button d-md-none" @click="toggleMenu">
+        <v-icon>{{ isMenuOpen ? 'mdi-close' : 'mdi-menu' }}</v-icon>
+      </button>
+
+      <!-- Mobile Menu -->
+      <div class="mobile-menu" :class="{ 'is-open': isMenuOpen }">
+        <RouterLink to="/sobre-mi" class="mobile-link" @click="closeMenu">Sobre Mí</RouterLink>
+        <RouterLink to="/servicios" class="mobile-link" @click="closeMenu">Servicios</RouterLink>
+        <RouterLink to="/portafolio" class="mobile-link" @click="closeMenu">Portafolio</RouterLink>
+        <RouterLink to="/cv" class="mobile-link" @click="closeMenu">CV</RouterLink>
+        <RouterLink to="/contacto" class="mobile-link" @click="closeMenu">Contacto</RouterLink>
+        
+        <div class="mobile-social-links">
+          <a href="https://github.com/maikostudios" target="_blank" class="social-link">
+            <v-icon>mdi-github</v-icon>
+          </a>
+          <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link">
+            <v-icon>mdi-linkedin</v-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
-const mobileMenu = ref(false)
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+  if (isMenuOpen.value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+  document.body.style.overflow = ''
+}
 </script>
 
 <style scoped>
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(10px);
-  background: rgba(10, 10, 10, 0.8) !important;
+  z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .navbar-brand {
-  text-decoration: none;
   display: flex;
   align-items: center;
 }
 
 .navbar-logo {
   height: 40px;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .navbar-logo:hover {
   transform: scale(1.05);
 }
 
-.navbar-nav {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+.nav-links {
+  display: none;
 }
 
-/* Mobile Menu Styles */
+.social-links {
+  display: none;
+}
+
+.nav-link, .social-link {
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover, .social-link:hover {
+  color: var(--color-primary);
+}
+
+.contact-button {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.contact-button:hover {
+  background: #0052cc;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
 .mobile-menu {
-  background: var(--color-background) !important;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-background);
+  padding: 2rem;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mobile-menu.is-open {
+  transform: translateX(0);
+}
+
+.mobile-link {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.5rem 0;
 }
 
 .mobile-social-links {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+  margin-top: auto;
   display: flex;
-  justify-content: center;
   gap: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
 }
 
-@media (max-width: 768px) {
-  .navbar-logo {
-    height: 32px;
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+  }
+
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2rem;
+  }
+
+  .menu-button {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: none;
   }
 }
 </style>
