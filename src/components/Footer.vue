@@ -19,10 +19,10 @@
 
           <div class="link-group">
             <h4>Servicios</h4>
-            <a href="#servicios">Desarrollo Web</a>
-            <a href="#servicios">Consultoría</a>
-            <a href="#servicios">Mentoría</a>
-            <a href="#servicios">Soporte Técnico</a>
+            <router-link to="/servicios">Desarrollo Web</router-link>
+            <router-link to="/servicios">Automatización</router-link>
+            <router-link to="/servicios">E-commerce</router-link>
+            <router-link to="/servicios">Consultoría</router-link>
           </div>
 
           <div class="link-group">

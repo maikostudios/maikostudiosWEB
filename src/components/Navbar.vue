@@ -16,10 +16,10 @@
 
       <!-- Social Links -->
       <div class="social-links">
-        <a href="https://github.com/maikostudios" target="_blank" class="social-link">
+        <a href="https://github.com/maikostudios" target="_blank" class="social-link" title="GitHub">
           <v-icon>mdi-github</v-icon>
         </a>
-        <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link">
+        <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link" title="LinkedIn">
           <v-icon>mdi-linkedin</v-icon>
         </a>
         <RouterLink to="/contacto" class="contact-button">
@@ -39,12 +39,12 @@
         <RouterLink to="/portafolio" class="mobile-link" @click="closeMenu">Portafolio</RouterLink>
         <RouterLink to="/cv" class="mobile-link" @click="closeMenu">CV</RouterLink>
         <RouterLink to="/contacto" class="mobile-link" @click="closeMenu">Contacto</RouterLink>
-        
+
         <div class="mobile-social-links">
-          <a href="https://github.com/maikostudios" target="_blank" class="social-link">
+          <a href="https://github.com/maikostudios" target="_blank" class="social-link" title="GitHub">
             <v-icon>mdi-github</v-icon>
           </a>
-          <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link">
+          <a href="https://linkedin.com/in/me-saezc" target="_blank" class="social-link" title="LinkedIn">
             <v-icon>mdi-linkedin</v-icon>
           </a>
         </div>
@@ -118,14 +118,16 @@ const closeMenu = () => {
   display: none;
 }
 
-.nav-link, .social-link {
+.nav-link,
+.social-link {
   color: var(--color-text);
   text-decoration: none;
   padding: 0.5rem 1rem;
   transition: color 0.2s ease;
 }
 
-.nav-link:hover, .social-link:hover {
+.nav-link:hover,
+.social-link:hover {
   color: var(--color-primary);
 }
 

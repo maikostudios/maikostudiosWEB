@@ -2,16 +2,29 @@
 import { createVuetify } from "vuetify";
 import "vuetify/styles";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
-import { mdiAccount, mdiMenu } from "@mdi/js";
+import "@mdi/font/css/materialdesignicons.css";
 
 const vuetify = createVuetify({
   icons: {
     defaultSet: "mdi",
     aliases,
-    sets: { mdi },
+    sets: {
+      mdi,
+    },
   },
   theme: {
     defaultTheme: "dark",
+    themes: {
+      dark: {
+        colors: {
+          primary: "#0066ff",
+          secondary: "#00cccc",
+          accent: "#00a5a5",
+          background: "#0a0a0a",
+          surface: "#1a1a1a",
+        },
+      },
+    },
   },
 });
 

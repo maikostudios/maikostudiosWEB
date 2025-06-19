@@ -24,11 +24,43 @@ const routes = [
     name: "Contacto",
     component: () => import("@/views/ContactoView.vue"),
   },
+  // Rutas de administración
+  {
+    path: "/admin/login",
+    name: "AdminLogin",
+    component: () => import("@/views/AdminLoginView.vue"),
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: () => import("@/views/AdminView.vue"),
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Guard de navegación para rutas protegidas
+router.beforeEach((to, from, next) => {
+  // Verificar si la ruta requiere autenticación
+  if (to.meta.requiresAuth) {
+    // Aquí verificarías si el usuario está autenticado
+    // Por ahora, simplificamos la verificación
+    const isAuthenticated =
+      localStorage.getItem("admin_authenticated") === "true";
+
+    if (!isAuthenticated) {
+      // Redirigir al login si no está autenticado
+      next("/admin/login");
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

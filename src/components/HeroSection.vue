@@ -1,8 +1,5 @@
 <template>
     <section class="hero-section">
-        <!-- Spotlight animado reutilizable -->
-        <SpotlightEffect />
-
         <div class="hero-content">
             <img src="/logo/logo_maikostudio.png" alt="Logo Maiko Studios" class="hero-logo" />
 
@@ -20,7 +17,6 @@
 
 <script setup>
 import { VBtn } from 'vuetify/components'
-import SpotlightEffect from '@/components/SpotlightEffect.vue'
 
 function scrollToContent() {
     const el = document.getElementById('servicios')

@@ -48,7 +48,7 @@ onMounted(() => {
 
 <style scoped>
 .spotlight {
-    position: absolute;
+    position: fixed;
     width: 400px;
     height: 400px;
     border-radius: 50%;
@@ -59,5 +59,7 @@ onMounted(() => {
     opacity: 0;
     transition: opacity 0.2s ease-out;
     z-index: 0;
+    top: 0;
+    left: 0;
 }
 </style>

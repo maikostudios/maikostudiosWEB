@@ -2,7 +2,7 @@
   <section id="servicios" class="servicios-section">
     <v-container>
       <h2 class="section-title">Servicios</h2>
-      
+
       <!-- Servicios Empresariales -->
       <div class="servicios-grid">
         <div class="servicio-card empresarial">
@@ -12,20 +12,24 @@
           </div>
           <ul class="servicios-list">
             <li>
-              <strong>Desarrollo de Software a Medida</strong>
-              <p>Soluciones personalizadas que optimizan sus procesos de negocio</p>
+              <strong>Desarrollo Web Empresarial</strong>
+              <p>Aplicaciones web escalables con Vue.js, React y Node.js</p>
             </li>
             <li>
-              <strong>Consultoría Tecnológica</strong>
-              <p>Asesoramiento experto para la transformación digital de su empresa</p>
+              <strong>Automatización de Procesos</strong>
+              <p>Optimización de flujos de trabajo con IA y herramientas modernas</p>
             </li>
             <li>
-              <strong>Integración de Sistemas</strong>
-              <p>Conectamos sus aplicaciones existentes con nuevas soluciones</p>
+              <strong>Sistemas de Gestión</strong>
+              <p>ERP, CRM y plataformas administrativas personalizadas</p>
+            </li>
+            <li>
+              <strong>Integración de APIs</strong>
+              <p>Conexión de sistemas existentes con nuevas tecnologías</p>
             </li>
           </ul>
-          <v-btn color="primary" variant="outlined" block>
-            Consultar Servicios Empresariales
+          <v-btn color="primary" variant="outlined" block to="/servicios">
+            Ver Todos los Servicios
           </v-btn>
         </div>
 
@@ -37,20 +41,24 @@
           </div>
           <ul class="servicios-list">
             <li>
-              <strong>Diseño Web para Emprendedores</strong>
-              <p>Sitios web profesionales y adaptables para tu negocio</p>
+              <strong>Sitios Web Profesionales</strong>
+              <p>Landing pages y sitios corporativos responsive</p>
             </li>
             <li>
-              <strong>Mentoría Tecnológica</strong>
-              <p>Aprende desarrollo web con sesiones personalizadas</p>
+              <strong>E-commerce y Tiendas Online</strong>
+              <p>Plataformas de venta con pasarelas de pago integradas</p>
             </li>
             <li>
-              <strong>Soporte Técnico</strong>
-              <p>Asistencia dedicada para tus proyectos digitales</p>
+              <strong>Capacitación Tecnológica</strong>
+              <p>Cursos personalizados de programación y herramientas digitales</p>
+            </li>
+            <li>
+              <strong>Consultoría Digital</strong>
+              <p>Estrategias para digitalizar tu emprendimiento</p>
             </li>
           </ul>
-          <v-btn color="secondary" variant="outlined" block>
-            Ver Servicios Freelance
+          <v-btn color="secondary" variant="outlined" block to="/contacto">
+            Solicitar Cotización
           </v-btn>
         </div>
       </div>
@@ -127,10 +135,33 @@
 @media (max-width: 768px) {
   .servicios-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
   }
 
   .servicio-card {
-    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .servicios-section {
+    padding: 4rem 0;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .servicio-card {
+    padding: 1rem;
   }
 }
 </style>
