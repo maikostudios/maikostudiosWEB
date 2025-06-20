@@ -61,9 +61,11 @@ class CVPDFService {
     return `
       :root {
           --azul: #2a60c4;
+          --azul-hover: #1f4ea2;
           --gris-fondo: #f4f4f4;
           --blanco: #ffffff;
           --gris-texto: #444;
+          --turquesa: #00cccc;
       }
 
       * {
@@ -140,7 +142,7 @@ class CVPDFService {
       }
 
       aside a {
-          color: #87ceeb;
+          color: var(--turquesa);
           text-decoration: none;
       }
 
@@ -176,6 +178,7 @@ class CVPDFService {
       }
 
       main a:hover {
+          color: var(--azul-hover);
           text-decoration: underline;
       }
 
@@ -281,16 +284,18 @@ class CVPDFService {
           
           <section>
               <h2>Contacto</h2>
-              <p><strong>Email:</strong> ${datos.email}</p>
-              <p><strong>Dirección:</strong> ${datos.ubicacion}</p>
-              <p><strong>Teléfono:</strong> ${datos.telefono}</p>
-              <p><strong>LinkedIn:</strong> <a href="${
+              <p><strong>📧 Email:</strong><br>${datos.email}</p>
+              <p><strong>📍 Dirección:</strong><br>${datos.ubicacion}</p>
+              <p><strong>📱 Teléfono:</strong><br>${datos.telefono}</p>
+              <p><strong>💼 LinkedIn:</strong><br><a href="${
                 datos.linkedin
               }">linkedin.com/in/me-saezc</a></p>
-              <p><strong>GitHub:</strong> <a href="https://github.com/maikostudios">github.com/maikostudios</a></p>
-              <p><strong>Portafolio:</strong> <a href="${
+              <p><strong>🌐 GitHub:</strong><br><a href="${
+                datos.github || "https://github.com/maikostudios"
+              }">github.com/maikostudios</a></p>
+              <p><strong>🌍 Portafolio:</strong><br><a href="${
                 datos.web
-              }">www.maikostudios.com</a></p>
+              }">maikostudios.com</a></p>
           </section>
 
           <section>

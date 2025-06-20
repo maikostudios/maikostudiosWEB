@@ -1,10 +1,12 @@
 // Servicio para generación de CVs con MaikoCV Agent
-import html2pdf from 'html2pdf.js'
+import html2pdf from "html2pdf.js";
 
 class CVGeneratorService {
   constructor() {
-    this.maikoAgentEndpoint = import.meta.env.VITE_MAIKO_CV_AGENT_URL || 'https://api.openai.com/v1/chat/completions'
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY
+    this.maikoAgentEndpoint =
+      import.meta.env.VITE_MAIKO_CV_AGENT_URL ||
+      "https://api.openai.com/v1/chat/completions";
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   }
 
   /**
@@ -14,21 +16,26 @@ class CVGeneratorService {
    */
   async generarCVConMaikoAgent(formData) {
     try {
-      // Preparar el prompt para MaikoCV
-      const prompt = this.construirPromptMaikoCV(formData)
-      
+      // Obtener datos del perfil desde Firebase
+      const { perfilService } = await import("@/firebase/services");
+      const perfilResult = await perfilService.obtenerPerfilCandidato();
+      const perfilCandidato = perfilResult.success ? perfilResult.data : null;
+
+      // Preparar el prompt para MaikoCV con datos reales
+      const prompt = this.construirPromptMaikoCV(formData, perfilCandidato);
+
       // Llamar al agente MaikoCV
       const response = await fetch(this.maikoAgentEndpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: "gpt-4",
           messages: [
             {
-              role: 'system',
+              role: "system",
               content: `Eres MaikoCV, un agente especializado en generar CVs personalizados para Michael Esteban Sáez Contreras. 
               
               INFORMACIÓN DEL CANDIDATO:
@@ -47,88 +54,146 @@ class CVGeneratorService {
               6. Usa estilos CSS inline para mejor compatibilidad con PDF
               
               FORMATO DE RESPUESTA:
-              Devuelve ÚNICAMENTE el HTML del CV, sin explicaciones adicionales.`
+              Devuelve ÚNICAMENTE el HTML del CV, sin explicaciones adicionales.`,
             },
             {
-              role: 'user',
-              content: prompt
-            }
+              role: "user",
+              content: prompt,
+            },
           ],
           max_tokens: 4000,
-          temperature: 0.7
-        })
-      })
+          temperature: 0.7,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`Error en la API: ${response.status}`)
+        throw new Error(`Error en la API: ${response.status}`);
       }
 
-      const data = await response.json()
-      const htmlCV = data.choices[0].message.content
+      const data = await response.json();
+      const htmlCV = data.choices[0].message.content;
 
       return {
         success: true,
         html: htmlCV,
-        timestamp: new Date().toISOString()
-      }
-
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
-      console.error('Error al generar CV con MaikoCV:', error)
-      
+      console.error("Error al generar CV con MaikoCV:", error);
+
       // Fallback: generar CV básico si falla la API
       return {
         success: true,
-        html: this.generarCVFallback(formData),
+        html: this.generarCVFallback(formData, perfilCandidato),
         timestamp: new Date().toISOString(),
-        fallback: true
-      }
+        fallback: true,
+      };
     }
   }
 
   /**
    * Construye el prompt para el agente MaikoCV
    * @param {Object} formData - Datos del formulario
+   * @param {Object} perfilCandidato - Datos del perfil desde Firestore
    * @returns {string} - Prompt estructurado
    */
-  construirPromptMaikoCV(formData) {
-    const { reclutador, requisitos, habilidadesSeleccionadas, descripcionCargo } = formData
+  construirPromptMaikoCV(formData, perfilCandidato = null) {
+    const { reclutador, habilidadesSeleccionadas, descripcionCargo } = formData;
+
+    // Usar datos del perfil si están disponibles
+    const candidato = perfilCandidato || {
+      nombre_completo: "Michael Esteban Sáez Contreras",
+      cargo_principal: "Desarrollador Full Stack",
+      experiencia_profesional: [],
+      habilidades_tecnicas: { lenguajes: [], frameworks: [] },
+    };
 
     return `
     SOLICITUD DE CV PERSONALIZADO:
-    
+
+    INFORMACIÓN DEL CANDIDATO (usar estos datos reales):
+    - Nombre completo: ${candidato.nombre_completo}
+    - Cargo principal: ${candidato.cargo_principal}
+    - Ubicación: ${candidato.ubicacion || "Temuco, Chile"}
+    - Email: ${candidato.email || "m.saezc@maikostudios.com"}
+    - Teléfono: ${candidato.telefono || "+56983833148"}
+    - LinkedIn: ${candidato.linkedin || "https://www.linkedin.com/in/me-saezc/"}
+    - GitHub: ${candidato.github || "https://github.com/maikostudios"}
+    - Web: ${candidato.web || "https://maikostudios.com/"}
+
+    EXPERIENCIA PROFESIONAL REAL:
+    ${
+      candidato.experiencia_profesional
+        ?.map(
+          (exp) =>
+            `- ${exp.cargo} en ${exp.empresa} (${exp.periodo}): ${exp.descripcion}`
+        )
+        .join("\n") || "Usar experiencia por defecto"
+    }
+
+    HABILIDADES TÉCNICAS REALES:
+    - Lenguajes: ${
+      candidato.habilidades_tecnicas?.lenguajes?.join(", ") ||
+      "JavaScript, Python, Java"
+    }
+    - Frameworks: ${
+      candidato.habilidades_tecnicas?.frameworks?.join(", ") ||
+      "Vue.js, React, Node.js"
+    }
+
     INFORMACIÓN DEL RECLUTADOR:
     - Nombre: ${reclutador?.nombre || formData.nombreReclutador}
     - Empresa: ${reclutador?.empresa || formData.empresa}
     - Posición: ${reclutador?.posicion || formData.posicion}
     - Email: ${reclutador?.email || formData.email}
-    
+
     REQUISITOS DEL PUESTO:
-    - Habilidades requeridas: ${(habilidadesSeleccionadas || formData.tecnologias || []).join(', ')}
-    - Descripción del cargo: ${descripcionCargo || formData.descripcionPuesto || ''}
-    - Experiencia requerida: ${formData.experienciaRequerida || 'No especificada'}
-    - Modalidad: ${formData.modalidad || 'No especificada'}
-    
+    - Habilidades requeridas: ${(
+      habilidadesSeleccionadas ||
+      formData.tecnologias ||
+      []
+    ).join(", ")}
+    - Descripción del cargo: ${
+      descripcionCargo || formData.descripcionPuesto || ""
+    }
+
     INSTRUCCIONES ESPECÍFICAS:
-    1. Personaliza el CV de Michael para esta posición específica
-    2. Destaca las habilidades que coincidan con los requisitos
-    3. Adapta la descripción de experiencias para alinearse con el puesto
-    4. Mantén la estructura profesional del CV Maestro
-    5. Incluye información de contacto actualizada
-    6. Usa un diseño limpio y profesional
-    
-    Genera el HTML del CV personalizado ahora.
-    `
+    1. Usa EXACTAMENTE los datos reales del candidato proporcionados arriba
+    2. Personaliza el CV para la posición específica de ${
+      reclutador?.posicion || formData.posicion
+    }
+    3. Destaca las habilidades que coincidan con los requisitos del puesto
+    4. Adapta la descripción de experiencias para alinearse con el puesto
+    5. Usa la paleta de colores: azul principal #2a60c4, turquesa #00cccc, gris #444
+    6. Mantén estructura profesional con sidebar azul y contenido principal blanco
+    7. Incluye emojis en la información de contacto
+    8. Genera HTML completo con estilos CSS inline para PDF
+
+    Genera el HTML del CV personalizado usando los datos reales del candidato.
+    `;
   }
 
   /**
    * Genera un CV básico como fallback
    * @param {Object} formData - Datos del formulario
+   * @param {Object} perfilCandidato - Datos del perfil desde Firestore
    * @returns {string} - HTML del CV básico
    */
-  generarCVFallback(formData) {
-    const habilidades = formData.habilidadesSeleccionadas || formData.tecnologias || []
-    const empresa = formData.empresa || formData.reclutador?.empresa || 'Empresa'
-    const posicion = formData.posicion || formData.reclutador?.posicion || 'Desarrollador'
+  generarCVFallback(formData, perfilCandidato = null) {
+    const habilidades =
+      formData.habilidadesSeleccionadas || formData.tecnologias || [];
+    const empresa =
+      formData.empresa || formData.reclutador?.empresa || "Empresa";
+    const posicion =
+      formData.posicion || formData.reclutador?.posicion || "Desarrollador";
+
+    // Usar datos del perfil si están disponibles
+    const candidato = perfilCandidato || {
+      nombre_completo: "Michael Esteban Sáez Contreras",
+      cargo_principal: "Desarrollador Full Stack",
+      email: "m.saezc@maikostudios.com",
+      telefono: "+56983833148",
+    };
 
     return `
     <!DOCTYPE html>
@@ -153,10 +218,10 @@ class CVGeneratorService {
     <body>
         <div class="cv-container">
             <div class="header">
-                <h1>Michael Esteban Sáez Contreras</h1>
-                <p>Desarrollador Full Stack</p>
-                <p>📧 maikostudios@gmail.com | 📱 +56 9 XXXX XXXX</p>
-                <p>🌐 LinkedIn: /in/michael-saez | GitHub: @maikostudios</p>
+                <h1>${candidato.nombre_completo}</h1>
+                <p>${candidato.cargo_principal}</p>
+                <p>📧 ${candidato.email} | 📱 ${candidato.telefono}</p>
+                <p>🌐 LinkedIn: /in/me-saezc | GitHub: @maikostudios</p>
             </div>
             
             <div class="content">
@@ -171,7 +236,9 @@ class CVGeneratorService {
                 <div class="section">
                     <h2>Habilidades Técnicas Relevantes</h2>
                     <div class="skills">
-                        ${habilidades.map(skill => `<span class="skill">${skill}</span>`).join('')}
+                        ${habilidades
+                          .map((skill) => `<span class="skill">${skill}</span>`)
+                          .join("")}
                     </div>
                 </div>
 
@@ -196,13 +263,15 @@ class CVGeneratorService {
                 <div class="section">
                     <h2>Información Adicional</h2>
                     <p>CV generado específicamente para la posición de <strong>${posicion}</strong> en <strong>${empresa}</strong></p>
-                    <p>Fecha de generación: ${new Date().toLocaleDateString('es-CL')}</p>
+                    <p>Fecha de generación: ${new Date().toLocaleDateString(
+                      "es-CL"
+                    )}</p>
                 </div>
             </div>
         </div>
     </body>
     </html>
-    `
+    `;
   }
 
   /**
@@ -211,29 +280,33 @@ class CVGeneratorService {
    * @param {string} filename - Nombre del archivo
    * @returns {Promise<Blob>} - Blob del PDF generado
    */
-  async convertirHTMLaPDF(htmlContent, filename = 'cv-personalizado.pdf') {
+  async convertirHTMLaPDF(htmlContent, filename = "cv-personalizado.pdf") {
     const options = {
       margin: 0.5,
       filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
         scale: 2,
         useCORS: true,
-        letterRendering: true
+        letterRendering: true,
       },
-      jsPDF: { 
-        unit: 'in', 
-        format: 'letter', 
-        orientation: 'portrait' 
-      }
-    }
+      jsPDF: {
+        unit: "in",
+        format: "letter",
+        orientation: "portrait",
+      },
+    };
 
     try {
-      const pdf = await html2pdf().set(options).from(htmlContent).toPdf().get('pdf')
-      return pdf.output('blob')
+      const pdf = await html2pdf()
+        .set(options)
+        .from(htmlContent)
+        .toPdf()
+        .get("pdf");
+      return pdf.output("blob");
     } catch (error) {
-      console.error('Error al generar PDF:', error)
-      throw error
+      console.error("Error al generar PDF:", error);
+      throw error;
     }
   }
 
@@ -242,13 +315,13 @@ class CVGeneratorService {
    * @param {string} htmlContent - Contenido HTML del CV
    * @param {string} containerId - ID del contenedor donde renderizar
    */
-  renderizarCVEnContenedor(htmlContent, containerId = 'cv-container') {
-    const container = document.getElementById(containerId)
+  renderizarCVEnContenedor(htmlContent, containerId = "cv-container") {
+    const container = document.getElementById(containerId);
     if (container) {
-      container.innerHTML = htmlContent
-      container.style.display = 'block'
+      container.innerHTML = htmlContent;
+      container.style.display = "block";
     } else {
-      console.error(`Contenedor ${containerId} no encontrado`)
+      console.error(`Contenedor ${containerId} no encontrado`);
     }
   }
 
@@ -257,16 +330,16 @@ class CVGeneratorService {
    * @param {Blob} pdfBlob - Blob del PDF
    * @param {string} filename - Nombre del archivo
    */
-  descargarPDF(pdfBlob, filename = 'cv-personalizado.pdf') {
-    const url = URL.createObjectURL(pdfBlob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+  descargarPDF(pdfBlob, filename = "cv-personalizado.pdf") {
+    const url = URL.createObjectURL(pdfBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }
 
-export default new CVGeneratorService()
+export default new CVGeneratorService();

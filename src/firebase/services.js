@@ -231,6 +231,221 @@ export const cvService = {
   },
 };
 
+// Servicio para perfil del candidato
+export const perfilService = {
+  // Obtener perfil completo del candidato
+  async obtenerPerfilCandidato() {
+    if (!checkFirebaseAvailable()) {
+      // Modo demo - devolver datos completos de Michael
+      return {
+        success: true,
+        data: this.obtenerDatosDemo(),
+        demo: true,
+      };
+    }
+
+    try {
+      // Intentar obtener desde Firestore
+      const perfilDoc = await getDocs(
+        query(collection(db, "perfil_candidato"), where("activo", "==", true))
+      );
+
+      if (!perfilDoc.empty) {
+        const datos = perfilDoc.docs[0].data();
+        return { success: true, data: datos };
+      } else {
+        // Si no hay datos en Firestore, usar datos demo
+        return {
+          success: true,
+          data: this.obtenerDatosDemo(),
+          demo: true,
+        };
+      }
+    } catch (error) {
+      console.error("Error al obtener perfil:", error);
+      // Fallback a datos demo
+      return {
+        success: true,
+        data: this.obtenerDatosDemo(),
+        demo: true,
+      };
+    }
+  },
+
+  // Datos completos de Michael para modo demo
+  obtenerDatosDemo() {
+    return {
+      // Información personal
+      nombre_completo: "Michael Esteban Sáez Contreras",
+      cargo_principal: "Desarrollador Full Stack",
+      ubicacion: "Temuco, IX Región, Chile",
+      email: "m.saezc@maikostudios.com",
+      telefono: "+56983833148",
+      linkedin: "https://www.linkedin.com/in/me-saezc/",
+      github: "https://github.com/maikostudios",
+      web: "https://maikostudios.com/",
+
+      // Perfil profesional
+      perfil_profesional:
+        "Desarrollador Full Stack con experiencia comprobada en tecnologías modernas como Vue, React, Node.js, Java y Python. Certificado como facilitador e-learning y comprometido con la formación de nuevos talentos. Apasionado por la innovación, automatización y optimización de procesos usando software y herramientas digitales. Dispuesto a liderar o integrarse en equipos con metodologías ágiles (Scrum/Kanban).",
+
+      // Experiencia profesional
+      experiencia_profesional: [
+        {
+          cargo: "Fundador y Desarrollador Principal",
+          empresa: "Maiko Studios",
+          periodo: "2024 - Presente",
+          descripcion:
+            "Creación y desarrollo de plataformas digitales innovadoras como DeUna Transferencias. Implementación de automatizaciones con IA para optimizar procesos empresariales. Digitalización integral para PYMEs y asesorías tecnológicas especializadas.",
+        },
+        {
+          cargo: "Facilitador Front End",
+          empresa: "Desafío Latam",
+          periodo: "Ago 2024 - Dic 2024",
+          descripcion:
+            "Impartí cursos en tecnologías Front End como HTML, CSS, JavaScript, y Vue en el marco del programa Talento Digital para Chile. Certificado como facilitador por la institución, enfocado en la formación de nuevos desarrolladores.",
+        },
+        {
+          cargo: "Facilitador Bootcamp",
+          empresa: "INFOCAL",
+          periodo: "Ene 2024 - Sep 2024",
+          descripcion:
+            "Docente en cursos de desarrollo Front End usando HTML, CSS, JavaScript, Bootstrap y Vue.js, adaptando contenidos a estudiantes en formación técnica y profesional.",
+        },
+        {
+          cargo: "Full Stack Developer",
+          empresa: "Tata Consultancy Services",
+          periodo: "Jul 2021 - Dic 2023",
+          descripcion:
+            "Desarrollador líder en proyectos para Metlife Chile, resolviendo el 100% de tickets reportados. Trabajo Full Stack con tecnologías JavaScript, Node.js, Express, y bases de datos SQL.",
+        },
+        {
+          cargo: "Soporte TI",
+          empresa: "NTTDATA Centers",
+          periodo: "Nov 2020 - Dic 2021",
+          descripcion:
+            "Gestión de incidencias, soporte técnico especializado, geolocalización de datos y configuración de infraestructura tecnológica para clientes corporativos.",
+        },
+      ],
+
+      // Educación
+      educacion: [
+        {
+          titulo: "Ingeniería en Informática Mención Ciberseguridad",
+          institucion: "Instituto Profesional Providencia",
+          periodo: "2021 - Actualmente",
+          descripcion:
+            "Especialización en desarrollo de software seguro y arquitecturas de ciberseguridad.",
+        },
+      ],
+
+      // Habilidades técnicas
+      habilidades_tecnicas: {
+        lenguajes: [
+          "JavaScript",
+          "Python",
+          "Java",
+          "TypeScript",
+          "HTML5",
+          "CSS3",
+        ],
+        frameworks: [
+          "Vue.js",
+          "React",
+          "Angular",
+          "Node.js",
+          "Express.js",
+          "Spring Boot",
+          "Django",
+          "Flask",
+        ],
+        bases_datos: [
+          "PostgreSQL",
+          "MongoDB",
+          "MySQL",
+          "Redis",
+          "Firebase Firestore",
+        ],
+        herramientas: [
+          "Git",
+          "Docker",
+          "AWS",
+          "Firebase",
+          "Jira",
+          "Figma",
+          "Adobe XD",
+        ],
+        metodologias: [
+          "Scrum",
+          "Kanban",
+          "Agile",
+          "DevOps",
+          "CI/CD",
+          "MVC",
+          "MVVM",
+          "Microservicios",
+        ],
+      },
+
+      // Certificaciones
+      certificaciones: [
+        "Vue.js Certified Developer",
+        "Firebase Certified Developer",
+        "JavaScript Full Stack Development",
+        "Android Mobile Development",
+        "Facilitador eLearning Certificado",
+        "Scrum Master Fundamentals",
+        "AWS Cloud Practitioner",
+      ],
+
+      // Idiomas
+      idiomas: [
+        { idioma: "Español", nivel: "Nativo" },
+        { idioma: "Inglés", nivel: "Intermedio" },
+        { idioma: "Portugués", nivel: "Básico" },
+        { idioma: "Japonés", nivel: "Básico" },
+      ],
+
+      // Información adicional
+      info_adicional: {
+        licencia: "Clase B",
+        situacion_militar: "al día",
+        disponibilidad: "Inmediata",
+      },
+
+      // Áreas de interés
+      areas_interes: [
+        "Desarrollo Full Stack",
+        "DevOps y Cloud Computing",
+        "Inteligencia Artificial",
+        "Liderazgo Técnico",
+        "Mentoría y Educación",
+        "Automatización de Procesos",
+      ],
+    };
+  },
+
+  // Actualizar perfil del candidato
+  async actualizarPerfil(datosPerfil) {
+    if (!checkFirebaseAvailable()) {
+      console.log("📝 Perfil demo actualizado:", datosPerfil);
+      return { success: true, demo: true };
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "perfil_candidato"), {
+        ...datosPerfil,
+        activo: true,
+        fechaActualizacion: serverTimestamp(),
+      });
+      return { success: true, id: docRef.id };
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      return { success: false, error: error.message };
+    }
+  },
+};
+
 // Servicio para estadísticas
 export const statsService = {
   // Registrar visita a la página
