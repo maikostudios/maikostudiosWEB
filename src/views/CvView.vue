@@ -136,43 +136,70 @@
                                     Habilidades Requeridas
                                 </h3>
                                 <p class="section-description">
-                                    Selecciona las habilidades más relevantes para esta posición
+                                    Selecciona o escribe las habilidades más relevantes para esta posición
                                 </p>
 
-                                <!-- Categorías de habilidades -->
-                                <div class="skills-categories">
-                                    <div v-for="(skills, categoria) in habilidadesPredefinidas" :key="categoria" class="skill-category">
-                                        <h4 class="category-title">
-                                            <v-icon left size="small">mdi-tag</v-icon>
-                                            {{ categoria.charAt(0).toUpperCase() + categoria.slice(1) }}
-                                        </h4>
-                                        <div class="skills-grid">
-                                            <v-chip
-                                                v-for="skill in skills"
-                                                :key="skill"
-                                                :color="formulario.habilidadesSeleccionadas.includes(skill) ? 'secondary' : 'default'"
-                                                :variant="formulario.habilidadesSeleccionadas.includes(skill) ? 'flat' : 'outlined'"
-                                                class="skill-chip"
-                                                @click="toggleSkill(skill)"
-                                            >
-                                                {{ skill }}
-                                            </v-chip>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Selector de habilidades con autocomplete -->
+                                <v-autocomplete
+                                    v-model="formulario.habilidadesSeleccionadas"
+                                    :items="todasLasHabilidades"
+                                    label="Buscar y seleccionar habilidades"
+                                    multiple
+                                    chips
+                                    closable-chips
+                                    variant="outlined"
+                                    density="comfortable"
+                                    prepend-inner-icon="mdi-magnify"
+                                    :rules="[rules.minSkills]"
+                                    hint="Escribe para buscar habilidades existentes o agregar nuevas"
+                                    persistent-hint
+                                    v-model:search="busquedaHabilidad"
+                                    :filter-keys="['title', 'categoria']"
+                                    item-title="title"
+                                    item-value="value"
+                                    return-object
+                                >
+                                    <template v-slot:chip="{ props, item }">
+                                        <v-chip
+                                            v-bind="props"
+                                            :color="obtenerColorCategoria(item.raw.categoria)"
+                                            variant="flat"
+                                            size="small"
+                                        >
+                                            <v-icon left size="small">{{ obtenerIconoCategoria(item.raw.categoria) }}</v-icon>
+                                            {{ item.raw.title }}
+                                        </v-chip>
+                                    </template>
 
-                                <!-- Habilidad personalizada -->
-                                <div class="custom-skills-section">
-                                    <v-text-field
-                                        v-model="nuevaHabilidad"
-                                        label="Agregar habilidad personalizada"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        append-inner-icon="mdi-plus"
-                                        @click:append-inner="agregarHabilidadPersonalizada"
-                                        @keyup.enter="agregarHabilidadPersonalizada"
-                                    />
-                                </div>
+                                    <template v-slot:item="{ props, item }">
+                                        <v-list-item v-bind="props">
+                                            <template v-slot:prepend>
+                                                <v-icon :color="obtenerColorCategoria(item.raw.categoria)">
+                                                    {{ obtenerIconoCategoria(item.raw.categoria) }}
+                                                </v-icon>
+                                            </template>
+                                            <v-list-item-title>{{ item.raw.title }}</v-list-item-title>
+                                            <v-list-item-subtitle>{{ item.raw.categoria }}</v-list-item-subtitle>
+                                        </v-list-item>
+                                    </template>
+
+                                    <template v-slot:no-data>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                <span class="text-grey">No se encontraron habilidades. </span>
+                                                <v-btn
+                                                    v-if="busquedaHabilidad && busquedaHabilidad.length > 2"
+                                                    variant="text"
+                                                    size="small"
+                                                    @click="agregarHabilidadPersonalizada"
+                                                >
+                                                    <v-icon left size="small">mdi-plus</v-icon>
+                                                    Agregar "{{ busquedaHabilidad }}"
+                                                </v-btn>
+                                            </v-list-item-title>
+                                        </v-list-item>
+                                    </template>
+                                </v-autocomplete>
 
                                 <!-- Habilidades seleccionadas -->
                                 <div v-if="formulario.habilidadesSeleccionadas.length > 0" class="selected-skills">
@@ -183,13 +210,16 @@
                                     <div class="selected-chips">
                                         <v-chip
                                             v-for="skill in formulario.habilidadesSeleccionadas"
-                                            :key="skill"
-                                            color="secondary"
+                                            :key="skill.value || skill"
+                                            :color="obtenerColorCategoria(skill.categoria)"
+                                            variant="flat"
+                                            size="small"
                                             closable
                                             class="selected-chip"
                                             @click:close="removeSkill(skill)"
                                         >
-                                            {{ skill }}
+                                            <v-icon left size="small">{{ obtenerIconoCategoria(skill.categoria) }}</v-icon>
+                                            {{ skill.title || skill }}
                                         </v-chip>
                                     </div>
                                 </div>
@@ -572,6 +602,7 @@ const valid = ref(false)
 const mostrarEstadoGeneracion = ref(false)
 const mostrarResultado = ref(false)
 const nuevaHabilidad = ref('')
+const busquedaHabilidad = ref('')
 
 // Estados para Gemini
 const mostrarFormularioGemini = ref(false)
@@ -619,6 +650,48 @@ const habilidadesPredefinidas = {
   ]
 }
 
+// Convertir habilidades predefinidas a formato de autocomplete
+const todasLasHabilidades = computed(() => {
+  const habilidades = []
+
+  Object.entries(habilidadesPredefinidas).forEach(([categoria, skills]) => {
+    skills.forEach(skill => {
+      habilidades.push({
+        title: skill,
+        value: skill,
+        categoria: categoria
+      })
+    })
+  })
+
+  return habilidades
+})
+
+// Funciones para obtener colores e iconos por categoría
+const obtenerColorCategoria = (categoria) => {
+  const colores = {
+    tecnologias: 'blue',
+    ia: 'purple',
+    diseno: 'pink',
+    metodologias: 'green',
+    servicios: 'orange',
+    personalizada: 'secondary'
+  }
+  return colores[categoria] || 'secondary'
+}
+
+const obtenerIconoCategoria = (categoria) => {
+  const iconos = {
+    tecnologias: 'mdi-code-tags',
+    ia: 'mdi-brain',
+    diseno: 'mdi-palette',
+    metodologias: 'mdi-cog',
+    servicios: 'mdi-briefcase',
+    personalizada: 'mdi-star'
+  }
+  return iconos[categoria] || 'mdi-star'
+}
+
 // Reglas de validación
 const rules = {
   required: value => !!value || 'Este campo es obligatorio',
@@ -626,7 +699,8 @@ const rules = {
     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return pattern.test(value) || 'Ingresa un email válido'
   },
-  minLength: value => value.length >= 50 || 'La descripción debe tener al menos 50 caracteres'
+  minLength: value => value.length >= 50 || 'La descripción debe tener al menos 50 caracteres',
+  minSkills: value => (value && value.length >= 1) || 'Selecciona al menos una habilidad'
 }
 
 // Computed para verificar si el formulario está completo
@@ -709,26 +783,42 @@ const toggleFormularioIntegrado = () => {
 
 // Funciones para manejar habilidades
 const toggleSkill = (skill) => {
-    const index = formulario.habilidadesSeleccionadas.indexOf(skill)
+    // Esta función ya no se usa con el nuevo autocomplete, pero la mantenemos por compatibilidad
+    const skillObj = typeof skill === 'string' ? { title: skill, value: skill, categoria: 'personalizada' } : skill
+    const index = formulario.habilidadesSeleccionadas.findIndex(s => (s.value || s) === (skillObj.value || skillObj))
     if (index > -1) {
         formulario.habilidadesSeleccionadas.splice(index, 1)
     } else {
-        formulario.habilidadesSeleccionadas.push(skill)
+        formulario.habilidadesSeleccionadas.push(skillObj)
     }
 }
 
 const removeSkill = (skill) => {
-    const index = formulario.habilidadesSeleccionadas.indexOf(skill)
+    const index = formulario.habilidadesSeleccionadas.findIndex(s =>
+        (s.value || s) === (skill.value || skill)
+    )
     if (index > -1) {
         formulario.habilidadesSeleccionadas.splice(index, 1)
     }
 }
 
 const agregarHabilidadPersonalizada = () => {
-    if (nuevaHabilidad.value.trim() && !formulario.habilidadesSeleccionadas.includes(nuevaHabilidad.value.trim())) {
-        formulario.habilidadesSeleccionadas.push(nuevaHabilidad.value.trim())
+    const habilidadTexto = busquedaHabilidad.value?.trim() || nuevaHabilidad.value?.trim()
+    if (habilidadTexto && !formulario.habilidadesSeleccionadas.some(s => (s.value || s) === habilidadTexto)) {
+        const nuevaSkill = {
+            title: habilidadTexto,
+            value: habilidadTexto,
+            categoria: 'personalizada'
+        }
+        formulario.habilidadesSeleccionadas.push(nuevaSkill)
+        busquedaHabilidad.value = ''
         nuevaHabilidad.value = ''
     }
+}
+
+// Función para manejar la búsqueda de habilidades
+const manejarBusquedaHabilidad = (valor) => {
+    busquedaHabilidad.value = valor
 }
 
 // Función principal para generar CV dinámico
@@ -969,13 +1059,16 @@ const limpiarResultadoGemini = () => {
 
 // Función para generar prompt optimizado
 const generarPromptOptimizado = (tipo) => {
-    const habilidadesSeleccionadas = formulario.habilidadesSeleccionadas || []
+    // Convertir habilidades a formato string para compatibilidad
+    const habilidadesTexto = formulario.habilidadesSeleccionadas.map(skill =>
+        skill.title || skill
+    )
     const empresa = formulario.empresa || ''
     const posicion = formulario.posicion || ''
 
     promptGemini.value = geminiService.generarPromptOptimizado(
         tipo,
-        habilidadesSeleccionadas,
+        habilidadesTexto,
         empresa,
         posicion
     )
