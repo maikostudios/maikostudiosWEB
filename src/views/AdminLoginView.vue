@@ -31,9 +31,9 @@
 
           <!-- Información de acceso para desarrollo -->
           <v-alert v-if="mostrarInfoDesarrollo" type="info" variant="tonal" class="mt-4">
-            <strong>Modo Desarrollo:</strong><br>
-            Email: admin@maikostudios.com<br>
-            Contraseña: admin123
+            <strong>Credenciales de Acceso:</strong><br>
+            Email: maikostudios@gmail.com<br>
+            Contraseña: 123456
           </v-alert>
         </v-card-text>
 
@@ -120,11 +120,28 @@ const iniciarSesion = async () => {
   cargando.value = true
 
   try {
-    // Verificar credenciales de desarrollo
-    if (credenciales.email === 'admin@maikostudios.com' && credenciales.password === 'admin123') {
+    // Verificar credenciales de desarrollo/testing
+    if (credenciales.email === 'maikostudios@gmail.com' && credenciales.password === '123456') {
       // Simular usuario autenticado para desarrollo
       store.user = {
         uid: 'admin-dev',
+        email: 'maikostudios@gmail.com',
+        displayName: 'Michael Sáez (Testing)'
+      }
+
+      // Guardar estado de autenticación
+      localStorage.setItem('admin_authenticated', 'true')
+
+      mostrarNotificacion('Sesión iniciada correctamente (Modo Testing)', 'success')
+      router.push('/admin')
+      return
+    }
+
+    // También permitir credenciales alternativas para desarrollo
+    if (credenciales.email === 'admin@maikostudios.com' && credenciales.password === 'admin123') {
+      // Simular usuario autenticado para desarrollo
+      store.user = {
+        uid: 'admin-dev-alt',
         email: 'admin@maikostudios.com',
         displayName: 'Michael Sáez (Dev)'
       }
@@ -146,6 +163,7 @@ const iniciarSesion = async () => {
 
     // Verificar que el usuario es Michael (por email)
     const emailsAutorizados = [
+      'maikostudios@gmail.com',
       'm.esteban.saez@gmail.com',
       'admin@maikostudios.com',
       'michael@maikostudios.com'
