@@ -531,8 +531,8 @@ const generarCVDinamico = async () => {
     mostrarEstadoGeneracion.value = true
 
     try {
-        // Usar el composable unificado para generar CV (sin vista previa)
-        const resultado = await generarCVPersonalizado(formulario, 'sin-preview')
+        // Usar el composable unificado para generar CV dinámico
+        const resultado = await generarCVPersonalizado(formulario, 'dinamico')
 
         if (resultado.success) {
             mostrarEstadoGeneracion.value = false

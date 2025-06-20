@@ -179,6 +179,56 @@ export const cvService = {
       return { success: false, error: error.message };
     }
   },
+
+  // Guardar información del reclutador
+  async guardarReclutador(datosReclutador) {
+    if (!checkFirebaseAvailable()) {
+      // Modo demo - simular guardado exitoso
+      console.log("👤 Reclutador demo guardado:", datosReclutador);
+      return {
+        success: true,
+        id: "demo-reclutador-" + Date.now(),
+        demo: true,
+      };
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "reclutadores_interesados"), {
+        ...datosReclutador,
+        fechaCreacion: serverTimestamp(),
+        estadoCV: "pendiente",
+      });
+      return { success: true, id: docRef.id };
+    } catch (error) {
+      console.error("Error al guardar reclutador:", error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Actualizar estado del CV del reclutador
+  async actualizarEstadoCV(reclutadorId, datosCV) {
+    if (!checkFirebaseAvailable()) {
+      // Modo demo - simular actualización exitosa
+      console.log("📄 Estado CV demo actualizado:", { reclutadorId, datosCV });
+      return {
+        success: true,
+        demo: true,
+      };
+    }
+
+    try {
+      const docRef = doc(db, "reclutadores_interesados", reclutadorId);
+      await updateDoc(docRef, {
+        ...datosCV,
+        estadoCV: "generado",
+        fechaGeneracion: serverTimestamp(),
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error al actualizar estado CV:", error);
+      return { success: false, error: error.message };
+    }
+  },
 };
 
 // Servicio para estadísticas
