@@ -156,8 +156,9 @@
                                     v-model:search="busquedaHabilidad"
                                     :filter-keys="['title', 'categoria']"
                                     item-title="title"
-                                    item-value="value"
+                                    item-value="id"
                                     return-object
+                                    no-filter
                                 >
                                     <template v-slot:chip="{ props, item }">
                                         <v-chip
@@ -210,7 +211,7 @@
                                     <div class="selected-chips">
                                         <v-chip
                                             v-for="skill in formulario.habilidadesSeleccionadas"
-                                            :key="skill.value || skill"
+                                            :key="skill.id || skill.value || skill"
                                             :color="obtenerColorCategoria(skill.categoria)"
                                             variant="flat"
                                             size="small"
@@ -653,14 +654,20 @@ const habilidadesPredefinidas = {
 // Convertir habilidades predefinidas a formato de autocomplete
 const todasLasHabilidades = computed(() => {
   const habilidades = []
+  const skillsUnicos = new Set() // Para evitar duplicados
 
   Object.entries(habilidadesPredefinidas).forEach(([categoria, skills]) => {
     skills.forEach(skill => {
-      habilidades.push({
-        title: skill,
-        value: skill,
-        categoria: categoria
-      })
+      // Solo agregar si no existe ya
+      if (!skillsUnicos.has(skill)) {
+        skillsUnicos.add(skill)
+        habilidades.push({
+          title: skill,
+          value: skill,
+          categoria: categoria,
+          id: `${categoria}-${skill}` // ID único para evitar problemas de renderizado
+        })
+      }
     })
   })
 
@@ -670,11 +677,11 @@ const todasLasHabilidades = computed(() => {
 // Habilidades disponibles (excluyendo las ya seleccionadas)
 const habilidadesDisponibles = computed(() => {
   const seleccionadas = formulario.habilidadesSeleccionadas.map(skill =>
-    skill.value || skill
+    skill.id || skill.value || skill
   )
 
   return todasLasHabilidades.value.filter(habilidad =>
-    !seleccionadas.includes(habilidad.value)
+    !seleccionadas.includes(habilidad.id)
   )
 })
 
@@ -806,7 +813,7 @@ const toggleSkill = (skill) => {
 
 const removeSkill = (skill) => {
     const index = formulario.habilidadesSeleccionadas.findIndex(s =>
-        (s.value || s) === (skill.value || skill)
+        (s.id || s.value || s) === (skill.id || skill.value || skill)
     )
     if (index > -1) {
         formulario.habilidadesSeleccionadas.splice(index, 1)
@@ -819,7 +826,8 @@ const agregarHabilidadPersonalizada = () => {
         const nuevaSkill = {
             title: habilidadTexto,
             value: habilidadTexto,
-            categoria: 'personalizada'
+            categoria: 'personalizada',
+            id: `personalizada-${habilidadTexto}-${Date.now()}`
         }
         formulario.habilidadesSeleccionadas.push(nuevaSkill)
         busquedaHabilidad.value = ''
