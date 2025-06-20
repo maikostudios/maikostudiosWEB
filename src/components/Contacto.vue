@@ -215,7 +215,9 @@ const enviarFormulario = async () => {
 <style scoped>
 .contacto-section {
   padding: 6rem 0;
-  background: linear-gradient(to bottom, var(--color-background), #0d0d0d);
+  background: transparent;
+  position: relative;
+  z-index: 2;
 }
 
 .section-title {
