@@ -47,6 +47,27 @@
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
+
+                        <v-card class="option-card" elevation="2">
+                            <v-card-title>
+                                <v-icon color="purple" size="32">mdi-robot-excited</v-icon>
+                                CV con DeepSeek AI
+                                <v-chip color="purple" size="small" class="ml-2">NUEVO</v-chip>
+                            </v-card-title>
+                            <v-card-text>
+                                Genera tu CV usando DeepSeek, la IA más avanzada. Solo describe lo que necesitas.
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-btn color="purple" block @click="toggleFormularioDeepSeek">
+                                    <v-icon left>mdi-brain</v-icon>
+                                    {{ mostrarFormularioDeepSeek ? 'Ocultar DeepSeek' : 'Usar DeepSeek AI' }}
+                                </v-btn>
+                                <v-btn variant="outlined" block @click="probarConexionDeepSeek" class="mt-2">
+                                    <v-icon left>mdi-connection</v-icon>
+                                    Probar Conexión
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </div>
                 </div>
 
@@ -218,6 +239,184 @@
                 </v-card>
             </div>
 
+            <!-- Formulario DeepSeek AI -->
+            <div v-if="mostrarFormularioDeepSeek" id="formulario-deepseek" class="formulario-integrado">
+                <v-card class="form-card" style="border: 2px solid #9c27b0;">
+                    <v-card-title class="form-title" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(156, 39, 176, 0.2));">
+                        <v-icon left color="purple">mdi-robot-excited</v-icon>
+                        Generar CV con DeepSeek AI
+                        <v-chip color="purple" size="small" class="ml-2">BETA</v-chip>
+                    </v-card-title>
+
+                    <v-card-text>
+                        <!-- Estado de conexión -->
+                        <v-alert
+                            v-if="conexionDeepSeek"
+                            :type="conexionDeepSeek.success ? 'success' : 'error'"
+                            class="mb-4"
+                        >
+                            <template v-if="conexionDeepSeek.testing">
+                                <v-progress-circular indeterminate size="16" class="mr-2"></v-progress-circular>
+                                Probando conexión con DeepSeek...
+                            </template>
+                            <template v-else-if="conexionDeepSeek.success">
+                                ✅ Conexión exitosa con DeepSeek: {{ conexionDeepSeek.response }}
+                            </template>
+                            <template v-else>
+                                ❌ Error de conexión: {{ conexionDeepSeek.error }}
+                            </template>
+                        </v-alert>
+
+                        <!-- Prompts rápidos -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <v-icon left>mdi-lightning-bolt</v-icon>
+                                Prompts Rápidos
+                            </h3>
+                            <p class="section-description">
+                                Selecciona un tipo de CV o escribe tu propio prompt personalizado
+                            </p>
+
+                            <div class="skills-grid mb-4">
+                                <v-chip
+                                    color="purple"
+                                    variant="outlined"
+                                    class="skill-chip"
+                                    @click="generarPromptOptimizado('frontend')"
+                                >
+                                    Frontend Developer
+                                </v-chip>
+                                <v-chip
+                                    color="purple"
+                                    variant="outlined"
+                                    class="skill-chip"
+                                    @click="generarPromptOptimizado('backend')"
+                                >
+                                    Backend Developer
+                                </v-chip>
+                                <v-chip
+                                    color="purple"
+                                    variant="outlined"
+                                    class="skill-chip"
+                                    @click="generarPromptOptimizado('fullstack')"
+                                >
+                                    Full Stack
+                                </v-chip>
+                                <v-chip
+                                    color="purple"
+                                    variant="outlined"
+                                    class="skill-chip"
+                                    @click="generarPromptOptimizado('lider')"
+                                >
+                                    Tech Lead
+                                </v-chip>
+                                <v-chip
+                                    color="purple"
+                                    variant="outlined"
+                                    class="skill-chip"
+                                    @click="generarPromptOptimizado('docente')"
+                                >
+                                    Facilitador/Docente
+                                </v-chip>
+                            </div>
+                        </div>
+
+                        <!-- Prompt personalizado -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <v-icon left>mdi-message-text</v-icon>
+                                Describe tu CV ideal
+                            </h3>
+                            <v-textarea
+                                v-model="promptDeepSeek"
+                                label="Describe cómo quieres que sea tu CV"
+                                placeholder="Ejemplo: 'CV para desarrollador frontend en startup, destacar Vue.js y experiencia en UX, para empresa tecnológica innovadora'"
+                                variant="outlined"
+                                rows="4"
+                                counter="500"
+                                hint="Sé específico: menciona el tipo de empresa, posición, tecnologías a destacar, etc."
+                            />
+                        </div>
+                    </v-card-text>
+
+                    <v-card-actions class="form-actions">
+                        <v-btn
+                            color="purple"
+                            size="large"
+                            :disabled="!promptDeepSeek.trim()"
+                            :loading="generandoConDeepSeek"
+                            @click="generarCVConDeepSeek"
+                            class="generate-btn"
+                        >
+                            <v-icon left>mdi-robot-excited</v-icon>
+                            Generar con DeepSeek AI
+                        </v-btn>
+
+                        <v-btn
+                            variant="outlined"
+                            @click="limpiarResultadoDeepSeek"
+                            class="ml-2"
+                        >
+                            <v-icon left>mdi-refresh</v-icon>
+                            Limpiar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+
+            <!-- Resultado DeepSeek -->
+            <div v-if="resultadoDeepSeek" class="formulario-integrado">
+                <v-card class="form-card">
+                    <v-card-title v-if="resultadoDeepSeek.success" class="success-title">
+                        <v-icon left>mdi-robot-excited</v-icon>
+                        <div>
+                            ¡CV Generado con DeepSeek AI!
+                            <div class="subtitle">{{ resultadoDeepSeek.metadata?.candidato }} - {{ resultadoDeepSeek.metadata?.modelo }}</div>
+                        </div>
+                    </v-card-title>
+
+                    <v-card-title v-else style="background: #f44336; color: white;">
+                        <v-icon left>mdi-alert-circle</v-icon>
+                        Error en DeepSeek AI
+                    </v-card-title>
+
+                    <v-card-text v-if="resultadoDeepSeek.success" class="text-center py-6">
+                        <div class="success-content">
+                            <p class="success-description mb-4">
+                                DeepSeek ha generado tu CV personalizado usando IA avanzada.
+                            </p>
+
+                            <div class="action-buttons">
+                                <v-btn
+                                    color="purple"
+                                    size="large"
+                                    @click="descargarCVDeepSeek"
+                                    class="download-btn-main"
+                                >
+                                    <v-icon left>mdi-download</v-icon>
+                                    Descargar CV DeepSeek (PDF)
+                                </v-btn>
+                            </div>
+                        </div>
+                    </v-card-text>
+
+                    <v-card-text v-else class="text-center py-6">
+                        <p class="error-description">{{ resultadoDeepSeek.error }}</p>
+                        <v-btn color="purple" @click="generarCVConDeepSeek" class="mt-4">
+                            <v-icon left>mdi-refresh</v-icon>
+                            Intentar de nuevo
+                        </v-btn>
+                    </v-card-text>
+
+                    <v-card-actions class="justify-center pb-4">
+                        <v-btn variant="text" @click="limpiarResultadoDeepSeek">
+                            <v-icon left>mdi-close</v-icon>
+                            Cerrar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+
             <!-- Vista previa del CV -->
                 <div class="cv-preview" v-if="mostrarVistaPrevia">
                     <h2>Vista Previa</h2>
@@ -349,6 +548,7 @@ import PresentacionCv from '../components/cv_components/PresentacionCv.vue'
 import ExperienciaLaboralCv from '../components/cv_components/ExperienciaLaboralCv.vue'
 import cvGeneratorService from '@/services/cvGeneratorService'
 import { useCVGenerator } from '@/composables/useCVGenerator'
+import deepSeekService from '@/services/deepSeekService'
 
 // Composable para generación de CV
 const {
@@ -372,6 +572,13 @@ const valid = ref(false)
 const mostrarEstadoGeneracion = ref(false)
 const mostrarResultado = ref(false)
 const nuevaHabilidad = ref('')
+
+// Estados para DeepSeek
+const mostrarFormularioDeepSeek = ref(false)
+const promptDeepSeek = ref('')
+const generandoConDeepSeek = ref(false)
+const resultadoDeepSeek = ref(null)
+const conexionDeepSeek = ref(null)
 
 // Datos del formulario dinámico
 const formulario = reactive({
@@ -653,6 +860,125 @@ const imprimirCVDinamico = async () => {
 const manejarCVGenerado = (datosCV) => {
     cvGeneradoData.value = datosCV
     mostrarVistaPrevia.value = true
+}
+
+// ===== FUNCIONES DEEPSEEK =====
+
+// Función para mostrar/ocultar formulario DeepSeek
+const toggleFormularioDeepSeek = () => {
+    mostrarFormularioDeepSeek.value = !mostrarFormularioDeepSeek.value
+    if (mostrarFormularioDeepSeek.value) {
+        // Scroll suave hacia el formulario
+        setTimeout(() => {
+            const formularioElement = document.getElementById('formulario-deepseek')
+            if (formularioElement) {
+                formularioElement.scrollIntoView({ behavior: 'smooth' })
+            }
+        }, 100)
+    }
+}
+
+// Función para probar conexión con DeepSeek
+const probarConexionDeepSeek = async () => {
+    try {
+        conexionDeepSeek.value = { testing: true }
+        const resultado = await deepSeekService.probarConexion()
+        conexionDeepSeek.value = resultado
+
+        if (resultado.success) {
+            console.log('✅ Conexión DeepSeek exitosa:', resultado.response)
+        } else {
+            console.error('❌ Error conexión DeepSeek:', resultado.error)
+        }
+    } catch (error) {
+        console.error('❌ Error probando DeepSeek:', error)
+        conexionDeepSeek.value = { success: false, error: error.message }
+    }
+}
+
+// Función para generar CV con DeepSeek
+const generarCVConDeepSeek = async () => {
+    if (!promptDeepSeek.value.trim()) {
+        alert('Por favor, describe cómo quieres personalizar tu CV')
+        return
+    }
+
+    generandoConDeepSeek.value = true
+    resultadoDeepSeek.value = null
+
+    try {
+        console.log('🤖 Generando CV con DeepSeek...', { prompt: promptDeepSeek.value })
+
+        const resultado = await deepSeekService.generarCVPersonalizado(promptDeepSeek.value)
+
+        if (resultado.success) {
+            resultadoDeepSeek.value = {
+                success: true,
+                html: resultado.html,
+                metadata: resultado.metadata,
+                provider: 'deepseek'
+            }
+
+            // Ocultar formulario y mostrar resultado
+            mostrarFormularioDeepSeek.value = false
+
+            console.log('✅ CV generado con DeepSeek:', resultado.metadata)
+        } else {
+            throw new Error(resultado.error || 'Error desconocido en DeepSeek')
+        }
+
+    } catch (error) {
+        console.error('❌ Error generando CV con DeepSeek:', error)
+        resultadoDeepSeek.value = {
+            success: false,
+            error: error.message,
+            provider: 'deepseek'
+        }
+        alert(`Error al generar CV con DeepSeek: ${error.message}`)
+    } finally {
+        generandoConDeepSeek.value = false
+    }
+}
+
+// Función para descargar CV de DeepSeek
+const descargarCVDeepSeek = async () => {
+    if (!resultadoDeepSeek.value?.html) {
+        alert('No hay CV de DeepSeek disponible para descargar.')
+        return
+    }
+
+    try {
+        const { default: cvGeneratorService } = await import('@/services/cvGeneratorService')
+        const nombreArchivo = `cv-deepseek-${Date.now()}.pdf`
+        const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(resultadoDeepSeek.value.html, nombreArchivo)
+        cvGeneratorService.descargarPDF(pdfBlob, nombreArchivo)
+
+        console.log('✅ CV DeepSeek descargado:', nombreArchivo)
+    } catch (error) {
+        console.error('❌ Error descargando CV DeepSeek:', error)
+        alert('Error al descargar el CV. Inténtalo de nuevo.')
+    }
+}
+
+// Función para limpiar resultado DeepSeek
+const limpiarResultadoDeepSeek = () => {
+    resultadoDeepSeek.value = null
+    promptDeepSeek.value = ''
+    conexionDeepSeek.value = null
+}
+
+// Función para generar prompt optimizado
+const generarPromptOptimizado = (tipo) => {
+    const habilidadesSeleccionadas = formulario.habilidadesSeleccionadas || []
+    const empresa = formulario.empresa || ''
+    const posicion = formulario.posicion || ''
+
+    promptDeepSeek.value = deepSeekService.generarPromptOptimizado(
+        tipo,
+        habilidadesSeleccionadas,
+        empresa,
+        posicion
+    )
 }
 </script>
 
