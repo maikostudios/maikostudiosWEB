@@ -70,7 +70,7 @@
 <style scoped>
 .proyectos-section {
   padding: 6rem 0;
-  background: var(--color-background);
+  background: transparent;
 }
 
 .section-title {

@@ -27,7 +27,7 @@ function scrollToContent() {
 <style scoped>
 .hero-section {
     position: relative;
-    background-color: #0a0a0a;
+    background: transparent;
     color: #ffffff;
     padding: 6rem 1rem;
     text-align: center;

@@ -2,6 +2,8 @@
   <section id="sobre-mi" class="sobre-mi-section">
     <v-container>
       <div class="content-wrapper">
+        <h2 class="section-title">Sobre Mí</h2>
+        <p class="section-subtitle">Conoce más sobre mi trayectoria y pasión por la tecnología</p>
         <div class="profile-content">
           <div class="profile-image">
             <img src="https://avatars.githubusercontent.com/u/68249859?v=4" alt="Michael Sáez" class="avatar" />

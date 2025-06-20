@@ -69,7 +69,7 @@
 <style scoped>
 .servicios-section {
   padding: 6rem 0;
-  background: linear-gradient(to bottom, #0d0d0d, var(--color-background));
+  background: transparent;
 }
 
 .section-title {
