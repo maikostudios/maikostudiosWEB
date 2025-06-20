@@ -446,6 +446,158 @@ export const perfilService = {
   },
 };
 
+// Servicio para plantillas de CV
+export const plantillasService = {
+  // Obtener plantilla activa del CV
+  async obtenerPlantillaCV() {
+    if (!checkFirebaseAvailable()) {
+      // Modo demo - devolver plantilla por defecto
+      return {
+        success: true,
+        data: this.obtenerPlantillaDemo(),
+        demo: true,
+      };
+    }
+
+    try {
+      const q = query(
+        collection(db, "plantillas"),
+        where("activa", "==", true),
+        where("tipo", "==", "cv_profesional")
+      );
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        const plantilla = snapshot.docs[0].data();
+        return { success: true, data: plantilla };
+      } else {
+        // Fallback a plantilla demo
+        return {
+          success: true,
+          data: this.obtenerPlantillaDemo(),
+          demo: true,
+        };
+      }
+    } catch (error) {
+      console.error("Error al obtener plantilla:", error);
+      return {
+        success: true,
+        data: this.obtenerPlantillaDemo(),
+        demo: true,
+      };
+    }
+  },
+
+  // Plantilla demo por defecto
+  obtenerPlantillaDemo() {
+    return {
+      nombre: "cv_michael_saez_completo",
+      tipo: "cv_profesional",
+      plantilla_cv_maiko: `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #000; }
+    header { background-color: #121212; color: white; text-align: center; padding: 20px 10px; }
+    .sub-header { font-size: 14px; margin-top: 5px; }
+    .divider { height: 5px; background-color: #00cccc; }
+    section { padding: 20px; }
+    h2 { color: #00cccc; margin-bottom: 10px; }
+    .entry { margin-bottom: 15px; }
+    .entry-title { font-weight: bold; }
+    .footer { background-color: #f0f0f0; text-align: center; font-size: 12px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{nombre_completo}}</h1>
+    <div class="sub-header">{{cargo_principal}}</div>
+    <div class="sub-header">{{email}} | {{telefono}} | <a href="{{linkedin}}" style="color:white;">LinkedIn</a> | <a href="{{web}}" style="color:white;">maikostudios.com</a></div>
+    <div class="sub-header">{{ubicacion}}</div>
+  </header>
+  <div class="divider"></div>
+  <section>
+    <h2>Perfil Profesional</h2>
+    <p>{{perfil_profesional}}</p>
+  </section>
+  <section>
+    <h2>Experiencia Profesional</h2>
+    {{experiencia_profesional}}
+  </section>
+  <section>
+    <h2>Educación</h2>
+    {{educacion}}
+  </section>
+  <section>
+    <h2>Certificaciones</h2>
+    <p>{{certificaciones}}</p>
+  </section>
+  <section>
+    <h2>Habilidades Técnicas</h2>
+    {{habilidades_tecnicas}}
+  </section>
+  <section>
+    <h2>Habilidades Blandas</h2>
+    <p>{{habilidades_blandas}}</p>
+  </section>
+  <section>
+    <h2>Idiomas</h2>
+    <p>{{idiomas}}</p>
+  </section>
+  <section>
+    <h2>Información Adicional</h2>
+    <p>{{info_adicional}}</p>
+  </section>
+  <div class="footer">
+    Contacto: <a href="mailto:{{email}}">{{email}}</a> | <a href="{{linkedin}}">LinkedIn</a> | <a href="{{web}}">maikostudios.com</a>
+  </div>
+</body>
+</html>`,
+      descripcion: "Plantilla oficial del CV de Michael Sáez",
+      version: "1.0",
+      activa: true,
+      campos_variables: [
+        "nombre_completo",
+        "cargo_principal",
+        "email",
+        "telefono",
+        "linkedin",
+        "web",
+        "ubicacion",
+        "perfil_profesional",
+        "experiencia_profesional",
+        "educacion",
+        "certificaciones",
+        "habilidades_tecnicas",
+        "habilidades_blandas",
+        "idiomas",
+        "info_adicional",
+      ],
+    };
+  },
+
+  // Guardar nueva plantilla
+  async guardarPlantilla(plantillaData) {
+    if (!checkFirebaseAvailable()) {
+      console.log("📄 Plantilla demo guardada:", plantillaData.nombre);
+      return { success: true, demo: true };
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "plantillas"), {
+        ...plantillaData,
+        fecha_creacion: serverTimestamp(),
+        activa: true,
+      });
+      return { success: true, id: docRef.id };
+    } catch (error) {
+      console.error("Error al guardar plantilla:", error);
+      return { success: false, error: error.message };
+    }
+  },
+};
+
 // Servicio para estadísticas
 export const statsService = {
   // Registrar visita a la página
