@@ -222,11 +222,13 @@ ${datosJSON}
 1. Para arrays (experiencia, educación): Crea HTML con estructura <div class="entry"> para cada elemento
 2. Para habilidades técnicas: Organiza por categorías usando <h3> (Frontend, Backend, Databases, etc.)
 3. Mantén colores exactos: header #121212, títulos h2 #00cccc, footer #f0f0f0
-4. IMPORTANTE: Todos los textos deben ser color negro (#000) - NO uses colores grises
-5. Los elementos <h3> ya tienen estilos definidos en CSS - NO agregues estilos inline
-6. Ordena cronológicamente de más reciente a más antiguo
-7. Optimiza descripciones para ATS con palabras clave técnicas
-8. Devuelve SOLO el HTML final, sin explicaciones`;
+4. CRÍTICO: TODO el texto debe ser NEGRO (#000) - NUNCA uses colores grises, claros o por defecto
+5. NO agregues estilos inline de color - los CSS ya están definidos
+6. Para párrafos usa solo <p> sin atributos de estilo
+7. Para subtítulos usa <div class="entry-subtitle">
+8. Ordena cronológicamente de más reciente a más antiguo
+9. Optimiza descripciones para ATS con palabras clave técnicas
+10. Devuelve SOLO el HTML final, sin explicaciones ni comentarios`;
 
     if (userPrompt.trim()) {
       prompt += `

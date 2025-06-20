@@ -498,20 +498,26 @@ export const plantillasService = {
 <head>
   <meta charset="UTF-8" />
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #000; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #000 !important; }
     header { background-color: #121212; color: white; text-align: center; padding: 20px 10px; }
-    .sub-header { font-size: 14px; margin-top: 5px; }
+    .sub-header { font-size: 14px; margin-top: 5px; color: white; }
     .divider { height: 5px; background-color: #00cccc; }
-    section { padding: 20px; }
-    h1, h2, h3, h4, h5, h6 { color: #000; margin-bottom: 10px; }
-    h2 { color: #00cccc; margin-bottom: 10px; }
-    h3 { color: #000; font-size: 16px; font-weight: bold; margin-bottom: 8px; margin-top: 15px; }
-    .entry { margin-bottom: 15px; }
-    .entry-title { font-weight: bold; color: #000; }
-    .footer { background-color: #f0f0f0; text-align: center; font-size: 12px; padding: 10px; }
-    p { color: #000; }
+    section { padding: 20px; color: #000 !important; }
+    h1, h2, h3, h4, h5, h6 { color: #000 !important; margin-bottom: 10px; }
+    h2 { color: #00cccc !important; margin-bottom: 10px; }
+    h3 { color: #000 !important; font-size: 16px; font-weight: bold; margin-bottom: 8px; margin-top: 15px; }
+    .entry { margin-bottom: 15px; color: #000 !important; }
+    .entry-title { font-weight: bold; color: #000 !important; }
+    .entry-subtitle { color: #000 !important; font-style: italic; }
+    .footer { background-color: #f0f0f0; text-align: center; font-size: 12px; padding: 10px; color: #000 !important; }
+    p { color: #000 !important; }
+    div { color: #000 !important; }
+    span { color: #000 !important; }
     a { color: #00cccc; text-decoration: none; }
-    header a { color: white; }
+    header a { color: white !important; }
+    * { color: #000 !important; }
+    header *, header h1, header .sub-header { color: white !important; }
+    h2 { color: #00cccc !important; }
   </style>
 </head>
 <body>
