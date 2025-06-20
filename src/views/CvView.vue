@@ -142,7 +142,7 @@
                                 <!-- Selector de habilidades con autocomplete -->
                                 <v-autocomplete
                                     v-model="formulario.habilidadesSeleccionadas"
-                                    :items="todasLasHabilidades"
+                                    :items="habilidadesDisponibles"
                                     label="Buscar y seleccionar habilidades"
                                     multiple
                                     chips
@@ -665,6 +665,17 @@ const todasLasHabilidades = computed(() => {
   })
 
   return habilidades
+})
+
+// Habilidades disponibles (excluyendo las ya seleccionadas)
+const habilidadesDisponibles = computed(() => {
+  const seleccionadas = formulario.habilidadesSeleccionadas.map(skill =>
+    skill.value || skill
+  )
+
+  return todasLasHabilidades.value.filter(habilidad =>
+    !seleccionadas.includes(habilidad.value)
+  )
 })
 
 // Funciones para obtener colores e iconos por categoría
