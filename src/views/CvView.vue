@@ -139,64 +139,19 @@
                                     Selecciona o escribe las habilidades más relevantes para esta posición
                                 </p>
 
-                                <!-- Selector de habilidades con autocomplete -->
-                                <v-select
-                                    v-model="formulario.habilidadesSeleccionadas"
-                                    :items="habilidadesDisponibles"
-                                    label="Seleccionar habilidades"
-                                    multiple
-                                    chips
-                                    closable-chips
+
+
+                                <!-- Selector de habilidades simplificado -->
+                                <v-text-field
+                                    v-model="nuevaHabilidad"
+                                    label="Agregar habilidad (ej: Vue.js, Python, Figma)"
                                     variant="outlined"
                                     density="comfortable"
-                                    prepend-inner-icon="mdi-star"
-                                    :rules="[rules.minSkills]"
-                                    hint="Selecciona las habilidades más relevantes para esta posición"
+                                    prepend-inner-icon="mdi-plus"
+                                    hint="Escribe una habilidad y presiona Enter para agregar"
                                     persistent-hint
-                                    item-title="title"
-                                    item-value="title"
-                                    return-object
-                                >
-                                    <template v-slot:chip="{ props, item }">
-                                        <v-chip
-                                            v-bind="props"
-                                            :color="obtenerColorCategoria(item.raw.categoria)"
-                                            variant="flat"
-                                            size="small"
-                                        >
-                                            <v-icon left size="small">{{ obtenerIconoCategoria(item.raw.categoria) }}</v-icon>
-                                            {{ item.raw.title }}
-                                        </v-chip>
-                                    </template>
-
-                                    <template v-slot:item="{ props, item }">
-                                        <v-list-item v-bind="props">
-                                            <template v-slot:prepend>
-                                                <v-icon :color="obtenerColorCategoria(item.raw.categoria)">
-                                                    {{ obtenerIconoCategoria(item.raw.categoria) }}
-                                                </v-icon>
-                                            </template>
-                                            <v-list-item-title>{{ item.raw.title }}</v-list-item-title>
-                                            <v-list-item-subtitle>{{ item.raw.categoria }}</v-list-item-subtitle>
-                                        </v-list-item>
-                                    </template>
-
-                                </v-select>
-
-                                <!-- Campo para agregar habilidades personalizadas -->
-                                <div class="custom-skills-section mt-4">
-                                    <v-text-field
-                                        v-model="nuevaHabilidad"
-                                        label="Agregar habilidad personalizada"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        append-inner-icon="mdi-plus"
-                                        hint="Escribe una habilidad que no esté en la lista"
-                                        persistent-hint
-                                        @click:append-inner="agregarHabilidadPersonalizada"
-                                        @keyup.enter="agregarHabilidadPersonalizada"
-                                    />
-                                </div>
+                                    @keyup.enter="agregarHabilidadSimple"
+                                />
 
                                 <!-- Habilidades seleccionadas -->
                                 <div v-if="formulario.habilidadesSeleccionadas.length > 0" class="selected-skills">
@@ -207,16 +162,16 @@
                                     <div class="selected-chips">
                                         <v-chip
                                             v-for="skill in formulario.habilidadesSeleccionadas"
-                                            :key="skill.title || skill.value || skill"
-                                            :color="obtenerColorCategoria(skill.categoria)"
+                                            :key="skill"
+                                            color="primary"
                                             variant="flat"
                                             size="small"
                                             closable
                                             class="selected-chip"
                                             @click:close="removeSkill(skill)"
                                         >
-                                            <v-icon left size="small">{{ obtenerIconoCategoria(skill.categoria) }}</v-icon>
-                                            {{ skill.title || skill }}
+                                            <v-icon left size="small">mdi-star</v-icon>
+                                            {{ skill }}
                                         </v-chip>
                                     </div>
                                 </div>
@@ -243,15 +198,15 @@
 
                     <v-card-actions class="form-actions">
                         <v-btn
-                            color="secondary"
+                            color="primary"
                             size="large"
                             :disabled="!formularioCompleto"
-                            :loading="mostrarEstadoGeneracion"
-                            @click="generarCVDinamico"
+                            :loading="generandoConGemini"
+                            @click="generarCVPersonalizadoConGemini"
                             class="generate-btn"
                         >
-                            <v-icon left>mdi-magic-staff</v-icon>
-                            Generar CV Personalizado
+                            <v-icon left>mdi-robot</v-icon>
+                            Generar CV Personalizado con IA
                         </v-btn>
 
                         <v-btn
@@ -647,33 +602,7 @@ const habilidadesPredefinidas = {
   ]
 }
 
-// Convertir habilidades predefinidas a formato de autocomplete
-const todasLasHabilidades = computed(() => {
-  const habilidades = []
-
-  Object.entries(habilidadesPredefinidas).forEach(([categoria, skills]) => {
-    skills.forEach(skill => {
-      habilidades.push({
-        title: skill,
-        value: skill,
-        categoria: categoria
-      })
-    })
-  })
-
-  return habilidades
-})
-
-// Habilidades disponibles (excluyendo las ya seleccionadas)
-const habilidadesDisponibles = computed(() => {
-  const seleccionadas = formulario.habilidadesSeleccionadas.map(skill =>
-    skill.title || skill.value || skill
-  )
-
-  return todasLasHabilidades.value.filter(habilidad =>
-    !seleccionadas.includes(habilidad.title)
-  )
-})
+// Variables simplificadas para habilidades (ya declarada arriba)
 
 // Funciones para obtener colores e iconos por categoría
 const obtenerColorCategoria = (categoria) => {
@@ -802,24 +731,19 @@ const toggleSkill = (skill) => {
 }
 
 const removeSkill = (skill) => {
-    const index = formulario.habilidadesSeleccionadas.findIndex(s =>
-        (s.title || s.value || s) === (skill.title || skill.value || skill)
-    )
+    const index = formulario.habilidadesSeleccionadas.indexOf(skill)
     if (index > -1) {
         formulario.habilidadesSeleccionadas.splice(index, 1)
     }
 }
 
-const agregarHabilidadPersonalizada = () => {
-    const habilidadTexto = busquedaHabilidad.value?.trim() || nuevaHabilidad.value?.trim()
-    if (habilidadTexto && !formulario.habilidadesSeleccionadas.some(s => (s.title || s.value || s) === habilidadTexto)) {
-        const nuevaSkill = {
-            title: habilidadTexto,
-            value: habilidadTexto,
-            categoria: 'personalizada'
-        }
-        formulario.habilidadesSeleccionadas.push(nuevaSkill)
-        busquedaHabilidad.value = ''
+
+
+// Función simplificada para agregar habilidades
+const agregarHabilidadSimple = () => {
+    const habilidadTexto = nuevaHabilidad.value?.trim()
+    if (habilidadTexto && !formulario.habilidadesSeleccionadas.includes(habilidadTexto)) {
+        formulario.habilidadesSeleccionadas.push(habilidadTexto)
         nuevaHabilidad.value = ''
     }
 }
@@ -1065,18 +989,116 @@ const limpiarResultadoGemini = () => {
     conexionGemini.value = null
 }
 
+// Función para generar CV personalizado con Gemini usando datos del formulario
+const generarCVPersonalizadoConGemini = async () => {
+    if (!formularioCompleto.value) {
+        alert('Por favor, completa todos los campos del formulario')
+        return
+    }
+
+    generandoConGemini.value = true
+    resultadoGemini.value = null
+
+    try {
+        // Crear prompt personalizado con los datos del formulario
+        const habilidadesTexto = formulario.habilidadesSeleccionadas.join(', ')
+        const promptPersonalizado = `
+CV personalizado para la posición de ${formulario.posicion} en ${formulario.empresa}.
+
+HABILIDADES CLAVE A DESTACAR: ${habilidadesTexto}
+
+DESCRIPCIÓN DEL CARGO:
+${formulario.descripcionCargo}
+
+INSTRUCCIONES:
+- Adapta el CV para destacar las habilidades mencionadas: ${habilidadesTexto}
+- Optimiza el contenido para la posición de ${formulario.posicion}
+- Incluye palabras clave relevantes para ${formulario.empresa}
+- Asegúrate de que el CV sea atractivo para reclutadores de ${formulario.empresa}
+- Destaca experiencias y proyectos relacionados con las tecnologías solicitadas
+        `.trim()
+
+        console.log('🤖 Generando CV personalizado con Gemini...', {
+            empresa: formulario.empresa,
+            posicion: formulario.posicion,
+            habilidades: habilidadesTexto
+        })
+
+        const resultado = await geminiService.generarCVPersonalizado(promptPersonalizado)
+
+        if (resultado.success) {
+            resultadoGemini.value = {
+                success: true,
+                html: resultado.html,
+                metadata: {
+                    ...resultado.metadata,
+                    empresa: formulario.empresa,
+                    posicion: formulario.posicion,
+                    habilidades: habilidadesTexto
+                },
+                provider: 'gemini'
+            }
+
+            // Guardar información del reclutador en Firebase
+            await guardarSolicitudCV()
+
+            console.log('✅ CV personalizado generado con Gemini:', resultado.metadata)
+        } else {
+            throw new Error(resultado.error || 'Error desconocido en Gemini')
+        }
+
+    } catch (error) {
+        console.error('❌ Error generando CV personalizado con Gemini:', error)
+        resultadoGemini.value = {
+            success: false,
+            error: error.message,
+            provider: 'gemini'
+        }
+        alert(`Error al generar CV personalizado: ${error.message}`)
+    } finally {
+        generandoConGemini.value = false
+    }
+}
+
+// Función para guardar solicitud de CV en Firebase
+const guardarSolicitudCV = async () => {
+    try {
+        const { cvService } = await import('@/firebase/services')
+
+        const solicitudData = {
+            nombreReclutador: formulario.nombreReclutador,
+            empresa: formulario.empresa,
+            email: formulario.email,
+            posicion: formulario.posicion,
+            habilidadesSeleccionadas: formulario.habilidadesSeleccionadas,
+            descripcionCargo: formulario.descripcionCargo,
+            tipoSolicitud: 'cv_personalizado_gemini',
+            fechaSolicitud: new Date().toISOString(),
+            estado: 'completado'
+        }
+
+        const resultado = await cvService.guardarSolicitudCV(solicitudData)
+
+        if (resultado.success) {
+            console.log('✅ Solicitud CV guardada en Firebase:', resultado.id)
+        } else {
+            console.warn('⚠️ No se pudo guardar en Firebase (modo demo):', resultado)
+        }
+    } catch (error) {
+        console.error('❌ Error guardando solicitud CV:', error)
+    }
+}
+
 // Función para generar prompt optimizado
 const generarPromptOptimizado = (tipo) => {
     // Convertir habilidades a formato string para compatibilidad
-    const habilidadesTexto = formulario.habilidadesSeleccionadas.map(skill =>
-        skill.title || skill
-    )
+    const habilidadesTexto = formulario.habilidadesSeleccionadas.join(', ')
     const empresa = formulario.empresa || ''
     const posicion = formulario.posicion || ''
 
     promptGemini.value = geminiService.generarPromptOptimizado(
         tipo,
-        habilidadesTexto,
+        habilidadesTexto.split(', '),
         empresa,
         posicion
     )
