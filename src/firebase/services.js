@@ -503,10 +503,15 @@ export const plantillasService = {
     .sub-header { font-size: 14px; margin-top: 5px; }
     .divider { height: 5px; background-color: #00cccc; }
     section { padding: 20px; }
+    h1, h2, h3, h4, h5, h6 { color: #000; margin-bottom: 10px; }
     h2 { color: #00cccc; margin-bottom: 10px; }
+    h3 { color: #000; font-size: 16px; font-weight: bold; margin-bottom: 8px; margin-top: 15px; }
     .entry { margin-bottom: 15px; }
-    .entry-title { font-weight: bold; }
+    .entry-title { font-weight: bold; color: #000; }
     .footer { background-color: #f0f0f0; text-align: center; font-size: 12px; padding: 10px; }
+    p { color: #000; }
+    a { color: #00cccc; text-decoration: none; }
+    header a { color: white; }
   </style>
 </head>
 <body>
