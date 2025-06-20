@@ -2,6 +2,10 @@
 
 Bienvenido al repositorio oficial del sitio web de **Maiko Studios** — una empresa chilena enfocada en desarrollo web, automatización, educación digital y servicios tecnológicos modernos.
 
+## 🚀 Comenzando el camino de MaikoCV con DeepSeek
+
+Iniciamos una nueva etapa en el desarrollo de MaikoCV, explorando las capacidades de DeepSeek para mejorar la generación inteligente de currículums personalizados. Esta rama representa el comienzo de una integración más avanzada con modelos de IA de última generación.
+
 ## 🚀 Tecnologías utilizadas
 
 - [Vue 3](https://vuejs.org/) + [Vuetify](https://vuetifyjs.com/)
