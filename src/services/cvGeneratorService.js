@@ -197,77 +197,84 @@ class CVGeneratorService {
 
     return `
     <!DOCTYPE html>
-    <html>
+    <html lang="es">
     <head>
-        <meta charset="UTF-8">
-        <title>CV - Michael Esteban Sáez Contreras</title>
+        <meta charset="UTF-8" />
         <style>
-            body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; color: #333; }
-            .cv-container { max-width: 800px; margin: 0 auto; background: white; }
-            .header { background: #2a60c4; color: white; padding: 30px; text-align: center; }
-            .header h1 { margin: 0; font-size: 28px; }
-            .header p { margin: 5px 0; font-size: 16px; }
-            .content { padding: 30px; }
-            .section { margin-bottom: 25px; }
-            .section h2 { color: #2a60c4; border-bottom: 2px solid #2a60c4; padding-bottom: 5px; }
-            .skills { display: flex; flex-wrap: wrap; gap: 10px; }
-            .skill { background: #f0f8ff; padding: 5px 10px; border-radius: 15px; font-size: 14px; }
-            .highlight { background: #e6f3ff; padding: 10px; border-left: 4px solid #2a60c4; margin: 10px 0; }
+            body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #000; }
+            header { background-color: #121212; color: white; text-align: center; padding: 20px 10px; }
+            .sub-header { font-size: 14px; margin-top: 5px; }
+            .divider { height: 5px; background-color: #00cccc; }
+            section { padding: 20px; }
+            h2 { color: #00cccc; margin-bottom: 10px; }
+            .entry { margin-bottom: 15px; }
+            .entry-title { font-weight: bold; }
+            .footer { background-color: #f0f0f0; text-align: center; font-size: 12px; padding: 10px; }
+            a { color: #00cccc; text-decoration: none; }
+            header a { color: white; }
+            .highlight { background: #ffeb3b; padding: 2px 4px; border-radius: 3px; }
         </style>
     </head>
     <body>
-        <div class="cv-container">
-            <div class="header">
-                <h1>${candidato.nombre_completo}</h1>
-                <p>${candidato.cargo_principal}</p>
-                <p>📧 ${candidato.email} | 📱 ${candidato.telefono}</p>
-                <p>🌐 LinkedIn: /in/me-saezc | GitHub: @maikostudios</p>
+        <header>
+            <h1>${candidato.nombre_completo}</h1>
+            <div class="sub-header">${candidato.cargo_principal}</div>
+            <div class="sub-header">${candidato.email} | ${
+      candidato.telefono
+    } | <a href="https://www.linkedin.com/in/me-saezc/" style="color:white;">LinkedIn</a> | <a href="https://maikostudios.com/" style="color:white;">maikostudios.com</a></div>
+            <div class="sub-header">Temuco, IX Región, Chile</div>
+        </header>
+        <div class="divider"></div>
+
+        <section>
+            <h2>CV Personalizado para ${empresa}</h2>
+            <p>Este CV ha sido personalizado específicamente para la posición de <strong>${posicion}</strong> en <strong>${empresa}</strong>.</p>
+            <p>Habilidades que coinciden con los requisitos: <span class="highlight">${habilidades.join(
+              ", "
+            )}</span></p>
+        </section>
+
+        <section>
+            <h2>Perfil Profesional</h2>
+            <p>Desarrollador Full Stack con experiencia en tecnologías como Javascript, Node.js, Express, Vue, React, Java, Python y RoR. Capacidad para liderar equipos técnicos y enfocado en proyectos desafiantes que impulsen la innovación.</p>
+        </section>
+
+        <section>
+            <h2>Experiencia Profesional</h2>
+
+            <div class="entry">
+                <div class="entry-title">Fundador y Desarrollador - Maiko Studios (2024 - Actualidad)</div>
+                <p>Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas.</p>
             </div>
-            
-            <div class="content">
-                <div class="section">
-                    <h2>Perfil Profesional</h2>
-                    <div class="highlight">
-                        <p><strong>CV Personalizado para ${posicion} en ${empresa}</strong></p>
-                        <p>Desarrollador Full Stack con más de 5 años de experiencia especializado en las tecnologías que requieren para este puesto. Apasionado por crear soluciones tecnológicas innovadoras y escalables.</p>
-                    </div>
-                </div>
 
-                <div class="section">
-                    <h2>Habilidades Técnicas Relevantes</h2>
-                    <div class="skills">
-                        ${habilidades
-                          .map((skill) => `<span class="skill">${skill}</span>`)
-                          .join("")}
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Experiencia Laboral</h2>
-                    <h3>Desarrollador Full Stack Senior | MaikoStudios (2020 - Presente)</h3>
-                    <ul>
-                        <li>Desarrollo de aplicaciones web modernas con Vue.js y React</li>
-                        <li>Implementación de APIs REST con Node.js y Express</li>
-                        <li>Gestión de bases de datos PostgreSQL y MongoDB</li>
-                        <li>Integración con servicios de Firebase y AWS</li>
-                        <li>Mentoría técnica y liderazgo de equipos de desarrollo</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2>Educación</h2>
-                    <p><strong>Ingeniería en Informática</strong> - Universidad Tecnológica</p>
-                    <p>Certificaciones en desarrollo web moderno y arquitecturas cloud</p>
-                </div>
-
-                <div class="section">
-                    <h2>Información Adicional</h2>
-                    <p>CV generado específicamente para la posición de <strong>${posicion}</strong> en <strong>${empresa}</strong></p>
-                    <p>Fecha de generación: ${new Date().toLocaleDateString(
-                      "es-CL"
-                    )}</p>
-                </div>
+            <div class="entry">
+                <div class="entry-title">Facilitador/Docente Bootcamp Front End - Desafío Latam (Ago 2024 – Dic 2024)</div>
+                <p>Enseñanza de HTML, CSS, BOOTSTRAP, JAVASCRIPT, y VUE JS en el Programa Talento Digital para Chile.</p>
             </div>
+
+            <div class="entry">
+                <div class="entry-title">Developer Full Stack & Soporte TI - Tata Consultancy Services – Metlife Chile (Jul 2021 – Dic 2023)</div>
+                <p>Desarrollos para área Direct Marketing. Soporte a aplicaciones y resolución de tickets.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Habilidades Técnicas</h2>
+            <p><strong>Lenguajes:</strong> Javascript, Python, Java, Kotlin, SQL, PL/SQL, Ruby, PHP</p>
+            <p><strong>Frontend:</strong> Vue.js, React, HTML, CSS, Bootstrap, Android</p>
+            <p><strong>Backend / Microservicios:</strong> Node.js, Express, Spring Framework, RoR</p>
+            <p><strong>Herramientas:</strong> GIT, JIRA, SCRUM, KANBAN, MVC, Trello, Firebase, Firestore</p>
+        </section>
+
+        <section>
+            <h2>¿Por qué soy el candidato ideal para ${empresa}?</h2>
+            <p>Mi experiencia como facilitador y desarrollador me ha permitido desarrollar tanto habilidades técnicas sólidas como capacidades de liderazgo y comunicación. Estoy preparado para contribuir inmediatamente al equipo de ${empresa} en la posición de ${posicion}.</p>
+        </section>
+
+        <div class="footer">
+            Contacto: <a href="mailto:${candidato.email}">${
+      candidato.email
+    }</a> | <a href="https://www.linkedin.com/in/me-saezc/">LinkedIn</a> | <a href="https://maikostudios.com/">maikostudios.com</a>
         </div>
     </body>
     </html>
