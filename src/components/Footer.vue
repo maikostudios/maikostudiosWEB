@@ -44,9 +44,11 @@
 
 <style scoped>
 .footer {
-  background: #0a0a0a;
+  background: transparent;
   padding: 4rem 0 2rem;
   color: var(--color-text);
+  position: relative;
+  z-index: 2;
 }
 
 .footer-content {

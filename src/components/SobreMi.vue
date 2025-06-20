@@ -2,7 +2,6 @@
   <section id="sobre-mi" class="sobre-mi-section">
     <v-container>
       <div class="content-wrapper">
-        <h2 class="section-title">Sobre Mí</h2>
         <div class="profile-content">
           <div class="profile-image">
             <img src="https://avatars.githubusercontent.com/u/68249859?v=4" alt="Michael Sáez" class="avatar" />
@@ -34,19 +33,14 @@
 <style scoped>
 .sobre-mi-section {
   padding: 6rem 0;
-  background: linear-gradient(to bottom, var(--color-background), #0d0d0d);
+  background: transparent;
+  position: relative;
+  z-index: 2;
 }
 
 .content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.section-title {
-  font-size: 2.5rem;
-  color: var(--color-text);
-  margin-bottom: 3rem;
-  text-align: center;
 }
 
 .profile-content {
