@@ -5,12 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:prod": "vite --mode production",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:dev": "vite build --mode development",
+    "preview": "vite preview",
+    "firebase:dev": "firebase use maikostudios-dev",
+    "firebase:prod": "firebase use maikostudios",
+    "deploy:dev": "npm run build:dev && firebase deploy --project maikostudios-dev",
+    "deploy:prod": "npm run build && firebase deploy --project maikostudios"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "firebase": "^11.9.1",
+    "html2pdf.js": "^0.10.3",
     "maikostudios": "file:",
     "openai": "^5.5.1",
     "pinia": "^3.0.2",
