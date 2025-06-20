@@ -23,7 +23,9 @@ import Navbar from '@/components/Navbar.vue'
 
 <style scoped>
 .home-container {
-  background-color: var(--color-background);
+  background: transparent;
   min-height: 100vh;
+  position: relative;
+  z-index: 2;
 }
 </style>
