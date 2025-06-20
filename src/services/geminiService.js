@@ -141,59 +141,108 @@ class GeminiService {
   }
 
   /**
-   * Crea el prompt del sistema según tu especificación
-   * @returns {string} - Prompt del sistema
+   * Crea el prompt optimizado para RRHH técnico
+   * @returns {string} - Prompt especializado en RRHH técnico
    */
   crearPromptSistema() {
-    return `Eres MaikoCV, un agente experto en generación de CVs personalizados para Michael Esteban Sáez Contreras.
+    return `Eres MaikoCV, un agente experto en Recursos Humanos del sector TI y Generación de CVs Profesionales para Michael Esteban Sáez Contreras.
 
-Tu tarea es reemplazar únicamente los datos dinámicos dentro de una plantilla HTML predefinida, sin alterar la estructura, diseño, clases ni estilos inline. La plantilla base ya tiene la disposición visual, colores, tipografía y layout deseados.
+📌 Tu objetivo es generar un CV completamente personalizado, optimizado para superar filtros automatizados (ATS) y ser atractivo para reclutadores técnicos y no técnicos del área TI.
 
-⚠️ IMPORTANTE:
-- No inventes secciones ni reestructures el HTML.
-- No agregues estilos nuevos, emojis adicionales ni cambios en las etiquetas existentes.
-- No modifiques los nombres de clases ni IDs en el HTML.
-- Solo reemplaza los contenidos internos entre etiquetas (ej: \`<p>\`, \`<li>\`, \`<h2>\`, etc.) con la nueva información del candidato.
+🎯 ESTRUCTURA DE TRABAJO:
 
-FORMATO DE RESPUESTA:
-Devuelve exclusivamente el HTML completo y corregido, sin explicaciones.`;
+1. Recibirás:
+   - Una plantilla HTML con variables tipo {{variable}} que **NO debes modificar en estructura ni diseño**.
+   - Datos personales, profesionales, técnicos y académicos del candidato en formato JSON.
+   - Una posible descripción de oferta laboral o puesto objetivo.
+
+2. Analiza cuidadosamente:
+   - Las coincidencias entre habilidades, experiencia y lo que solicita el puesto.
+   - Qué información puede ser omitida si no aporta al perfil buscado.
+   - Cómo mejorar la redacción para destacar logros, impacto, tecnologías, resultados y métricas concretas.
+
+3. Adaptación del contenido:
+   - Reordena, resalta o personaliza la información **respetando la plantilla HTML**.
+   - Omite experiencias o cursos no alineados al rol, a menos que puedas reformularlos para añadir valor.
+   - Redacta en español profesional y neutro.
+   - Ordena cronológicamente de lo más reciente a lo más antiguo.
+
+4. Validación final (Autoevaluación):
+   - Antes de entregar el HTML, realiza una evaluación interna:
+     - ¿Es coherente y relevante el contenido?
+     - ¿Refleja un perfil técnico moderno y competitivo?
+     - ¿Está adaptado al puesto objetivo?
+     - ¿Contiene suficientes palabras clave técnicas para sistemas ATS?
+     - ¿Tiene un nivel profesional "10 de 10"?
+
+   - Si alguna de las respuestas es "no", vuelve a optimizar el contenido **hasta que todas las respuestas sean afirmativas**.
+
+⚠️ REGLAS OBLIGATORIAS:
+- No modifiques el layout, clases CSS, etiquetas HTML ni la semántica.
+- No generes texto fuera del HTML (no uses Markdown, JSON ni explicaciones).
+- Devuelve exclusivamente el HTML con las variables reemplazadas.
+
+💡 TU MISIÓN:
+Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros automáticos (ATS) como para reclutadores humanos en tecnología, utilizando al máximo los datos proporcionados y tu experiencia en el área de RRHH técnico.`;
   }
 
   /**
-   * Crea el prompt del usuario según tu especificación
+   * Crea el prompt del usuario con datos específicos
    * @param {string} plantillaHTML - HTML de la plantilla
    * @param {string} datosJSON - Datos del candidato en JSON
    * @param {string} userPrompt - Prompt de personalización
    * @returns {string} - Prompt del usuario
    */
   crearPromptUsuario(plantillaHTML, datosJSON, userPrompt = "") {
-    let prompt = `Este es el contenido de la plantilla HTML maestra para el CV (estructura visual que debes respetar):
+    let prompt = `📄 PLANTILLA HTML MAESTRA (NO MODIFICAR ESTRUCTURA):
+La siguiente plantilla contiene variables {{variable}} que debes reemplazar con los datos del JSON:
 
 ${plantillaHTML}
 
-Estos son los nuevos datos del candidato en formato JSON que debes usar para reemplazar el contenido de la plantilla:
+👤 DATOS DEL CANDIDATO (FUENTE: Firebase Database):
+Utiliza estos datos reales para reemplazar las variables {{}} en la plantilla:
 
 ${datosJSON}
 
-⚙️ Tu tarea:
-1. Sustituye los textos del CV con la nueva información.
-2. Mantén todos los estilos CSS inline y estructura HTML exactamente igual.
-3. Respeta el orden, formato, títulos, colores y layout.
-4. Usa los datos del JSON de forma precisa. Si hay campos faltantes, deja el contenido actual tal cual.
-5. Devuelve el HTML final reemplazado, sin comentarios ni explicaciones.`;
+🔍 VARIABLES A REEMPLAZAR:
+- {{nombre_completo}} → Usar campo "nombre_completo" del JSON
+- {{cargo_principal}} → Usar campo "cargo_principal" del JSON
+- {{email}} → Usar campo "email" del JSON
+- {{telefono}} → Usar campo "telefono" del JSON
+- {{ubicacion}} → Usar campo "ubicacion" del JSON
+- {{linkedin}} → Usar campo "linkedin" del JSON
+- {{perfil_profesional}} → Usar campo "perfil_profesional" del JSON
+- {{experiencia_profesional}} → Convertir array "experiencia_profesional" a HTML estructurado
+- {{educacion}} → Convertir array "educacion" a HTML estructurado
+- {{habilidades_tecnicas}} → Convertir objeto "habilidades_tecnicas" a HTML organizado por categorías
+- {{habilidades_blandas}} → Usar campo "habilidades_blandas" del JSON
+- {{idiomas}} → Convertir array "idiomas" a formato legible
+
+⚙️ INSTRUCCIONES ESPECÍFICAS:
+1. Para arrays (experiencia, educación): Crea HTML con estructura <div class="entry"> para cada elemento
+2. Para habilidades técnicas: Organiza por categorías (Frontend, Backend, Databases, etc.)
+3. Mantén colores exactos: header #121212, títulos #00cccc, footer #f0f0f0
+4. Ordena cronológicamente de más reciente a más antiguo
+5. Optimiza descripciones para ATS con palabras clave técnicas
+6. Devuelve SOLO el HTML final, sin explicaciones`;
 
     if (userPrompt.trim()) {
       prompt += `
 
-📝 PERSONALIZACIÓN ADICIONAL SOLICITADA:
+🎯 PERSONALIZACIÓN PARA PUESTO ESPECÍFICO:
 "${userPrompt}"
 
-Aplica esta personalización manteniendo la estructura HTML base.`;
+Aplica esta personalización:
+- Destaca habilidades y experiencias relevantes al puesto
+- Ajusta descripciones para incluir palabras clave del sector
+- Reordena información por relevancia al rol objetivo
+- Mantén estructura HTML base intacta`;
     }
 
     prompt += `
 
-Cuando termines, el resultado debe ser un CV listo para renderizarse como HTML o exportarse como PDF.`;
+✅ RESULTADO ESPERADO:
+HTML completo con todas las variables {{}} reemplazadas, optimizado para ATS y reclutadores técnicos, listo para renderizar o convertir a PDF.`;
 
     return prompt;
   }
@@ -242,7 +291,12 @@ Cuando termines, el resultado debe ser un CV listo para renderizarse como HTML o
     posicion = ""
   ) {
     const prompts = {
-      frontend: `CV para desarrollador Frontend. Destaca experiencia en ${habilidades
+      frontend: `CV optimizado para DESARROLLADOR FRONTEND.
+
+🎯 OBJETIVO: Posición Frontend Developer con enfoque en interfaces modernas y UX/UI.
+
+📋 PRIORIDADES ATS:
+- Destacar: ${habilidades
         .filter((h) =>
           [
             "Vue.js",
@@ -252,13 +306,21 @@ Cuando termines, el resultado debe ser un CV listo para renderizarse como HTML o
             "HTML",
             "CSS",
             "Bootstrap",
+            "Vuetify",
           ].includes(h)
         )
-        .join(
-          ", "
-        )}. Enfócate en proyectos de interfaz de usuario y experiencia del usuario.`,
+        .join(", ")}
+- Palabras clave: "Responsive Design", "SPA", "Component-based", "User Experience", "Performance Optimization"
+- Métricas: Incluir tiempos de carga, mejoras de UX, proyectos completados
 
-      backend: `CV para desarrollador Backend. Resalta experiencia en ${habilidades
+🔍 ENFOQUE RRHH: Resaltar capacidad de traducir diseños a código funcional, colaboración con equipos de diseño, y experiencia en frameworks modernos.`,
+
+      backend: `CV optimizado para DESARROLLADOR BACKEND.
+
+🎯 OBJETIVO: Posición Backend Developer con enfoque en arquitectura y escalabilidad.
+
+📋 PRIORIDADES ATS:
+- Destacar: ${habilidades
         .filter((h) =>
           [
             "Node.js",
@@ -268,17 +330,47 @@ Cuando termines, el resultado debe ser un CV listo para renderizarse como HTML o
             "Spring",
             "PostgreSQL",
             "MongoDB",
+            "Firebase",
           ].includes(h)
         )
-        .join(", ")}. Destaca arquitectura de sistemas y APIs.`,
+        .join(", ")}
+- Palabras clave: "API REST", "Microservicios", "Base de datos", "Escalabilidad", "Performance", "Seguridad"
+- Métricas: Incluir rendimiento de APIs, usuarios concurrentes, optimizaciones de BD
 
-      fullstack: `CV para desarrollador Full Stack. Equilibra experiencia frontend y backend. Destaca ${habilidades
-        .slice(0, 6)
-        .join(", ")} y capacidad de desarrollo integral.`,
+🔍 ENFOQUE RRHH: Resaltar experiencia en arquitectura de sistemas, optimización de consultas, y manejo de grandes volúmenes de datos.`,
 
-      lider: `CV para posición de liderazgo técnico. Destaca experiencia en mentoría, gestión de equipos, y arquitectura de software. Resalta habilidades de comunicación y liderazgo.`,
+      fullstack: `CV optimizado para DESARROLLADOR FULL STACK.
 
-      docente: `CV para posición educativa/facilitador. Destaca experiencia como facilitador en Desafío Latam e INFOCAL. Resalta habilidades pedagógicas y capacidad de transmitir conocimiento técnico.`,
+🎯 OBJETIVO: Posición Full Stack Developer con capacidad integral de desarrollo.
+
+📋 PRIORIDADES ATS:
+- Destacar: ${habilidades.slice(0, 8).join(", ")}
+- Palabras clave: "End-to-end development", "MERN/MEAN Stack", "DevOps", "CI/CD", "Agile"
+- Métricas: Proyectos completos, tiempo de desarrollo, tecnologías integradas
+
+🔍 ENFOQUE RRHH: Resaltar versatilidad técnica, capacidad de liderar proyectos completos, y experiencia en todo el ciclo de desarrollo.`,
+
+      lider: `CV optimizado para TECH LEAD / LÍDER TÉCNICO.
+
+🎯 OBJETIVO: Posición de liderazgo técnico con responsabilidades de mentoría y arquitectura.
+
+📋 PRIORIDADES ATS:
+- Destacar: "Technical Leadership", "Team Management", "Architecture Design", "Code Review", "Mentoring"
+- Palabras clave: "Scrum Master", "Agile", "Technical Decisions", "Performance Optimization", "Best Practices"
+- Métricas: Tamaño de equipos liderados, proyectos entregados, mejoras implementadas
+
+🔍 ENFOQUE RRHH: Resaltar experiencia en gestión de equipos técnicos, toma de decisiones arquitectónicas, y capacidad de mentoría.`,
+
+      docente: `CV optimizado para FACILITADOR/DOCENTE TÉCNICO.
+
+🎯 OBJETIVO: Posición educativa en tecnología con enfoque en formación práctica.
+
+📋 PRIORIDADES ATS:
+- Destacar: "Technical Training", "Curriculum Development", "Bootcamp", "Mentoring", "Knowledge Transfer"
+- Palabras clave: "Facilitador", "Desafío Latam", "Talento Digital", "Vue.js", "JavaScript", "HTML/CSS"
+- Métricas: Estudiantes formados, tasa de empleabilidad, cursos desarrollados
+
+🔍 ENFOQUE RRHH: Resaltar experiencia en Desafío Latam, capacidad pedagógica, y habilidad para transmitir conocimientos técnicos complejos.`,
     };
 
     let prompt = prompts[tipoCV] || prompts.fullstack;
