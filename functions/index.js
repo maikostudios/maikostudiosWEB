@@ -5,6 +5,7 @@
 
 const { onCall } = require("firebase-functions/v2/https");
 const { onRequest } = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const axios = require("axios");
@@ -116,7 +117,9 @@ INSTRUCCIONES ESPECÍFICAS:
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+          Authorization: `Bearer ${
+            process.env.DEEPSEEK_API_KEY || functions.config().deepseek?.api_key
+          }`,
           "Content-Type": "application/json",
         },
         timeout: 30000,
@@ -189,7 +192,9 @@ exports.testDeepSeekConnection = onCall(async (request) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+          Authorization: `Bearer ${
+            process.env.DEEPSEEK_API_KEY || functions.config().deepseek?.api_key
+          }`,
           "Content-Type": "application/json",
         },
       }

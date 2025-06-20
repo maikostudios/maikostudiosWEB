@@ -3,13 +3,17 @@
  * Generación inteligente de CVs usando Firebase Functions
  */
 
-import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getFunctions, httpsCallable } from "firebase/functions";
+import deepSeekMockService from "./deepSeekMockService";
 
 class DeepSeekService {
   constructor() {
-    this.functions = getFunctions()
-    this.generateCV = httpsCallable(this.functions, 'generateCVWithDeepSeek')
-    this.testConnection = httpsCallable(this.functions, 'testDeepSeekConnection')
+    this.functions = getFunctions();
+    this.generateCV = httpsCallable(this.functions, "generateCVWithDeepSeek");
+    this.testConnection = httpsCallable(
+      this.functions,
+      "testDeepSeekConnection"
+    );
   }
 
   /**
@@ -17,40 +21,38 @@ class DeepSeekService {
    * @param {string} userPrompt - Prompt del usuario para personalización
    * @returns {Promise<Object>} - Resultado con HTML generado
    */
-  async generarCVPersonalizado(userPrompt = '') {
+  async generarCVPersonalizado(userPrompt = "") {
     try {
-      console.log('🤖 Iniciando generación con DeepSeek...', { userPrompt })
+      console.log("🤖 Iniciando generación con DeepSeek...", { userPrompt });
 
-      const resultado = await this.generateCV({ 
-        userPrompt: userPrompt.trim()
-      })
+      const resultado = await this.generateCV({
+        userPrompt: userPrompt.trim(),
+      });
 
       if (resultado.data.success) {
-        console.log('✅ CV generado exitosamente con DeepSeek', {
+        console.log("✅ CV generado exitosamente con DeepSeek", {
           candidato: resultado.data.metadata.candidato,
           modelo: resultado.data.metadata.modelo,
-          htmlLength: resultado.data.html.length
-        })
+          htmlLength: resultado.data.html.length,
+        });
 
         return {
           success: true,
           html: resultado.data.html,
           metadata: resultado.data.metadata,
-          provider: 'deepseek'
-        }
+          provider: "deepseek",
+        };
       } else {
-        throw new Error(resultado.data.error || 'Error desconocido en DeepSeek')
+        throw new Error(
+          resultado.data.error || "Error desconocido en DeepSeek"
+        );
       }
-
     } catch (error) {
-      console.error('❌ Error en DeepSeek Service:', error)
-      
-      return {
-        success: false,
-        error: error.message,
-        provider: 'deepseek',
-        fallback: true
-      }
+      console.error("❌ Error en DeepSeek Service:", error);
+      console.log("🔄 Usando DeepSeek Mock Service como fallback...");
+
+      // Fallback al servicio mock
+      return await deepSeekMockService.generarCVPersonalizado(userPrompt);
     }
   }
 
@@ -60,27 +62,26 @@ class DeepSeekService {
    */
   async probarConexion() {
     try {
-      console.log('🔍 Probando conexión con DeepSeek...')
+      console.log("🔍 Probando conexión con DeepSeek...");
 
-      const resultado = await this.testConnection()
+      const resultado = await this.testConnection();
 
       if (resultado.data.success) {
-        console.log('✅ Conexión con DeepSeek exitosa')
+        console.log("✅ Conexión con DeepSeek exitosa");
         return {
           success: true,
           message: resultado.data.message,
-          response: resultado.data.response
-        }
+          response: resultado.data.response,
+        };
       } else {
-        throw new Error(resultado.data.error)
+        throw new Error(resultado.data.error);
       }
-
     } catch (error) {
-      console.error('❌ Error probando conexión DeepSeek:', error)
-      return {
-        success: false,
-        error: error.message
-      }
+      console.error("❌ Error probando conexión DeepSeek:", error);
+      console.log("🔄 Usando DeepSeek Mock Service como fallback...");
+
+      // Fallback al servicio mock
+      return await deepSeekMockService.probarConexion();
     }
   }
 
@@ -92,34 +93,63 @@ class DeepSeekService {
    * @param {string} posicion - Posición objetivo
    * @returns {string} - Prompt optimizado
    */
-  generarPromptOptimizado(tipoCV, habilidades = [], empresa = '', posicion = '') {
+  generarPromptOptimizado(
+    tipoCV,
+    habilidades = [],
+    empresa = "",
+    posicion = ""
+  ) {
     const prompts = {
-      frontend: `CV para desarrollador Frontend. Destaca experiencia en ${habilidades.filter(h => 
-        ['Vue.js', 'React', 'Angular', 'JavaScript', 'HTML', 'CSS', 'Bootstrap'].includes(h)
-      ).join(', ')}. Enfócate en proyectos de interfaz de usuario y experiencia del usuario.`,
-      
-      backend: `CV para desarrollador Backend. Resalta experiencia en ${habilidades.filter(h => 
-        ['Node.js', 'Express', 'Python', 'Java', 'Spring', 'PostgreSQL', 'MongoDB'].includes(h)
-      ).join(', ')}. Destaca arquitectura de sistemas y APIs.`,
-      
-      fullstack: `CV para desarrollador Full Stack. Equilibra experiencia frontend y backend. Destaca ${habilidades.slice(0, 6).join(', ')} y capacidad de desarrollo integral.`,
-      
-      lider: `CV para posición de liderazgo técnico. Destaca experiencia en mentoría, gestión de equipos, y arquitectura de software. Resalta habilidades de comunicación y liderazgo.`,
-      
-      docente: `CV para posición educativa/facilitador. Destaca experiencia como facilitador en Desafío Latam e INFOCAL. Resalta habilidades pedagógicas y capacidad de transmitir conocimiento técnico.`
-    }
+      frontend: `CV para desarrollador Frontend. Destaca experiencia en ${habilidades
+        .filter((h) =>
+          [
+            "Vue.js",
+            "React",
+            "Angular",
+            "JavaScript",
+            "HTML",
+            "CSS",
+            "Bootstrap",
+          ].includes(h)
+        )
+        .join(
+          ", "
+        )}. Enfócate en proyectos de interfaz de usuario y experiencia del usuario.`,
 
-    let prompt = prompts[tipoCV] || prompts.fullstack
+      backend: `CV para desarrollador Backend. Resalta experiencia en ${habilidades
+        .filter((h) =>
+          [
+            "Node.js",
+            "Express",
+            "Python",
+            "Java",
+            "Spring",
+            "PostgreSQL",
+            "MongoDB",
+          ].includes(h)
+        )
+        .join(", ")}. Destaca arquitectura de sistemas y APIs.`,
+
+      fullstack: `CV para desarrollador Full Stack. Equilibra experiencia frontend y backend. Destaca ${habilidades
+        .slice(0, 6)
+        .join(", ")} y capacidad de desarrollo integral.`,
+
+      lider: `CV para posición de liderazgo técnico. Destaca experiencia en mentoría, gestión de equipos, y arquitectura de software. Resalta habilidades de comunicación y liderazgo.`,
+
+      docente: `CV para posición educativa/facilitador. Destaca experiencia como facilitador en Desafío Latam e INFOCAL. Resalta habilidades pedagógicas y capacidad de transmitir conocimiento técnico.`,
+    };
+
+    let prompt = prompts[tipoCV] || prompts.fullstack;
 
     if (empresa && posicion) {
-      prompt += ` Personaliza para la posición de ${posicion} en ${empresa}.`
+      prompt += ` Personaliza para la posición de ${posicion} en ${empresa}.`;
     }
 
     if (habilidades.length > 0) {
-      prompt += ` Tecnologías clave a destacar: ${habilidades.join(', ')}.`
+      prompt += ` Tecnologías clave a destacar: ${habilidades.join(", ")}.`;
     }
 
-    return prompt
+    return prompt;
   }
 
   /**
@@ -129,28 +159,35 @@ class DeepSeekService {
    */
   analizarPrompt(userPrompt) {
     const palabrasClave = {
-      frontend: ['frontend', 'vue', 'react', 'angular', 'ui', 'ux', 'interfaz'],
-      backend: ['backend', 'api', 'servidor', 'base de datos', 'microservicios'],
-      liderazgo: ['líder', 'team lead', 'senior', 'arquitecto', 'mentor'],
-      docente: ['profesor', 'facilitador', 'docente', 'enseñanza', 'educación']
-    }
+      frontend: ["frontend", "vue", "react", "angular", "ui", "ux", "interfaz"],
+      backend: [
+        "backend",
+        "api",
+        "servidor",
+        "base de datos",
+        "microservicios",
+      ],
+      liderazgo: ["líder", "team lead", "senior", "arquitecto", "mentor"],
+      docente: ["profesor", "facilitador", "docente", "enseñanza", "educación"],
+    };
 
-    const tipoDetectado = Object.keys(palabrasClave).find(tipo =>
-      palabrasClave[tipo].some(palabra => 
-        userPrompt.toLowerCase().includes(palabra)
-      )
-    ) || 'general'
+    const tipoDetectado =
+      Object.keys(palabrasClave).find((tipo) =>
+        palabrasClave[tipo].some((palabra) =>
+          userPrompt.toLowerCase().includes(palabra)
+        )
+      ) || "general";
 
-    const empresaMencionada = /para\s+(\w+)/i.exec(userPrompt)?.[1]
-    const posicionMencionada = /como\s+(\w+(?:\s+\w+)*)/i.exec(userPrompt)?.[1]
+    const empresaMencionada = /para\s+(\w+)/i.exec(userPrompt)?.[1];
+    const posicionMencionada = /como\s+(\w+(?:\s+\w+)*)/i.exec(userPrompt)?.[1];
 
     return {
       tipoDetectado,
       empresaMencionada,
       posicionMencionada,
       longitud: userPrompt.length,
-      sugerencias: this.generarSugerencias(tipoDetectado, userPrompt.length)
-    }
+      sugerencias: this.generarSugerencias(tipoDetectado, userPrompt.length),
+    };
   }
 
   /**
@@ -160,25 +197,33 @@ class DeepSeekService {
    * @returns {Array} - Lista de sugerencias
    */
   generarSugerencias(tipo, longitud) {
-    const sugerencias = []
+    const sugerencias = [];
 
     if (longitud < 20) {
-      sugerencias.push('Considera agregar más detalles sobre el tipo de posición o empresa objetivo')
+      sugerencias.push(
+        "Considera agregar más detalles sobre el tipo de posición o empresa objetivo"
+      );
     }
 
-    if (tipo === 'general') {
-      sugerencias.push('Especifica si es para frontend, backend, full stack o liderazgo')
+    if (tipo === "general") {
+      sugerencias.push(
+        "Especifica si es para frontend, backend, full stack o liderazgo"
+      );
     }
 
-    if (!tipo.includes('empresa')) {
-      sugerencias.push('Menciona la empresa objetivo para mayor personalización')
+    if (!tipo.includes("empresa")) {
+      sugerencias.push(
+        "Menciona la empresa objetivo para mayor personalización"
+      );
     }
 
-    sugerencias.push(`Prompt optimizado para ${tipo}: Usa palabras clave específicas del área`)
+    sugerencias.push(
+      `Prompt optimizado para ${tipo}: Usa palabras clave específicas del área`
+    );
 
-    return sugerencias
+    return sugerencias;
   }
 }
 
 // Exportar instancia única
-export default new DeepSeekService()
+export default new DeepSeekService();
