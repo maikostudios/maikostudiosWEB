@@ -172,7 +172,7 @@
     </v-dialog>
 
     <!-- Dialog para ver solicitud CV -->
-    <v-dialog v-model="dialogCV" max-width="700">
+    <v-dialog v-model="dialogCV" max-width="800">
       <v-card v-if="solicitudSeleccionada">
         <v-card-title>Solicitud CV - {{ solicitudSeleccionada.posicion }}</v-card-title>
         <v-card-text>
@@ -181,21 +181,49 @@
               <div><strong>Reclutador:</strong> {{ solicitudSeleccionada.nombreReclutador }}</div>
               <div><strong>Empresa:</strong> {{ solicitudSeleccionada.empresa }}</div>
               <div><strong>Email:</strong> {{ solicitudSeleccionada.email }}</div>
-              <div><strong>Rubro:</strong> {{ solicitudSeleccionada.rubro }}</div>
-              <div><strong>Experiencia:</strong> {{ solicitudSeleccionada.experienciaRequerida }}</div>
-              <div><strong>Modalidad:</strong> {{ solicitudSeleccionada.modalidad }}</div>
+              <div><strong>Posición:</strong> {{ solicitudSeleccionada.posicion }}</div>
+              <div v-if="solicitudSeleccionada.fechaSolicitud"><strong>Fecha:</strong> {{ formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
+              <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{ solicitudSeleccionada.tipoSolicitud }}</div>
             </div>
 
-            <div v-if="solicitudSeleccionada.tecnologias?.length" class="tecnologias">
+            <!-- Habilidades seleccionadas -->
+            <div v-if="solicitudSeleccionada.habilidadesSeleccionadas?.length" class="habilidades mt-4">
+              <strong>Habilidades Requeridas:</strong>
+              <div class="habilidades-chips mt-2">
+                <v-chip
+                  v-for="habilidad in solicitudSeleccionada.habilidadesSeleccionadas"
+                  :key="habilidad"
+                  size="small"
+                  color="primary"
+                  class="ma-1"
+                >
+                  {{ habilidad }}
+                </v-chip>
+              </div>
+            </div>
+
+            <!-- Tecnologías (para compatibilidad con solicitudes antiguas) -->
+            <div v-else-if="solicitudSeleccionada.tecnologias?.length" class="tecnologias mt-4">
               <strong>Tecnologías:</strong>
-              <v-chip v-for="tech in solicitudSeleccionada.tecnologias" :key="tech" size="small" class="ma-1">
-                {{ tech }}
-              </v-chip>
+              <div class="tecnologias-chips mt-2">
+                <v-chip
+                  v-for="tech in solicitudSeleccionada.tecnologias"
+                  :key="tech"
+                  size="small"
+                  color="secondary"
+                  class="ma-1"
+                >
+                  {{ tech }}
+                </v-chip>
+              </div>
             </div>
 
-            <div v-if="solicitudSeleccionada.descripcionPuesto" class="descripcion">
-              <strong>Descripción del puesto:</strong>
-              <p>{{ solicitudSeleccionada.descripcionPuesto }}</p>
+            <!-- Descripción del cargo -->
+            <div v-if="solicitudSeleccionada.descripcionCargo || solicitudSeleccionada.descripcionPuesto" class="descripcion-cargo mt-4">
+              <strong>Descripción del Cargo:</strong>
+              <div class="descripcion-texto mt-2">
+                <p class="descripcion-content">{{ solicitudSeleccionada.descripcionCargo || solicitudSeleccionada.descripcionPuesto }}</p>
+              </div>
             </div>
           </div>
         </v-card-text>
@@ -439,10 +467,36 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.tecnologias {
+.habilidades, .tecnologias {
   margin: 1rem 0;
 }
 
+.habilidades-chips, .tecnologias-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.descripcion-cargo {
+  margin-top: 1.5rem;
+}
+
+.descripcion-texto {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.descripcion-content {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Mantener compatibilidad con descripción antigua */
 .descripcion {
   margin-top: 1rem;
   padding: 1rem;
