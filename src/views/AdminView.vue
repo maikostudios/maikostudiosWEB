@@ -157,10 +157,17 @@
             <div class="tab-content">
               <div class="section-header">
                 <h2>Gestión de Portafolio</h2>
-                <v-btn color="primary" @click="abrirFormularioProyecto()">
-                  <v-icon left>mdi-plus</v-icon>
-                  Nuevo Proyecto
-                </v-btn>
+                <div class="header-actions">
+                  <v-btn v-if="proyectos.length === 0" color="success" variant="outlined" @click="poblarBaseDatos"
+                    :loading="poblando" class="mr-2">
+                    <v-icon left>mdi-database-plus</v-icon>
+                    Poblar con Ejemplos
+                  </v-btn>
+                  <v-btn color="primary" @click="abrirFormularioProyecto()">
+                    <v-icon left>mdi-plus</v-icon>
+                    Nuevo Proyecto
+                  </v-btn>
+                </div>
               </div>
 
               <v-data-table :headers="headersProyectos" :items="proyectos" :loading="loading" class="admin-table"
@@ -251,7 +258,7 @@
                 formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
               <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{
                 solicitudSeleccionada.tipoSolicitud
-                }}</div>
+              }}</div>
             </div>
 
             <!-- Habilidades seleccionadas -->
@@ -433,6 +440,7 @@ import { useRouter } from 'vue-router'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
 import { useGitHubAssets } from '@/composables/useGitHubAssets'
+import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js'
 
 const router = useRouter()
 const store = useMainStore()
@@ -462,6 +470,7 @@ const proyectoAEliminar = ref(null)
 const formularioValido = ref(false)
 const guardandoProyecto = ref(false)
 const formProyecto = ref(null)
+const poblando = ref(false)
 
 // Datos reactivos
 const estadisticas = reactive({
@@ -713,6 +722,31 @@ const guardarProyecto = async () => {
   }
 }
 
+// Función para poblar base de datos con ejemplos
+const poblarBaseDatos = async () => {
+  poblando.value = true
+
+  try {
+    console.log('🚀 Poblando base de datos con proyectos de ejemplo...')
+    const resultado = await poblarFirebaseConProyectos()
+
+    if (resultado.creados > 0) {
+      // Recargar proyectos después de crear
+      await cargarProyectos()
+      console.log(`✅ ${resultado.creados} proyectos creados exitosamente`)
+    }
+
+    if (resultado.errores > 0) {
+      console.warn(`⚠️ ${resultado.errores} errores durante la creación`)
+    }
+
+  } catch (error) {
+    console.error('❌ Error al poblar base de datos:', error)
+  } finally {
+    poblando.value = false
+  }
+}
+
 // Inicialización
 onMounted(async () => {
   cargarDatos()
@@ -720,6 +754,17 @@ onMounted(async () => {
 
   // Cargar imágenes desde GitHub
   await cargarImagenesProyectos()
+
+  // Exponer funciones para testing en desarrollo
+  if (import.meta.env.DEV) {
+    window.store = store
+    window.poblarBaseDatos = poblarBaseDatos
+    window.poblarFirebaseConProyectos = poblarFirebaseConProyectos
+    console.log('🔧 Funciones expuestas para testing:')
+    console.log('   - window.store')
+    console.log('   - window.poblarBaseDatos()')
+    console.log('   - window.poblarFirebaseConProyectos()')
+  }
 })
 </script>
 
@@ -899,6 +944,12 @@ onMounted(async () => {
 }
 
 /* Estilos específicos para gestión de portafolio */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .proyecto-imagen-mini {
   width: 60px;
   height: 40px;
