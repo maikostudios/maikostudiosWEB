@@ -122,21 +122,21 @@ service cloud.firestore {
     match /mensajes_contacto/{document} {
       allow create: if true;
       allow read, update, delete: if request.auth != null &&
-        request.auth.token.email in ['contacto@maikostudios.com'];
+        request.auth.token.email in ['m.esteban.saez@gmail.com'];
     }
 
     // Solicitudes de CV - solo escritura pública, lectura autenticada
     match /solicitudes_cv/{document} {
       allow create: if true;
       allow read, update, delete: if request.auth != null &&
-        request.auth.token.email in ['contacto@maikostudios.com'];
+        request.auth.token.email in ['m.esteban.saez@gmail.com'];
     }
 
     // Visitas - solo escritura
     match /visitas/{document} {
       allow create: if true;
       allow read: if request.auth != null &&
-        request.auth.token.email in ['contacto@maikostudios.com'];
+        request.auth.token.email in ['m.esteban.saez@gmail.com'];
     }
   }
 }
@@ -181,7 +181,7 @@ firebase deploy --project maikostudios
 ```javascript
 const ADMIN_EMAILS = [
   "maikostudios@gmail.com", // Usuario principal de testing
-  "contacto@maikostudios.com", // Email de contacto oficial
+  "m.esteban.saez@gmail.com", // Email personal de Michael
   "admin@maikostudios.com", // Email administrativo
 ];
 ```

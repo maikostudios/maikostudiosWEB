@@ -164,7 +164,7 @@ const iniciarSesion = async () => {
     // Verificar que el usuario es Michael (por email)
     const emailsAutorizados = [
       'maikostudios@gmail.com',
-      'contacto@maikostudios.com',
+      'm.esteban.saez@gmail.com',
       'admin@maikostudios.com',
       'michael@maikostudios.com'
     ]

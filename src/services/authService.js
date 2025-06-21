@@ -10,7 +10,7 @@ import { auth, isFirebaseConfigured } from "@/firebase/config";
 // Lista de emails autorizados para acceder al panel de administración
 const ADMIN_EMAILS = [
   "maikostudios@gmail.com",
-  "contacto@maikostudios.com",
+  "m.esteban.saez@gmail.com",
   "admin@maikostudios.com",
 ];
 
