@@ -2,12 +2,13 @@
   <section id="proyectos" class="proyectos-section">
     <v-container>
       <h2 class="section-title">Proyectos Destacados</h2>
-      
+
       <div class="proyectos-grid">
         <!-- Proyecto 1 -->
         <div class="proyecto-card">
           <div class="proyecto-imagen">
-            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg" alt="Proyecto 1" />
+            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg" alt="Proyecto 1"
+              loading="lazy" decoding="async" />
           </div>
           <div class="proyecto-info">
             <h3>Sistema de Gestión Empresarial</h3>
@@ -33,7 +34,8 @@
         <!-- Proyecto 2 -->
         <div class="proyecto-card">
           <div class="proyecto-imagen">
-            <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg" alt="Proyecto 2" />
+            <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg" alt="Proyecto 2"
+              loading="lazy" decoding="async" />
           </div>
           <div class="proyecto-info">
             <h3>E-commerce Moderno</h3>
@@ -82,7 +84,7 @@
 
 .proyectos-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 3rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -155,13 +157,67 @@
   margin-top: 4rem;
 }
 
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+  .proyectos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .proyectos-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
   .proyecto-card {
+    margin-bottom: 1rem;
+  }
+
+  .proyecto-info {
+    padding: 1.5rem;
+  }
+
+  .proyecto-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .proyectos-section {
+    padding: 4rem 0;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
     margin-bottom: 2rem;
+  }
+
+  .proyectos-grid {
+    gap: 1.5rem;
+  }
+
+  .proyecto-info {
+    padding: 1rem;
+  }
+
+  .proyecto-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .tech-stack {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ver-mas {
+    margin-top: 2rem;
   }
 }
 </style>

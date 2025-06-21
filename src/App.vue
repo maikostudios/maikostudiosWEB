@@ -16,6 +16,9 @@
 
     <!-- Chatbot GPT disponible en toda la aplicación -->
     <ChatbotGPT />
+
+    <!-- Sistema de notificaciones global -->
+    <NotificationContainer position="top-right" />
   </div>
 </template>
 
@@ -23,6 +26,7 @@
 import { computed } from 'vue'
 import SpotlightEffect from '@/components/SpotlightEffect.vue'
 import ChatbotGPT from '@/components/ChatbotGPT.vue'
+import NotificationContainer from '@/components/NotificationContainer.vue'
 import { isFirebaseConfigured as checkFirebaseConfigured } from '@/firebase/config'
 
 // Computed para verificar si Firebase está configurado

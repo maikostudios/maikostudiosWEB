@@ -112,10 +112,14 @@ const closeMenu = () => {
 
 .nav-links {
   display: none;
+  align-items: center;
+  gap: 1rem;
 }
 
 .social-links {
   display: none;
+  align-items: center;
+  gap: 1rem;
 }
 
 .nav-link,
@@ -185,17 +189,31 @@ const closeMenu = () => {
   justify-content: center;
 }
 
-@media (min-width: 768px) {
+/* Tablet breakpoint */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-links {
+    display: none;
+    /* Mantener menú móvil en tablets */
+  }
+
+  .social-links {
+    display: none;
+  }
+
+  .menu-button {
+    display: block;
+  }
+}
+
+/* Desktop breakpoint */
+@media (min-width: 1024px) {
   .nav-links {
     display: flex;
-    gap: 1rem;
     margin-left: auto;
   }
 
   .social-links {
     display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-left: 2rem;
   }
 
@@ -205,6 +223,28 @@ const closeMenu = () => {
 
   .mobile-menu {
     display: none;
+  }
+}
+
+/* Mejoras para mobile */
+@media (max-width: 767px) {
+  .navbar-container {
+    padding: 0 1rem;
+  }
+
+  .mobile-menu {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .mobile-link {
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-link:last-of-type {
+    border-bottom: none;
   }
 }
 </style>

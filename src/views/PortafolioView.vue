@@ -12,7 +12,7 @@
                     <v-card class="proyecto-card destacado" elevation="8">
                         <div class="proyecto-imagen">
                             <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg"
-                                alt="De Una Transferencias" />
+                                alt="De Una Transferencias" loading="lazy" decoding="async" />
                             <div class="proyecto-overlay">
                                 <v-chip color="accent" size="large">
                                     <v-icon left>mdi-star</v-icon>
@@ -84,7 +84,7 @@
                         <v-card class="proyecto-card" elevation="4">
                             <div class="proyecto-imagen">
                                 <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
-                                    alt="E-commerce" />
+                                    alt="E-commerce" loading="lazy" decoding="async" />
                             </div>
                             <div class="proyecto-info">
                                 <h3>E-commerce Moderno</h3>
@@ -111,7 +111,7 @@
                         <v-card class="proyecto-card" elevation="4">
                             <div class="proyecto-imagen">
                                 <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
-                                    alt="Dashboard" />
+                                    alt="Dashboard" loading="lazy" decoding="async" />
                             </div>
                             <div class="proyecto-info">
                                 <h3>Dashboard Analítico</h3>
@@ -138,7 +138,7 @@
                         <v-card class="proyecto-card" elevation="4">
                             <div class="proyecto-imagen">
                                 <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg"
-                                    alt="App Móvil" />
+                                    alt="App Móvil" loading="lazy" decoding="async" />
                             </div>
                             <div class="proyecto-info">
                                 <h3>App de Gestión</h3>
@@ -164,8 +164,8 @@
 
                         <v-card class="proyecto-card" elevation="4">
                             <div class="proyecto-imagen">
-                                <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg"
-                                    alt="API" />
+                                <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg" alt="API"
+                                    loading="lazy" decoding="async" />
                             </div>
                             <div class="proyecto-info">
                                 <h3>API Microservicios</h3>
@@ -344,3 +344,331 @@
 <script setup>
 import BaseLayout from '@/components/BaseLayout.vue'
 </script>
+
+<style scoped>
+.portafolio-page {
+    padding: 4rem 0;
+    color: var(--color-text);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.page-title {
+    font-size: 3rem;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.page-subtitle {
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+}
+
+/* Proyecto estrella */
+.proyecto-estrella {
+    margin-bottom: 6rem;
+}
+
+.proyecto-card.destacado {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(0, 204, 204, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.proyecto-card.destacado:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 204, 204, 0.2);
+}
+
+.proyecto-imagen {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+}
+
+.proyecto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.proyecto-card:hover .proyecto-imagen img {
+    transform: scale(1.05);
+}
+
+.proyecto-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+}
+
+.proyecto-contenido {
+    padding: 2rem;
+}
+
+.proyecto-descripcion {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #cccccc;
+}
+
+.proyecto-caracteristicas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.caracteristica {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cccccc;
+}
+
+.tech-stack h4 {
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.tech-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.proyecto-acciones {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Otros proyectos */
+.otros-proyectos {
+    margin-bottom: 6rem;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.proyectos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.proyecto-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.proyecto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.proyecto-card .proyecto-imagen {
+    height: 200px;
+    border-radius: 0;
+}
+
+.proyecto-info {
+    padding: 1.5rem;
+}
+
+.proyecto-info h3 {
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.proyecto-info p {
+    color: #cccccc;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.tech-stack-small {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.proyecto-links {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Habilidades técnicas */
+.habilidades-section {
+    margin-bottom: 6rem;
+}
+
+.habilidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.habilidad-categoria {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.habilidad-categoria h3 {
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.habilidades-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.habilidad {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.habilidad span {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.nivel {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.barra {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Call to action */
+.cta-section {
+    text-align: center;
+}
+
+.cta-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .proyectos-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .habilidades-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .proyectos-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .proyecto-imagen {
+        height: 250px;
+    }
+
+    .proyecto-card .proyecto-imagen {
+        height: 180px;
+    }
+
+    .proyecto-caracteristicas {
+        grid-template-columns: 1fr;
+    }
+
+    .proyecto-acciones {
+        flex-direction: column;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .habilidades-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .portafolio-page {
+        padding: 2rem 0;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .proyecto-contenido {
+        padding: 1.5rem;
+    }
+
+    .proyecto-info {
+        padding: 1rem;
+    }
+
+    .habilidad-categoria {
+        padding: 1.5rem;
+    }
+}
+</style>
