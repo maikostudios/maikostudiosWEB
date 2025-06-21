@@ -1,7 +1,7 @@
 <template>
     <section>
         <h2>Contacto</h2>
-        <p><strong>Email:</strong> contacto@maikostudios.com</p>
+        <p><strong>Email:</strong> m.saezc@maikostudios.com</p>
         <p><strong>Dirección:</strong> Temuco, IX Región, Chile</p>
         <p><strong>Teléfono:</strong> +56983833148</p>
         <p><strong>Fecha de nacimiento:</strong> 19 Oct, 1994</p>

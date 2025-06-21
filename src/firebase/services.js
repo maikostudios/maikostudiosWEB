@@ -279,7 +279,7 @@ export const perfilService = {
       nombre_completo: "Michael Esteban Sáez Contreras",
       cargo_principal: "Desarrollador Full Stack",
       ubicacion: "Temuco, IX Región, Chile",
-      email: "contacto@maikostudios.com",
+      email: "m.saezc@maikostudios.com",
       telefono: "+56983833148",
       linkedin: "https://www.linkedin.com/in/me-saezc/",
       github: "https://github.com/maikostudios",
