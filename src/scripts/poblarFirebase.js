@@ -15,7 +15,8 @@ const proyectosEjemplo = [
     tecnologias: ["Vue.js", "Firebase", "Gemini AI", "Vuetify", "Pinia"],
     enlaceDemo: "https://maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/maikostudiosWEB",
-    esEstrella: true,
+    esEstrella: false,
+    mostrarEnHome: true,
     caracteristicas: [
       "Generador de CV con IA",
       "Chatbot inteligente",
@@ -41,6 +42,7 @@ const proyectosEjemplo = [
     enlaceDemo: "https://deuna-demo.maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/deuna-transferencias",
     esEstrella: true,
+    mostrarEnHome: true,
     caracteristicas: [
       "Dashboard administrativo completo",
       "API REST con documentación Swagger",
@@ -68,6 +70,7 @@ const proyectosEjemplo = [
     enlaceDemo: "https://login-demo.maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/corporate-login",
     esEstrella: false,
+    mostrarEnHome: false,
     caracteristicas: [],
   },
   {
@@ -80,6 +83,7 @@ const proyectosEjemplo = [
     enlaceDemo: "https://shop-demo.maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/ecommerce-vue",
     esEstrella: false,
+    mostrarEnHome: false,
     caracteristicas: [],
   },
   {
@@ -99,6 +103,7 @@ const proyectosEjemplo = [
     enlaceDemo: "https://analytics-demo.maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/analytics-dashboard",
     esEstrella: false,
+    mostrarEnHome: false,
     caracteristicas: [],
   },
   {
@@ -111,6 +116,7 @@ const proyectosEjemplo = [
     enlaceDemo: "https://app-demo.maikostudios.com",
     enlaceGithub: "https://github.com/maikostudios/task-manager-app",
     esEstrella: false,
+    mostrarEnHome: false,
     caracteristicas: [],
   },
 ];

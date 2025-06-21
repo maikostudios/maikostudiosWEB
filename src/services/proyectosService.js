@@ -84,6 +84,7 @@ export class ProyectosService {
         enlaceDemo: datosProyecto.enlaceDemo?.trim() || "",
         enlaceGithub: datosProyecto.enlaceGithub?.trim() || "",
         esEstrella: Boolean(datosProyecto.esEstrella),
+        mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
         caracteristicas: datosProyecto.caracteristicas || [],
         activo: true,
         fechaCreacion: serverTimestamp(),
@@ -93,6 +94,11 @@ export class ProyectosService {
       // Verificar que no haya más de un proyecto estrella si este es estrella
       if (proyectoData.esEstrella) {
         await this.verificarProyectoEstrella();
+      }
+
+      // Verificar que no haya más de 2 proyectos en Home si este se va a mostrar
+      if (proyectoData.mostrarEnHome) {
+        await this.verificarProyectosEnHome();
       }
 
       const docRef = await addDoc(this.collection, proyectoData);
@@ -135,6 +141,7 @@ export class ProyectosService {
         enlaceDemo: datosProyecto.enlaceDemo?.trim() || "",
         enlaceGithub: datosProyecto.enlaceGithub?.trim() || "",
         esEstrella: Boolean(datosProyecto.esEstrella),
+        mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
         caracteristicas: datosProyecto.caracteristicas || [],
         fechaActualizacion: serverTimestamp(),
       };
@@ -142,6 +149,11 @@ export class ProyectosService {
       // Verificar proyecto estrella si es necesario
       if (proyectoData.esEstrella) {
         await this.verificarProyectoEstrella(proyectoId);
+      }
+
+      // Verificar proyectos en Home si es necesario
+      if (proyectoData.mostrarEnHome) {
+        await this.verificarProyectosEnHome(proyectoId);
       }
 
       const docRef = doc(db, this.collectionName, proyectoId);
@@ -242,6 +254,7 @@ export class ProyectosService {
 
   /**
    * Obtener TODOS los proyectos estrella para mostrar en "Proyectos Destacados"
+   * @deprecated Usar obtenerProyectosHome() en su lugar
    */
   async obtenerProyectosEstrella() {
     try {
@@ -270,6 +283,40 @@ export class ProyectosService {
         data: [],
         error: error.message,
         message: "Error al cargar proyectos destacados",
+      };
+    }
+  }
+
+  /**
+   * Obtener proyectos para mostrar en el Home (máximo 2)
+   */
+  async obtenerProyectosHome() {
+    try {
+      console.log("🏠 Obteniendo proyectos para Home desde Firebase...");
+
+      const resultado = await this.obtenerProyectosActivos();
+      if (resultado.success) {
+        const proyectosHome = resultado.data.filter(
+          (proyecto) => proyecto.mostrarEnHome
+        );
+        console.log(
+          `✅ ${proyectosHome.length} proyectos para Home encontrados`
+        );
+
+        return {
+          success: true,
+          data: proyectosHome,
+          message: `${proyectosHome.length} proyectos para Home cargados`,
+        };
+      }
+      return resultado;
+    } catch (error) {
+      console.error("❌ Error al obtener proyectos para Home:", error);
+      return {
+        success: false,
+        data: [],
+        error: error.message,
+        message: "Error al cargar proyectos para Home",
       };
     }
   }
@@ -324,6 +371,48 @@ export class ProyectosService {
       }
     } catch (error) {
       console.error("❌ Error al verificar proyecto estrella:", error);
+    }
+  }
+
+  /**
+   * Verificar que no haya más de 2 proyectos marcados para mostrar en Home
+   */
+  async verificarProyectosEnHome(proyectoIdExcluir = null) {
+    try {
+      const resultado = await this.obtenerProyectos();
+      if (resultado.success) {
+        const proyectosEnHome = resultado.data.filter(
+          (proyecto) =>
+            proyecto.mostrarEnHome && proyecto.id !== proyectoIdExcluir
+        );
+
+        // Si hay más de 2 proyectos en Home, quitar los más antiguos
+        if (proyectosEnHome.length >= 2) {
+          // Ordenar por fecha de actualización (más antiguos primero)
+          proyectosEnHome.sort((a, b) => {
+            const fechaA = a.fechaActualizacion || a.fechaCreacion;
+            const fechaB = b.fechaActualizacion || b.fechaCreacion;
+            return fechaA - fechaB;
+          });
+
+          // Quitar estado a los proyectos más antiguos (mantener solo 1 para que el nuevo sea el segundo)
+          const proyectosAQuitar = proyectosEnHome.slice(
+            0,
+            proyectosEnHome.length - 1
+          );
+
+          for (const proyecto of proyectosAQuitar) {
+            const docRef = doc(db, this.collectionName, proyecto.id);
+            await updateDoc(docRef, {
+              mostrarEnHome: false,
+              fechaActualizacion: serverTimestamp(),
+            });
+            console.log(`🏠 Removido del Home el proyecto: ${proyecto.titulo}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error al verificar proyectos en Home:", error);
     }
   }
 }

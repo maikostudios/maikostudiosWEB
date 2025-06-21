@@ -21,9 +21,10 @@
 
       <!-- Empty state -->
       <div v-else-if="proyectosEstrella.length === 0" class="empty-container">
-        <v-icon color="grey" size="64">mdi-star-outline</v-icon>
+        <v-icon color="grey" size="64">mdi-home-outline</v-icon>
         <h3>No hay proyectos destacados</h3>
-        <p>Los proyectos destacados aparecerán aquí cuando sean marcados desde el panel de administración.</p>
+        <p>Los proyectos destacados aparecerán aquí cuando sean marcados como "Mostrar en Home" desde el panel de
+          administración.</p>
       </div>
 
       <!-- Proyectos destacados dinámicos -->
@@ -82,21 +83,21 @@ const loading = ref(true)
 const error = ref(null)
 const proyectosEstrella = ref([])
 
-// Función para cargar proyectos estrella
+// Función para cargar proyectos para el Home
 const cargarProyectos = async () => {
   loading.value = true
   error.value = null
 
   try {
-    console.log('🌟 Cargando proyectos destacados...')
+    console.log('🏠 Cargando proyectos para Home...')
 
-    const resultado = await store.obtenerProyectosEstrella()
+    const resultado = await store.obtenerProyectosHome()
 
     if (resultado.success) {
       proyectosEstrella.value = resultado.data
-      console.log(`✅ ${resultado.data.length} proyectos destacados cargados`)
+      console.log(`✅ ${resultado.data.length} proyectos para Home cargados`)
     } else {
-      error.value = resultado.message || 'Error al cargar proyectos destacados'
+      error.value = resultado.message || 'Error al cargar proyectos para Home'
       console.error('❌ Error al cargar proyectos:', resultado.error)
     }
   } catch (err) {
@@ -135,10 +136,17 @@ onMounted(() => {
 
 .proyectos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 3rem;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
+  justify-items: center;
+}
+
+/* Cuando hay exactamente 2 proyectos, usar grid específico */
+.proyectos-grid:has(.proyecto-card:nth-child(2):last-child) {
+  grid-template-columns: 1fr 1fr;
+  max-width: 900px;
 }
 
 .proyecto-card {
@@ -146,6 +154,8 @@ onMounted(() => {
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 420px;
 }
 
 .proyecto-card:hover {
@@ -154,7 +164,7 @@ onMounted(() => {
 
 .proyecto-imagen {
   width: 100%;
-  height: 250px;
+  height: 280px;
   overflow: hidden;
 }
 
@@ -248,8 +258,18 @@ onMounted(() => {
 /* Tablet breakpoint */
 @media (max-width: 1024px) {
   .proyectos-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
+    max-width: 800px;
+  }
+
+  .proyectos-grid:has(.proyecto-card:nth-child(2):last-child) {
+    grid-template-columns: 1fr 1fr;
+    max-width: 750px;
+  }
+
+  .proyecto-card {
+    max-width: 380px;
   }
 }
 
@@ -257,10 +277,20 @@ onMounted(() => {
   .proyectos-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+    max-width: 100%;
+  }
+
+  .proyectos-grid:has(.proyecto-card:nth-child(2):last-child) {
+    grid-template-columns: 1fr;
   }
 
   .proyecto-card {
     margin-bottom: 1rem;
+    max-width: 100%;
+  }
+
+  .proyecto-imagen {
+    height: 220px;
   }
 
   .proyecto-info {

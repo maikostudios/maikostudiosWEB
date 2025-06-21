@@ -181,7 +181,14 @@
                 <template #item.esEstrella="{ item }">
                   <v-chip :color="item.esEstrella ? 'accent' : 'default'" size="small">
                     <v-icon v-if="item.esEstrella" left size="small">mdi-star</v-icon>
-                    {{ item.esEstrella ? 'Estrella' : 'Normal' }}
+                    {{ item.esEstrella ? 'Sí' : 'No' }}
+                  </v-chip>
+                </template>
+
+                <template #item.mostrarEnHome="{ item }">
+                  <v-chip :color="item.mostrarEnHome ? 'primary' : 'default'" size="small">
+                    <v-icon v-if="item.mostrarEnHome" left size="small">mdi-home</v-icon>
+                    {{ item.mostrarEnHome ? 'Sí' : 'No' }}
                   </v-chip>
                 </template>
 
@@ -311,12 +318,17 @@
         <v-card-text>
           <v-form ref="formProyecto" v-model="formularioValido">
             <v-row>
-              <v-col cols="12" md="8">
+              <v-col cols="12" md="6">
                 <v-text-field v-model="formularioProyecto.titulo" label="Título del Proyecto" :rules="[rules.required]"
                   variant="outlined" />
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="3">
                 <v-switch v-model="formularioProyecto.esEstrella" label="Proyecto Estrella" color="accent" inset />
+                <small class="text-caption text-grey">Para portafolio (solo 1)</small>
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-switch v-model="formularioProyecto.mostrarEnHome" label="Mostrar en Home" color="primary" inset />
+                <small class="text-caption text-grey">Página principal (máx 2)</small>
               </v-col>
             </v-row>
 
@@ -492,6 +504,7 @@ const formularioProyecto = reactive({
   enlaceDemo: '',
   enlaceGithub: '',
   esEstrella: false,
+  mostrarEnHome: false,
   caracteristicas: []
 })
 
@@ -540,7 +553,8 @@ const headersProyectos = [
   { title: 'Imagen', key: 'imagen', sortable: false },
   { title: 'Título', key: 'titulo' },
   { title: 'Descripción', key: 'descripcion' },
-  { title: 'Tipo', key: 'esEstrella', sortable: false },
+  { title: 'Estrella', key: 'esEstrella', sortable: false },
+  { title: 'En Home', key: 'mostrarEnHome', sortable: false },
   { title: 'Tecnologías', key: 'tecnologias', sortable: false },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
@@ -647,6 +661,7 @@ const abrirFormularioProyecto = (proyecto = null) => {
       enlaceDemo: '',
       enlaceGithub: '',
       esEstrella: false,
+      mostrarEnHome: false,
       caracteristicas: []
     })
   }
@@ -700,6 +715,7 @@ const guardarProyecto = async () => {
       enlaceDemo: formularioProyecto.enlaceDemo,
       enlaceGithub: formularioProyecto.enlaceGithub,
       esEstrella: formularioProyecto.esEstrella,
+      mostrarEnHome: formularioProyecto.mostrarEnHome,
       caracteristicas: formularioProyecto.caracteristicas
     }
 
