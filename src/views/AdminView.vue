@@ -239,7 +239,7 @@
                 formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
               <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{
                 solicitudSeleccionada.tipoSolicitud
-              }}</div>
+                }}</div>
             </div>
 
             <!-- Habilidades seleccionadas -->
@@ -310,22 +310,50 @@
 
             <v-row>
               <v-col cols="12">
-                <v-select v-model="formularioProyecto.imagen" :items="imagenesDisponibles" label="Imagen del Proyecto"
-                  :rules="[rules.required]" variant="outlined" item-title="nombre" item-value="url">
-                  <template #selection="{ item }">
-                    <div class="imagen-seleccionada">
-                      <img :src="item.raw.url" :alt="item.raw.nombre" />
-                      <span>{{ item.raw.nombre }}</span>
-                    </div>
-                  </template>
-                  <template #item="{ item, props }">
-                    <v-list-item v-bind="props">
-                      <template #prepend>
-                        <img :src="item.raw.url" :alt="item.raw.nombre" class="imagen-opcion" />
-                      </template>
-                    </v-list-item>
-                  </template>
-                </v-select>
+                <div class="imagen-selector-header">
+                  <v-select v-model="formularioProyecto.imagen" :items="imagenesDisponibles" label="Imagen del Proyecto"
+                    :rules="[rules.required]" variant="outlined" item-title="title" item-value="value"
+                    :loading="cargandoImagenes" :disabled="cargandoImagenes">
+                    <template #selection="{ item }">
+                      <div class="imagen-seleccionada">
+                        <img :src="item.raw.imagen" :alt="item.raw.title" />
+                        <div class="imagen-info">
+                          <span class="imagen-nombre">{{ item.raw.title }}</span>
+                          <span class="imagen-archivo">{{ item.raw.subtitle }}</span>
+                        </div>
+                      </div>
+                    </template>
+                    <template #item="{ item, props }">
+                      <v-list-item v-bind="props">
+                        <template #prepend>
+                          <img :src="item.raw.imagen" :alt="item.raw.title" class="imagen-opcion" />
+                        </template>
+                        <template #subtitle>
+                          <span class="text-caption">{{ item.raw.subtitle }}</span>
+                        </template>
+                      </v-list-item>
+                    </template>
+                  </v-select>
+
+                  <v-btn icon size="small" color="primary" @click="recargarImagenes" :loading="cargandoImagenes"
+                    class="ml-2">
+                    <v-icon>mdi-refresh</v-icon>
+                  </v-btn>
+                </div>
+
+                <!-- Información de estado -->
+                <div v-if="errorCarga" class="error-carga mt-2">
+                  <v-alert type="warning" density="compact">
+                    Error al cargar imágenes: {{ errorCarga }}
+                    <br>Usando imágenes de respaldo.
+                  </v-alert>
+                </div>
+
+                <div v-if="imagenesProyectos.length > 0" class="imagenes-info mt-2">
+                  <v-chip size="small" color="success">
+                    {{ imagenesProyectos.length }} imágenes disponibles desde GitHub
+                  </v-chip>
+                </div>
               </v-col>
             </v-row>
 
@@ -392,9 +420,21 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
+import { useGitHubAssets } from '@/composables/useGitHubAssets'
 
 const router = useRouter()
 const store = useMainStore()
+
+// Composable para gestión de imágenes desde GitHub
+const {
+  imagenesProyectos,
+  cargandoImagenes,
+  errorCarga,
+  opcionesSelector: imagenesDisponibles,
+  estadisticas: estadisticasImagenes,
+  cargarImagenesProyectos,
+  recargarImagenes
+} = useGitHubAssets()
 
 // Estado del componente
 const tabActiva = ref('mensajes')
@@ -432,30 +472,6 @@ const formularioProyecto = reactive({
 
 // Datos para proyectos
 const proyectos = ref([])
-
-// Imágenes disponibles del CDN
-const imagenesDisponibles = ref([
-  {
-    nombre: 'Sistema de Gestión',
-    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/sistema-gestion.jpg'
-  },
-  {
-    nombre: 'E-commerce',
-    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/ecommerce.jpg'
-  },
-  {
-    nombre: 'Dashboard',
-    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/dashboard.jpg'
-  },
-  {
-    nombre: 'App Móvil',
-    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/app-movil.jpg'
-  },
-  {
-    nombre: 'API Microservicios',
-    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/api-microservicios.jpg'
-  }
-])
 
 // Tecnologías disponibles
 const tecnologiasDisponibles = [
@@ -708,9 +724,12 @@ const guardarProyecto = async () => {
 }
 
 // Inicialización
-onMounted(() => {
+onMounted(async () => {
   cargarDatos()
   cargarProyectos()
+
+  // Cargar imágenes desde GitHub
+  await cargarImagenesProyectos()
 })
 </script>
 
@@ -943,5 +962,84 @@ onMounted(() => {
   background: rgba(0, 204, 204, 0.1);
   color: var(--color-primary);
   font-weight: 600;
+}
+
+/* Estilos para el selector de imágenes mejorado */
+.imagen-selector-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.imagen-seleccionada {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.imagen-seleccionada img {
+  width: 50px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 204, 204, 0.3);
+}
+
+.imagen-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.imagen-nombre {
+  font-weight: 500;
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.imagen-archivo {
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  opacity: 0.8;
+}
+
+.imagen-opcion {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: border-color 0.2s ease;
+}
+
+.imagen-opcion:hover {
+  border-color: var(--color-primary);
+}
+
+.error-carga {
+  margin-top: 8px;
+}
+
+.imagenes-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* Animación para el botón de recarga */
+.v-btn--loading .v-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
