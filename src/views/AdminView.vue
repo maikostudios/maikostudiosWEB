@@ -441,9 +441,13 @@ import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
 import { useGitHubAssets } from '@/composables/useGitHubAssets'
 import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js'
+import { globalNotifications } from '@/composables/useNotifications'
 
 const router = useRouter()
 const store = useMainStore()
+
+// Sistema de notificaciones
+const { success, error, info } = globalNotifications
 
 // Composable para gestión de imágenes desde GitHub
 const {
@@ -666,17 +670,18 @@ const eliminarProyecto = (proyecto) => {
 
 const confirmarEliminacion = async () => {
   if (proyectoAEliminar.value) {
+    const tituloProyecto = proyectoAEliminar.value.titulo
     const resultado = await store.eliminarProyecto(proyectoAEliminar.value.id)
 
     if (resultado.success) {
       dialogEliminar.value = false
       proyectoAEliminar.value = null
 
-      // Mostrar notificación de éxito
-      console.log('✅ Proyecto eliminado exitosamente')
+      // Notificación de éxito
+      success(`Proyecto "${tituloProyecto}" eliminado exitosamente`)
     } else {
-      console.error('❌ Error al eliminar proyecto:', resultado.error)
-      // Aquí podrías mostrar una notificación de error
+      // Notificación de error
+      error(`Error al eliminar proyecto: ${resultado.error}`)
     }
   }
 }
@@ -709,14 +714,19 @@ const guardarProyecto = async () => {
 
     if (resultado.success) {
       cerrarFormularioProyecto()
-      console.log('✅ Proyecto guardado exitosamente')
+
+      // Notificación de éxito
+      const accion = proyectoEditando.value ? 'actualizado' : 'creado'
+      success(`Proyecto "${proyectoData.titulo}" ${accion} exitosamente`)
     } else {
-      console.error('❌ Error al guardar proyecto:', resultado.error)
-      // Aquí podrías mostrar una notificación de error
+      // Notificación de error
+      const accion = proyectoEditando.value ? 'actualizar' : 'crear'
+      error(`Error al ${accion} proyecto: ${resultado.error}`)
     }
 
-  } catch (error) {
-    console.error('❌ Error inesperado al guardar proyecto:', error)
+  } catch (err) {
+    // Notificación de error inesperado
+    error(`Error inesperado: ${err.message}`)
   } finally {
     guardandoProyecto.value = false
   }
@@ -727,21 +737,27 @@ const poblarBaseDatos = async () => {
   poblando.value = true
 
   try {
-    console.log('🚀 Poblando base de datos con proyectos de ejemplo...')
+    // Notificación de inicio
+    info('Poblando base de datos con proyectos de ejemplo...')
+
     const resultado = await poblarFirebaseConProyectos()
 
     if (resultado.creados > 0) {
       // Recargar proyectos después de crear
       await cargarProyectos()
-      console.log(`✅ ${resultado.creados} proyectos creados exitosamente`)
+
+      // Notificación de éxito
+      success(`${resultado.creados} proyectos creados exitosamente`)
     }
 
     if (resultado.errores > 0) {
-      console.warn(`⚠️ ${resultado.errores} errores durante la creación`)
+      // Notificación de advertencia
+      error(`${resultado.errores} errores durante la creación`)
     }
 
-  } catch (error) {
-    console.error('❌ Error al poblar base de datos:', error)
+  } catch (err) {
+    // Notificación de error
+    error(`Error al poblar base de datos: ${err.message}`)
   } finally {
     poblando.value = false
   }
