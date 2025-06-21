@@ -234,6 +234,16 @@ export const useMainStore = defineStore("main", () => {
     }
   };
 
+  const obtenerProyectosEstrella = async () => {
+    try {
+      const resultado = await proyectosService.obtenerProyectosEstrella();
+      return resultado;
+    } catch (error) {
+      console.error("Error al obtener proyectos estrella:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   // Función para limpiar el estado (logout)
   const limpiarEstado = () => {
     user.value = null;
@@ -279,6 +289,7 @@ export const useMainStore = defineStore("main", () => {
     eliminarProyecto,
     obtenerProyectosActivos,
     obtenerProyectoEstrella,
+    obtenerProyectosEstrella,
 
     limpiarEstado,
   };

@@ -3,54 +3,55 @@
     <v-container>
       <h2 class="section-title">Proyectos Destacados</h2>
 
-      <div class="proyectos-grid">
-        <!-- Proyecto 1 -->
-        <div class="proyecto-card">
-          <div class="proyecto-imagen">
-            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg" alt="Proyecto 1"
-              loading="lazy" decoding="async" />
-          </div>
-          <div class="proyecto-info">
-            <h3>Sistema de Gestión Empresarial</h3>
-            <p>Plataforma integral para la gestión de recursos y procesos empresariales</p>
-            <div class="tech-stack">
-              <span>Vue.js</span>
-              <span>Node.js</span>
-              <span>PostgreSQL</span>
-            </div>
-            <div class="proyecto-links">
-              <v-btn color="primary" variant="outlined">
-                <v-icon left>mdi-eye</v-icon>
-                Ver Proyecto
-              </v-btn>
-              <v-btn color="secondary" variant="text">
-                <v-icon left>mdi-github</v-icon>
-                Código
-              </v-btn>
-            </div>
-          </div>
-        </div>
+      <!-- Loading state -->
+      <div v-if="loading" class="loading-container">
+        <v-progress-circular indeterminate color="primary" size="64" />
+        <p class="loading-text">Cargando proyectos destacados...</p>
+      </div>
 
-        <!-- Proyecto 2 -->
-        <div class="proyecto-card">
+      <!-- Error state -->
+      <div v-else-if="error" class="error-container">
+        <v-icon color="error" size="48">mdi-alert-circle</v-icon>
+        <p class="error-text">{{ error }}</p>
+        <v-btn color="primary" variant="outlined" @click="cargarProyectos">
+          <v-icon left>mdi-refresh</v-icon>
+          Reintentar
+        </v-btn>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="proyectosEstrella.length === 0" class="empty-container">
+        <v-icon color="grey" size="64">mdi-star-outline</v-icon>
+        <h3>No hay proyectos destacados</h3>
+        <p>Los proyectos destacados aparecerán aquí cuando sean marcados desde el panel de administración.</p>
+      </div>
+
+      <!-- Proyectos destacados dinámicos -->
+      <div v-else class="proyectos-grid">
+        <div v-for="proyecto in proyectosEstrella" :key="proyecto.id" class="proyecto-card">
           <div class="proyecto-imagen">
-            <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg" alt="Proyecto 2"
-              loading="lazy" decoding="async" />
+            <img :src="proyecto.imagen || 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'"
+              :alt="proyecto.titulo" loading="lazy" decoding="async" @error="onImageError" />
           </div>
           <div class="proyecto-info">
-            <h3>E-commerce Moderno</h3>
-            <p>Tienda online con integración de pagos y gestión de inventario</p>
+            <h3>{{ proyecto.titulo }}</h3>
+            <p>{{ proyecto.descripcion }}</p>
             <div class="tech-stack">
-              <span>React</span>
-              <span>Express</span>
-              <span>MongoDB</span>
+              <span v-for="tech in proyecto.tecnologias.slice(0, 4)" :key="tech">
+                {{ tech }}
+              </span>
+              <span v-if="proyecto.tecnologias.length > 4" class="tech-more">
+                +{{ proyecto.tecnologias.length - 4 }}
+              </span>
             </div>
             <div class="proyecto-links">
-              <v-btn color="primary" variant="outlined">
+              <v-btn v-if="proyecto.enlaceDemo" color="primary" variant="outlined" :href="proyecto.enlaceDemo"
+                target="_blank" rel="noopener noreferrer">
                 <v-icon left>mdi-eye</v-icon>
                 Ver Proyecto
               </v-btn>
-              <v-btn color="secondary" variant="text">
+              <v-btn v-if="proyecto.enlaceGithub" color="secondary" variant="text" :href="proyecto.enlaceGithub"
+                target="_blank" rel="noopener noreferrer">
                 <v-icon left>mdi-github</v-icon>
                 Código
               </v-btn>
@@ -68,6 +69,56 @@
     </v-container>
   </section>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useMainStore } from '@/stores/main'
+
+// Store
+const store = useMainStore()
+
+// Estado reactivo
+const loading = ref(true)
+const error = ref(null)
+const proyectosEstrella = ref([])
+
+// Función para cargar proyectos estrella
+const cargarProyectos = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    console.log('🌟 Cargando proyectos destacados...')
+
+    const resultado = await store.obtenerProyectosEstrella()
+
+    if (resultado.success) {
+      proyectosEstrella.value = resultado.data
+      console.log(`✅ ${resultado.data.length} proyectos destacados cargados`)
+    } else {
+      error.value = resultado.message || 'Error al cargar proyectos destacados'
+      console.error('❌ Error al cargar proyectos:', resultado.error)
+    }
+  } catch (err) {
+    error.value = 'Error inesperado al cargar proyectos'
+    console.error('❌ Error inesperado:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Función para manejar errores de imagen
+const onImageError = (event) => {
+  console.warn('⚠️ Error al cargar imagen:', event.target.src)
+  // Fallback a imagen por defecto
+  event.target.src = 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
+}
+
+// Cargar proyectos al montar el componente
+onMounted(() => {
+  cargarProyectos()
+})
+</script>
 
 <style scoped>
 .proyectos-section {
@@ -147,6 +198,12 @@
   font-size: 0.9rem;
 }
 
+.tech-more {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ccc !important;
+  font-style: italic;
+}
+
 .proyecto-links {
   display: flex;
   gap: 1rem;
@@ -155,6 +212,37 @@
 .ver-mas {
   text-align: center;
   margin-top: 4rem;
+}
+
+/* Estados especiales */
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-text,
+.error-text {
+  margin-top: 1rem;
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+.empty-container h3 {
+  color: var(--color-text);
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.empty-container p {
+  color: #ccc;
+  max-width: 500px;
+  line-height: 1.6;
 }
 
 /* Tablet breakpoint */
@@ -218,6 +306,22 @@
 
   .ver-mas {
     margin-top: 2rem;
+  }
+
+  /* Estados especiales en mobile */
+  .loading-container,
+  .error-container,
+  .empty-container {
+    padding: 2rem 1rem;
+  }
+
+  .loading-text,
+  .error-text {
+    font-size: 1rem;
+  }
+
+  .empty-container h3 {
+    font-size: 1.3rem;
   }
 }
 </style>
