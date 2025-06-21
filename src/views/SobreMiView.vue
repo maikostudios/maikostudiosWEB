@@ -2,12 +2,7 @@
     <BaseLayout>
         <section class="sobre-mi-page">
             <v-container>
-                <div class="page-header">
-                    <h1 class="page-title">Sobre Mí</h1>
-                    <p class="page-subtitle">Conoce más sobre mi trayectoria y pasión por la tecnología</p>
-                </div>
-
-                <!-- Reutilizar el componente SobreMi existente -->
+                <!-- Reutilizar el componente SobreMi existente (ya incluye título) -->
                 <SobreMi />
 
                 <!-- Sección adicional de valores y filosofía -->
@@ -43,24 +38,7 @@ import SobreMi from '@/components/SobreMi.vue'
 
 <style scoped>
 .sobre-mi-page {
-    padding: 4rem 0;
     color: var(--color-text);
-}
-
-.page-header {
-    text-align: center;
-    margin-bottom: 4rem;
-}
-
-.page-title {
-    font-size: 3rem;
-    color: var(--color-text);
-    margin-bottom: 1rem;
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    color: var(--color-secondary);
 }
 
 .valores-section {
