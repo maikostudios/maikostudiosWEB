@@ -102,7 +102,8 @@ const closeMenu = () => {
 }
 
 .navbar-logo {
-  height: 40px;
+  height: 60px;
+  width: auto;
   transition: transform 0.2s ease;
 }
 
@@ -232,6 +233,11 @@ const closeMenu = () => {
     padding: 0 1rem;
   }
 
+  .navbar-logo {
+    height: 50px;
+    /* Ligeramente más pequeño en mobile pero aún visible */
+  }
+
   .mobile-menu {
     padding: 1.5rem;
     gap: 1rem;
@@ -245,6 +251,14 @@ const closeMenu = () => {
 
   .mobile-link:last-of-type {
     border-bottom: none;
+  }
+}
+
+/* Mejoras para desktop grande */
+@media (min-width: 1440px) {
+  .navbar-logo {
+    height: 70px;
+    /* Aún más grande en pantallas grandes */
   }
 }
 </style>
