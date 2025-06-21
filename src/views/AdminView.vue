@@ -68,6 +68,10 @@
             <v-icon left>mdi-account-tie</v-icon>
             Solicitudes CV
           </v-tab>
+          <v-tab value="portafolio">
+            <v-icon left>mdi-folder-image</v-icon>
+            Gestión de Portafolio
+          </v-tab>
           <v-tab value="estadisticas">
             <v-icon left>mdi-chart-line</v-icon>
             Estadísticas
@@ -136,6 +140,55 @@
             </div>
           </v-window-item>
 
+          <!-- Tab de Gestión de Portafolio -->
+          <v-window-item value="portafolio">
+            <div class="tab-content">
+              <div class="section-header">
+                <h2>Gestión de Portafolio</h2>
+                <v-btn color="primary" @click="abrirFormularioProyecto()">
+                  <v-icon left>mdi-plus</v-icon>
+                  Nuevo Proyecto
+                </v-btn>
+              </div>
+
+              <v-data-table :headers="headersProyectos" :items="proyectos" :loading="loading" class="admin-table"
+                item-value="id">
+                <template #item.imagen="{ item }">
+                  <div class="proyecto-imagen-mini">
+                    <img :src="item.imagen" :alt="item.titulo" />
+                  </div>
+                </template>
+
+                <template #item.esEstrella="{ item }">
+                  <v-chip :color="item.esEstrella ? 'accent' : 'default'" size="small">
+                    <v-icon v-if="item.esEstrella" left size="small">mdi-star</v-icon>
+                    {{ item.esEstrella ? 'Estrella' : 'Normal' }}
+                  </v-chip>
+                </template>
+
+                <template #item.tecnologias="{ item }">
+                  <div class="tecnologias-mini">
+                    <v-chip v-for="tech in item.tecnologias.slice(0, 3)" :key="tech" size="x-small" class="ma-1">
+                      {{ tech }}
+                    </v-chip>
+                    <span v-if="item.tecnologias.length > 3" class="text-caption">
+                      +{{ item.tecnologias.length - 3 }}
+                    </span>
+                  </div>
+                </template>
+
+                <template #item.actions="{ item }">
+                  <v-btn icon size="small" color="primary" @click="editarProyecto(item)">
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                  <v-btn icon size="small" color="error" @click="eliminarProyecto(item)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </div>
+          </v-window-item>
+
           <!-- Tab de Estadísticas -->
           <v-window-item value="estadisticas">
             <div class="tab-content">
@@ -182,21 +235,19 @@
               <div><strong>Empresa:</strong> {{ solicitudSeleccionada.empresa }}</div>
               <div><strong>Email:</strong> {{ solicitudSeleccionada.email }}</div>
               <div><strong>Posición:</strong> {{ solicitudSeleccionada.posicion }}</div>
-              <div v-if="solicitudSeleccionada.fechaSolicitud"><strong>Fecha:</strong> {{ formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
-              <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{ solicitudSeleccionada.tipoSolicitud }}</div>
+              <div v-if="solicitudSeleccionada.fechaSolicitud"><strong>Fecha:</strong> {{
+                formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
+              <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{
+                solicitudSeleccionada.tipoSolicitud
+              }}</div>
             </div>
 
             <!-- Habilidades seleccionadas -->
             <div v-if="solicitudSeleccionada.habilidadesSeleccionadas?.length" class="habilidades mt-4">
               <strong>Habilidades Requeridas:</strong>
               <div class="habilidades-chips mt-2">
-                <v-chip
-                  v-for="habilidad in solicitudSeleccionada.habilidadesSeleccionadas"
-                  :key="habilidad"
-                  size="small"
-                  color="primary"
-                  class="ma-1"
-                >
+                <v-chip v-for="habilidad in solicitudSeleccionada.habilidadesSeleccionadas" :key="habilidad"
+                  size="small" color="primary" class="ma-1">
                   {{ habilidad }}
                 </v-chip>
               </div>
@@ -206,23 +257,20 @@
             <div v-else-if="solicitudSeleccionada.tecnologias?.length" class="tecnologias mt-4">
               <strong>Tecnologías:</strong>
               <div class="tecnologias-chips mt-2">
-                <v-chip
-                  v-for="tech in solicitudSeleccionada.tecnologias"
-                  :key="tech"
-                  size="small"
-                  color="secondary"
-                  class="ma-1"
-                >
+                <v-chip v-for="tech in solicitudSeleccionada.tecnologias" :key="tech" size="small" color="secondary"
+                  class="ma-1">
                   {{ tech }}
                 </v-chip>
               </div>
             </div>
 
             <!-- Descripción del cargo -->
-            <div v-if="solicitudSeleccionada.descripcionCargo || solicitudSeleccionada.descripcionPuesto" class="descripcion-cargo mt-4">
+            <div v-if="solicitudSeleccionada.descripcionCargo || solicitudSeleccionada.descripcionPuesto"
+              class="descripcion-cargo mt-4">
               <strong>Descripción del Cargo:</strong>
               <div class="descripcion-texto mt-2">
-                <p class="descripcion-content">{{ solicitudSeleccionada.descripcionCargo || solicitudSeleccionada.descripcionPuesto }}</p>
+                <p class="descripcion-content">{{ solicitudSeleccionada.descripcionCargo ||
+                  solicitudSeleccionada.descripcionPuesto }}</p>
               </div>
             </div>
           </div>
@@ -231,6 +279,108 @@
           <v-spacer />
           <v-btn variant="text" @click="dialogCV = false">Cerrar</v-btn>
           <v-btn color="secondary" @click="generarCVPersonalizado">Generar CV</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Dialog para crear/editar proyecto -->
+    <v-dialog v-model="dialogProyecto" max-width="900" persistent>
+      <v-card>
+        <v-card-title>
+          {{ proyectoEditando ? 'Editar Proyecto' : 'Nuevo Proyecto' }}
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="formProyecto" v-model="formularioValido">
+            <v-row>
+              <v-col cols="12" md="8">
+                <v-text-field v-model="formularioProyecto.titulo" label="Título del Proyecto" :rules="[rules.required]"
+                  variant="outlined" />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-switch v-model="formularioProyecto.esEstrella" label="Proyecto Estrella" color="accent" inset />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <v-textarea v-model="formularioProyecto.descripcion" label="Descripción" :rules="[rules.required]"
+                  variant="outlined" rows="3" />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <v-select v-model="formularioProyecto.imagen" :items="imagenesDisponibles" label="Imagen del Proyecto"
+                  :rules="[rules.required]" variant="outlined" item-title="nombre" item-value="url">
+                  <template #selection="{ item }">
+                    <div class="imagen-seleccionada">
+                      <img :src="item.raw.url" :alt="item.raw.nombre" />
+                      <span>{{ item.raw.nombre }}</span>
+                    </div>
+                  </template>
+                  <template #item="{ item, props }">
+                    <v-list-item v-bind="props">
+                      <template #prepend>
+                        <img :src="item.raw.url" :alt="item.raw.nombre" class="imagen-opcion" />
+                      </template>
+                    </v-list-item>
+                  </template>
+                </v-select>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field v-model="formularioProyecto.enlaceDemo" label="Enlace Demo (opcional)" variant="outlined"
+                  prepend-inner-icon="mdi-eye" />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field v-model="formularioProyecto.enlaceGithub" label="Enlace GitHub (opcional)"
+                  variant="outlined" prepend-inner-icon="mdi-github" />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <v-combobox v-model="formularioProyecto.tecnologias" :items="tecnologiasDisponibles" label="Tecnologías"
+                  :rules="[rules.required]" variant="outlined" multiple chips closable-chips />
+              </v-col>
+            </v-row>
+
+            <!-- Características adicionales para proyecto estrella -->
+            <v-row v-if="formularioProyecto.esEstrella">
+              <v-col cols="12">
+                <v-divider class="my-4" />
+                <h3 class="mb-4">Características del Proyecto Estrella</h3>
+                <v-combobox v-model="formularioProyecto.caracteristicas" label="Características especiales"
+                  variant="outlined" multiple chips closable-chips
+                  hint="Ej: Dashboard administrativo, API REST, Autenticación segura" />
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="cerrarFormularioProyecto">Cancelar</v-btn>
+          <v-btn color="primary" :disabled="!formularioValido" :loading="guardandoProyecto" @click="guardarProyecto">
+            {{ proyectoEditando ? 'Actualizar' : 'Crear' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Dialog de confirmación para eliminar -->
+    <v-dialog v-model="dialogEliminar" max-width="400">
+      <v-card>
+        <v-card-title>Confirmar Eliminación</v-card-title>
+        <v-card-text>
+          ¿Estás seguro de que quieres eliminar el proyecto "{{ proyectoAEliminar?.titulo }}"?
+          Esta acción no se puede deshacer.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="dialogEliminar = false">Cancelar</v-btn>
+          <v-btn color="error" @click="confirmarEliminacion">Eliminar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -251,8 +401,15 @@ const tabActiva = ref('mensajes')
 const loading = ref(false)
 const dialogMensaje = ref(false)
 const dialogCV = ref(false)
+const dialogProyecto = ref(false)
+const dialogEliminar = ref(false)
 const mensajeSeleccionado = ref(null)
 const solicitudSeleccionada = ref(null)
+const proyectoEditando = ref(null)
+const proyectoAEliminar = ref(null)
+const formularioValido = ref(false)
+const guardandoProyecto = ref(false)
+const formProyecto = ref(null)
 
 // Datos reactivos
 const estadisticas = reactive({
@@ -260,6 +417,60 @@ const estadisticas = reactive({
   totalSolicitudesCV: 0,
   totalVisitas: 0
 })
+
+// Formulario de proyecto
+const formularioProyecto = reactive({
+  titulo: '',
+  descripcion: '',
+  imagen: '',
+  tecnologias: [],
+  enlaceDemo: '',
+  enlaceGithub: '',
+  esEstrella: false,
+  caracteristicas: []
+})
+
+// Datos para proyectos
+const proyectos = ref([])
+
+// Imágenes disponibles del CDN
+const imagenesDisponibles = ref([
+  {
+    nombre: 'Sistema de Gestión',
+    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/sistema-gestion.jpg'
+  },
+  {
+    nombre: 'E-commerce',
+    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/ecommerce.jpg'
+  },
+  {
+    nombre: 'Dashboard',
+    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/dashboard.jpg'
+  },
+  {
+    nombre: 'App Móvil',
+    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/app-movil.jpg'
+  },
+  {
+    nombre: 'API Microservicios',
+    url: 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/img/proyectos/api-microservicios.jpg'
+  }
+])
+
+// Tecnologías disponibles
+const tecnologiasDisponibles = [
+  'Vue.js', 'React', 'Angular', 'Node.js', 'Express.js', 'Python', 'Java',
+  'Spring Boot', 'PostgreSQL', 'MongoDB', 'Firebase', 'MySQL', 'Docker',
+  'AWS', 'Google Cloud', 'JavaScript', 'TypeScript', 'HTML', 'CSS',
+  'Bootstrap', 'Tailwind CSS', 'Vuetify', 'Material UI', 'Redux', 'Vuex',
+  'Pinia', 'Chart.js', 'D3.js', 'Stripe', 'PayPal', 'Socket.io', 'GraphQL',
+  'REST API', 'Microservicios', 'Git', 'GitHub', 'GitLab', 'Figma', 'Adobe XD'
+]
+
+// Reglas de validación
+const rules = {
+  required: value => !!value || 'Este campo es obligatorio'
+}
 
 // Computed properties
 const mensajes = computed(() => store.mensajes)
@@ -281,6 +492,15 @@ const headersCV = [
   { title: 'Empresa', key: 'empresa' },
   { title: 'Posición', key: 'posicion' },
   { title: 'Fecha', key: 'fechaCreacion' },
+  { title: 'Acciones', key: 'actions', sortable: false }
+]
+
+const headersProyectos = [
+  { title: 'Imagen', key: 'imagen', sortable: false },
+  { title: 'Título', key: 'titulo' },
+  { title: 'Descripción', key: 'descripcion' },
+  { title: 'Tipo', key: 'esEstrella', sortable: false },
+  { title: 'Tecnologías', key: 'tecnologias', sortable: false },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
 
@@ -361,9 +581,136 @@ const cerrarSesion = () => {
   router.push('/admin/login')
 }
 
+// Funciones para gestión de proyectos
+const cargarProyectos = async () => {
+  // Por ahora usamos datos de ejemplo, luego se conectará con Firebase
+  proyectos.value = [
+    {
+      id: '1',
+      titulo: 'De Una Transferencias',
+      descripcion: 'Sistema SaaS completo para gestión de transferencias financieras y administración de cuentas.',
+      imagen: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+      tecnologias: ['Vue.js', 'Node.js', 'PostgreSQL', 'Firebase'],
+      enlaceDemo: 'https://deuna.com',
+      enlaceGithub: 'https://github.com/maikostudios/deuna',
+      esEstrella: true,
+      caracteristicas: ['Dashboard administrativo', 'API REST', 'Autenticación segura', 'Reportes en tiempo real']
+    },
+    {
+      id: '2',
+      titulo: 'E-commerce Moderno',
+      descripcion: 'Tienda online con carrito de compras, integración de pagos y panel administrativo completo.',
+      imagen: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
+      tecnologias: ['React', 'Stripe', 'MongoDB'],
+      enlaceDemo: '',
+      enlaceGithub: '',
+      esEstrella: false,
+      caracteristicas: []
+    }
+  ]
+}
+
+const abrirFormularioProyecto = (proyecto = null) => {
+  if (proyecto) {
+    // Editar proyecto existente
+    proyectoEditando.value = proyecto
+    Object.assign(formularioProyecto, proyecto)
+  } else {
+    // Nuevo proyecto
+    proyectoEditando.value = null
+    Object.assign(formularioProyecto, {
+      titulo: '',
+      descripcion: '',
+      imagen: '',
+      tecnologias: [],
+      enlaceDemo: '',
+      enlaceGithub: '',
+      esEstrella: false,
+      caracteristicas: []
+    })
+  }
+  dialogProyecto.value = true
+}
+
+const cerrarFormularioProyecto = () => {
+  dialogProyecto.value = false
+  proyectoEditando.value = null
+  formProyecto.value?.resetValidation()
+}
+
+const editarProyecto = (proyecto) => {
+  abrirFormularioProyecto(proyecto)
+}
+
+const eliminarProyecto = (proyecto) => {
+  proyectoAEliminar.value = proyecto
+  dialogEliminar.value = true
+}
+
+const confirmarEliminacion = async () => {
+  if (proyectoAEliminar.value) {
+    // Aquí se implementaría la eliminación en Firebase
+    const index = proyectos.value.findIndex(p => p.id === proyectoAEliminar.value.id)
+    if (index > -1) {
+      proyectos.value.splice(index, 1)
+    }
+
+    dialogEliminar.value = false
+    proyectoAEliminar.value = null
+
+    // Mostrar notificación de éxito
+    console.log('Proyecto eliminado exitosamente')
+  }
+}
+
+const guardarProyecto = async () => {
+  if (!formularioValido.value) return
+
+  guardandoProyecto.value = true
+
+  try {
+    const proyectoData = {
+      titulo: formularioProyecto.titulo,
+      descripcion: formularioProyecto.descripcion,
+      imagen: formularioProyecto.imagen,
+      tecnologias: formularioProyecto.tecnologias,
+      enlaceDemo: formularioProyecto.enlaceDemo,
+      enlaceGithub: formularioProyecto.enlaceGithub,
+      esEstrella: formularioProyecto.esEstrella,
+      caracteristicas: formularioProyecto.caracteristicas
+    }
+
+    if (proyectoEditando.value) {
+      // Actualizar proyecto existente
+      const index = proyectos.value.findIndex(p => p.id === proyectoEditando.value.id)
+      if (index > -1) {
+        proyectos.value[index] = { ...proyectoEditando.value, ...proyectoData }
+      }
+    } else {
+      // Crear nuevo proyecto
+      const nuevoProyecto = {
+        id: Date.now().toString(),
+        ...proyectoData
+      }
+      proyectos.value.push(nuevoProyecto)
+    }
+
+    cerrarFormularioProyecto()
+
+    // Mostrar notificación de éxito
+    console.log('Proyecto guardado exitosamente')
+
+  } catch (error) {
+    console.error('Error al guardar proyecto:', error)
+  } finally {
+    guardandoProyecto.value = false
+  }
+}
+
 // Inicialización
 onMounted(() => {
   cargarDatos()
+  cargarProyectos()
 })
 </script>
 
@@ -467,11 +814,13 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.habilidades, .tecnologias {
+.habilidades,
+.tecnologias {
   margin: 1rem 0;
 }
 
-.habilidades-chips, .tecnologias-chips {
+.habilidades-chips,
+.tecnologias-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -524,5 +873,75 @@ onMounted(() => {
   .cv-info-grid {
     grid-template-columns: 1fr;
   }
+
+  .proyecto-imagen-mini {
+    width: 50px;
+    height: 35px;
+  }
+
+  .tecnologias-mini {
+    max-width: 150px;
+  }
+
+  .imagen-seleccionada {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Estilos específicos para gestión de portafolio */
+.proyecto-imagen-mini {
+  width: 60px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.proyecto-imagen-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tecnologias-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 200px;
+}
+
+.imagen-seleccionada {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.imagen-seleccionada img {
+  width: 40px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.imagen-opcion {
+  width: 50px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para el formulario de proyecto */
+.v-dialog .v-card {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.v-dialog .v-card-title {
+  background: rgba(0, 204, 204, 0.1);
+  color: var(--color-primary);
+  font-weight: 600;
 }
 </style>
