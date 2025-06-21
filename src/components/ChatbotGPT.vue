@@ -15,7 +15,9 @@
             <v-icon color="white">mdi-robot</v-icon>
           </v-avatar>
           <div class="header-text">
-            <h4>Asistente Maiko Studios</h4>
+
+            <h5>MaikoBot 🤖</h5>
+            <h6>Asistente de Maiko Studios</h6>
             <span class="status">En línea</span>
           </div>
         </div>
@@ -28,22 +30,15 @@
       <v-card-text class="chat-messages" ref="mensajesContainer">
         <!-- Mensaje de bienvenida -->
         <div v-if="mensajes.length === 0" class="mensaje-bienvenida">
-          <v-icon color="primary" size="48">mdi-hand-wave</v-icon>
-          <h3>¡Hola! Soy el asistente de Maiko Studios</h3>
-          <p>¿En qué puedo ayudarte hoy?</p>
+          <v-icon color="primary" size="48">mdi-robot</v-icon>
+          <h3>¡Hola! Soy MaikoBot 🤖</h3>
+          <p>{{ mensajeInicial }}</p>
 
-          <!-- Aviso de modo demo -->
-          <v-alert type="info" variant="tonal" density="compact" class="demo-alert">
-            <small>Modo Demo: Respuestas predefinidas (GPT no configurado)</small>
-          </v-alert>
-
-          <!-- Respuestas rápidas iniciales -->
-          <div class="respuestas-rapidas">
-            <v-chip v-for="respuesta in respuestasRapidasIniciales" :key="respuesta" class="respuesta-chip"
-              color="primary" variant="outlined" @click="enviarRespuestaRapida(respuesta)">
-              {{ respuesta }}
-            </v-chip>
-          </div>
+          <!-- Indicador de estado -->
+          <v-chip :color="estadoConversacion === 'inicio' ? 'primary' : 'success'" variant="outlined" size="small"
+            class="estado-chip">
+            {{ estadoConversacion === 'inicio' ? 'Esperando tu nombre' : 'Conversación activa' }}
+          </v-chip>
         </div>
 
         <!-- Mensajes de la conversación -->
@@ -66,12 +61,14 @@
           </div>
         </div>
 
-        <!-- Respuestas rápidas dinámicas -->
-        <div v-if="respuestasRapidas.length > 0" class="respuestas-rapidas">
-          <v-chip v-for="respuesta in respuestasRapidas" :key="respuesta" class="respuesta-chip" color="secondary"
-            variant="outlined" size="small" @click="enviarRespuestaRapida(respuesta)">
-            {{ respuesta }}
-          </v-chip>
+        <!-- Indicador de derivación a humano -->
+        <div v-if="derivadoAHumano" class="derivacion-humano">
+          <v-alert type="warning" variant="tonal" density="compact">
+            <v-icon>mdi-account-supervisor</v-icon>
+            <strong>Conversación derivada a equipo humano</strong>
+            <br>
+            <small>Te contactaremos pronto por WhatsApp o email</small>
+          </v-alert>
         </div>
       </v-card-text>
 
@@ -90,7 +87,7 @@
 
       <!-- Footer con información -->
       <div class="chat-footer">
-        <small>Powered by GPT • Maiko Studios</small>
+        <small>Powered by IA • Maiko Studios</small>
       </div>
     </v-card>
   </div>
@@ -98,23 +95,27 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { obtenerRespuestaGPT, generarRespuestasRapidas, notificarLead } from '@/services/gptService'
+import {
+  obtenerSaludoInicial,
+  crearConversacion,
+  manejarMensajeUsuario
+} from '@/services/chatbotService'
 
-// Estado del chatbot
+// Estado del chatbot mejorado
 const chatAbierto = ref(false)
 const mensajeActual = ref('')
 const escribiendo = ref(false)
 const mensajes = reactive([])
-const respuestasRapidas = ref([])
 const mensajesContainer = ref(null)
 
-// Respuestas rápidas iniciales
-const respuestasRapidasIniciales = [
-  '¿Qué servicios ofrecen?',
-  'Quiero una cotización',
-  'Ver portfolio',
-  'Contactar a Michael'
-]
+// Estado de la conversación
+const conversacionId = ref(null)
+const estadoConversacion = ref('inicio') // inicio, esperandoContacto, preguntarDuda, finalizada
+const nombreUsuario = ref('')
+const derivadoAHumano = ref(false)
+
+// Mensaje inicial del bot
+const mensajeInicial = obtenerSaludoInicial()
 
 // Función para abrir el chat
 const abrirChat = () => {
@@ -129,68 +130,125 @@ const cerrarChat = () => {
   chatAbierto.value = false
 }
 
-// Función para enviar mensaje
+// Función para enviar mensaje con nuevo sistema
 const enviarMensaje = async () => {
-  if (!mensajeActual.value.trim()) return
-
   const mensaje = mensajeActual.value.trim()
+  if (!mensaje || escribiendo.value) return
 
-  // Agregar mensaje del usuario
-  mensajes.push({
-    texto: mensaje,
-    esUsuario: true,
-    timestamp: new Date()
-  })
+  // Si es el primer mensaje (estado inicio), crear conversación
+  if (estadoConversacion.value === 'inicio') {
+    try {
+      const resultado = await crearConversacion(mensaje)
 
-  mensajeActual.value = ''
-  escribiendo.value = true
+      if (resultado.success) {
+        // Nombre extraído correctamente
+        nombreUsuario.value = resultado.data.nombre
+        conversacionId.value = resultado.id
+        estadoConversacion.value = 'esperandoContacto'
 
-  await nextTick()
-  scrollToBottom()
+        // Agregar mensaje del usuario
+        mensajes.push({
+          texto: mensaje,
+          esUsuario: true,
+          timestamp: new Date()
+        })
 
-  try {
-    // Obtener respuesta de GPT
-    const historial = mensajes.map(m => ({
-      role: m.esUsuario ? 'user' : 'assistant',
-      content: m.texto
-    }))
+        // Respuesta del bot pidiendo contacto con el nombre extraído
+        const respuestaContacto = `¡Hola ${resultado.data.nombre}! 👋 Si se pierde la conversación, agradecería que me dejaras tu WhatsApp o correo electrónico para contactarte más tarde. ¿Cuál prefieres dejar?`
 
-    const resultado = await obtenerRespuestaGPT(mensaje, historial.slice(-10)) // Últimos 10 mensajes
+        mensajes.push({
+          texto: respuestaContacto,
+          esUsuario: false,
+          timestamp: new Date()
+        })
 
-    // Agregar respuesta del bot
-    mensajes.push({
-      texto: resultado.respuesta,
-      esUsuario: false,
-      timestamp: new Date()
-    })
+        mensajeActual.value = ''
+        await nextTick()
+        scrollToBottom()
+        return
+      } else if (resultado.error === 'nombre_invalido') {
+        // Error en extracción de nombre - mantener estado inicio
+        mensajes.push({
+          texto: mensaje,
+          esUsuario: true,
+          timestamp: new Date()
+        })
 
-    // Generar respuestas rápidas basadas en la categoría
-    respuestasRapidas.value = generarRespuestasRapidas(resultado.metadata.categoria)
+        mensajes.push({
+          texto: resultado.mensaje,
+          esUsuario: false,
+          timestamp: new Date()
+        })
 
-    // Notificar si es un lead potencial
-    if (resultado.metadata.esIntencionContratacion) {
-      await notificarLead(mensajes, resultado.metadata)
+        mensajeActual.value = ''
+        await nextTick()
+        scrollToBottom()
+        return
+      } else {
+        console.error('Error al crear conversación:', resultado.error)
+      }
+    } catch (error) {
+      console.error('Error al crear conversación:', error)
     }
+  }
 
-  } catch (error) {
-    console.error('Error en el chat:', error)
+  // Para mensajes posteriores, usar el sistema de manejo
+  if (conversacionId.value) {
+    // Agregar mensaje del usuario
     mensajes.push({
-      texto: 'Disculpa, hubo un error. ¿Podrías intentar de nuevo?',
-      esUsuario: false,
+      texto: mensaje,
+      esUsuario: true,
       timestamp: new Date()
     })
-  } finally {
-    escribiendo.value = false
+
+    mensajeActual.value = ''
+    escribiendo.value = true
+
     await nextTick()
     scrollToBottom()
+
+    try {
+      const resultado = await manejarMensajeUsuario(mensaje, conversacionId.value, estadoConversacion.value)
+
+      if (resultado.success) {
+        // Agregar respuesta del bot
+        mensajes.push({
+          texto: resultado.respuesta,
+          esUsuario: false,
+          timestamp: new Date()
+        })
+
+        // Actualizar estado
+        estadoConversacion.value = resultado.nuevoEstado
+        derivadoAHumano.value = resultado.derivadoAHumano
+
+      } else {
+        mensajes.push({
+          texto: resultado.respuesta || 'Disculpa, hubo un error. ¿Podrías intentar de nuevo?',
+          esUsuario: false,
+          timestamp: new Date()
+        })
+      }
+
+    } catch (error) {
+      console.error('Error en el chat:', error)
+      mensajes.push({
+        texto: 'Disculpa, hubo un error técnico. ¿Podrías intentar de nuevo?',
+        esUsuario: false,
+        timestamp: new Date()
+      })
+    } finally {
+      escribiendo.value = false
+      await nextTick()
+      scrollToBottom()
+    }
   }
 }
 
-// Función para enviar respuesta rápida
+// Función para enviar respuesta rápida (simplificada)
 const enviarRespuestaRapida = (respuesta) => {
   mensajeActual.value = respuesta
   enviarMensaje()
-  respuestasRapidas.value = []
 }
 
 // Función para hacer scroll al final
@@ -264,8 +322,11 @@ onMounted(() => {
   height: 500px;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -297,13 +358,13 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--color-background);
 }
 
 .mensaje-bienvenida {
   text-align: center;
   padding: 2rem 1rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .mensaje-bienvenida h3 {
@@ -311,7 +372,11 @@ onMounted(() => {
   margin: 1rem 0 0.5rem 0;
 }
 
-.demo-alert {
+.estado-chip {
+  margin: 1rem 0;
+}
+
+.derivacion-humano {
   margin: 1rem 0;
   max-width: 300px;
 }
@@ -342,9 +407,9 @@ onMounted(() => {
 }
 
 .mensaje-bot .mensaje-contenido {
-  background: white;
-  color: #333;
-  border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mensaje-texto {
@@ -354,6 +419,7 @@ onMounted(() => {
 .mensaje-hora {
   font-size: 0.7rem;
   opacity: 0.7;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .typing-indicator {
@@ -366,7 +432,7 @@ onMounted(() => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #999;
+  background: var(--color-primary);
   animation: typing 1.4s infinite ease-in-out;
 }
 
@@ -409,16 +475,16 @@ onMounted(() => {
 
 .chat-input {
   padding: 1rem;
-  background: white;
-  border-top: 1px solid #e0e0e0;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .chat-footer {
   text-align: center;
   padding: 0.5rem;
-  background: #f8f9fa;
-  border-top: 1px solid #e0e0e0;
-  color: #999;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 @media (max-width: 480px) {
