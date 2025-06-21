@@ -17,11 +17,11 @@
                         </p>
 
                         <div class="contact-methods">
-                            <a href="mailto:m.esteban.saez@gmail.com" class="contact-method">
+                            <a href="mailto:contacto@maikostudios.com" class="contact-method">
                                 <v-icon color="primary">mdi-email</v-icon>
                                 <div>
                                     <strong>Email</strong>
-                                    <span>m.esteban.saez@gmail.com</span>
+                                    <span>contacto@maikostudios.com</span>
                                 </div>
                             </a>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,22 +13,26 @@
             padding: 20px;
             background: #f5f5f5;
         }
+
         .test-container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .test-step {
             margin: 20px 0;
             padding: 15px;
             border-left: 4px solid #00cccc;
             background: #f8f9fa;
         }
+
         .test-step h3 {
             margin: 0 0 10px 0;
             color: #333;
         }
+
         .credentials {
             background: #e9ecef;
             padding: 15px;
@@ -36,6 +41,7 @@
             font-size: 14px;
             margin: 10px 0;
         }
+
         .test-button {
             background: #00cccc;
             color: white;
@@ -46,29 +52,35 @@
             font-size: 16px;
             margin: 10px 5px;
         }
+
         .test-button:hover {
             background: #0099aa;
         }
+
         .test-result {
             margin: 15px 0;
             padding: 15px;
             border-radius: 5px;
         }
+
         .success {
             background: #d4edda;
             border: 1px solid #c3e6cb;
             color: #155724;
         }
+
         .error {
             background: #f8d7da;
             border: 1px solid #f5c6cb;
             color: #721c24;
         }
+
         .info {
             background: #d1ecf1;
             border: 1px solid #bee5eb;
             color: #0c5460;
         }
+
         .warning {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -76,6 +88,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="test-container">
         <h1>🔐 Prueba Login Administrador MaikoStudios</h1>
@@ -87,14 +100,14 @@
                 <strong>🎯 Credenciales Principales (Testing):</strong><br>
                 Email: maikostudios@gmail.com<br>
                 Contraseña: 123456<br><br>
-                
+
                 <strong>🔧 Credenciales Alternativas (Desarrollo):</strong><br>
                 Email: admin@maikostudios.com<br>
                 Contraseña: admin123<br><br>
-                
+
                 <strong>📧 Emails Autorizados:</strong><br>
                 - maikostudios@gmail.com<br>
-                - m.esteban.saez@gmail.com<br>
+                - contacto@maikostudios.com<br>
                 - admin@maikostudios.com<br>
                 - michael@maikostudios.com
             </div>
@@ -102,7 +115,7 @@
 
         <div class="test-step">
             <h3>🧪 Pruebas de Autenticación</h3>
-            
+
             <h4>1. Modo Testing (Firebase Auth deshabilitado)</h4>
             <div class="credentials">
                 Email: maikostudios@gmail.com<br>
@@ -167,11 +180,11 @@
 
         function probarCredencialesTesting() {
             mostrarResultado('testing-result', 'info', '⏳ Probando credenciales de testing...');
-            
+
             // Simular el flujo de autenticación de testing
             const email = 'maikostudios@gmail.com';
             const password = '123456';
-            
+
             setTimeout(() => {
                 if (email === 'maikostudios@gmail.com' && password === '123456') {
                     mostrarResultado('testing-result', 'success', `
@@ -189,10 +202,10 @@
 
         function probarCredencialesDesarrollo() {
             mostrarResultado('desarrollo-result', 'info', '⏳ Probando credenciales de desarrollo...');
-            
+
             const email = 'admin@maikostudios.com';
             const password = 'admin123';
-            
+
             setTimeout(() => {
                 if (email === 'admin@maikostudios.com' && password === 'admin123') {
                     mostrarResultado('desarrollo-result', 'success', `
@@ -210,11 +223,11 @@
 
         function probarFirebaseAuth() {
             mostrarResultado('firebase-result', 'info', '⏳ Verificando configuración de Firebase Auth...');
-            
+
             setTimeout(() => {
                 // Simular verificación de Firebase
                 const firebaseConfigured = Math.random() > 0.5; // Simulación
-                
+
                 if (firebaseConfigured) {
                     mostrarResultado('firebase-result', 'warning', `
                         ⚠️ Firebase Auth configurado<br>
@@ -244,11 +257,11 @@
         function verificarEstadoAuth() {
             const isAuth = localStorage.getItem('admin_authenticated') === 'true';
             const userData = localStorage.getItem('admin_user');
-            
+
             let estado = 'No autenticado';
             let usuario = 'Ninguno';
             let modo = 'Desconocido';
-            
+
             if (isAuth && userData) {
                 try {
                     const user = JSON.parse(userData);
@@ -259,7 +272,7 @@
                     estado = 'Error en datos de usuario';
                 }
             }
-            
+
             document.getElementById('auth-status').innerHTML = `
                 <strong>Estado:</strong> ${estado}<br>
                 <strong>Usuario:</strong> ${usuario}<br>
@@ -281,4 +294,5 @@
         setInterval(verificarEstadoAuth, 5000);
     </script>
 </body>
+
 </html>
