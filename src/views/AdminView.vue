@@ -47,6 +47,18 @@
           <v-card class="stat-card">
             <v-card-text>
               <div class="stat-content">
+                <v-icon color="info" size="48">mdi-folder-image</v-icon>
+                <div class="stat-info">
+                  <h3>{{ estadisticas.totalProyectos }}</h3>
+                  <p>Proyectos</p>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+
+          <v-card class="stat-card">
+            <v-card-text>
+              <div class="stat-content">
                 <v-icon color="accent" size="48">mdi-eye</v-icon>
                 <div class="stat-info">
                   <h3>{{ estadisticas.totalVisitas }}</h3>
@@ -470,8 +482,7 @@ const formularioProyecto = reactive({
   caracteristicas: []
 })
 
-// Datos para proyectos
-const proyectos = ref([])
+// Los proyectos ahora vienen del store
 
 // Tecnologías disponibles
 const tecnologiasDisponibles = [
@@ -491,6 +502,7 @@ const rules = {
 // Computed properties
 const mensajes = computed(() => store.mensajes)
 const solicitudesCV = computed(() => store.solicitudesCV)
+const proyectos = computed(() => store.proyectos)
 const mensajesNoLeidos = computed(() => store.mensajesNoLeidos)
 
 // Headers para las tablas
@@ -599,31 +611,11 @@ const cerrarSesion = () => {
 
 // Funciones para gestión de proyectos
 const cargarProyectos = async () => {
-  // Por ahora usamos datos de ejemplo, luego se conectará con Firebase
-  proyectos.value = [
-    {
-      id: '1',
-      titulo: 'De Una Transferencias',
-      descripcion: 'Sistema SaaS completo para gestión de transferencias financieras y administración de cuentas.',
-      imagen: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
-      tecnologias: ['Vue.js', 'Node.js', 'PostgreSQL', 'Firebase'],
-      enlaceDemo: 'https://deuna.com',
-      enlaceGithub: 'https://github.com/maikostudios/deuna',
-      esEstrella: true,
-      caracteristicas: ['Dashboard administrativo', 'API REST', 'Autenticación segura', 'Reportes en tiempo real']
-    },
-    {
-      id: '2',
-      titulo: 'E-commerce Moderno',
-      descripcion: 'Tienda online con carrito de compras, integración de pagos y panel administrativo completo.',
-      imagen: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
-      tecnologias: ['React', 'Stripe', 'MongoDB'],
-      enlaceDemo: '',
-      enlaceGithub: '',
-      esEstrella: false,
-      caracteristicas: []
-    }
-  ]
+  const resultado = await store.cargarProyectos()
+  if (resultado.success) {
+    estadisticas.totalProyectos = store.proyectos.length
+  }
+  return resultado
 }
 
 const abrirFormularioProyecto = (proyecto = null) => {
@@ -665,17 +657,18 @@ const eliminarProyecto = (proyecto) => {
 
 const confirmarEliminacion = async () => {
   if (proyectoAEliminar.value) {
-    // Aquí se implementaría la eliminación en Firebase
-    const index = proyectos.value.findIndex(p => p.id === proyectoAEliminar.value.id)
-    if (index > -1) {
-      proyectos.value.splice(index, 1)
+    const resultado = await store.eliminarProyecto(proyectoAEliminar.value.id)
+
+    if (resultado.success) {
+      dialogEliminar.value = false
+      proyectoAEliminar.value = null
+
+      // Mostrar notificación de éxito
+      console.log('✅ Proyecto eliminado exitosamente')
+    } else {
+      console.error('❌ Error al eliminar proyecto:', resultado.error)
+      // Aquí podrías mostrar una notificación de error
     }
-
-    dialogEliminar.value = false
-    proyectoAEliminar.value = null
-
-    // Mostrar notificación de éxito
-    console.log('Proyecto eliminado exitosamente')
   }
 }
 
@@ -696,28 +689,25 @@ const guardarProyecto = async () => {
       caracteristicas: formularioProyecto.caracteristicas
     }
 
+    let resultado
     if (proyectoEditando.value) {
       // Actualizar proyecto existente
-      const index = proyectos.value.findIndex(p => p.id === proyectoEditando.value.id)
-      if (index > -1) {
-        proyectos.value[index] = { ...proyectoEditando.value, ...proyectoData }
-      }
+      resultado = await store.actualizarProyecto(proyectoEditando.value.id, proyectoData)
     } else {
       // Crear nuevo proyecto
-      const nuevoProyecto = {
-        id: Date.now().toString(),
-        ...proyectoData
-      }
-      proyectos.value.push(nuevoProyecto)
+      resultado = await store.crearProyecto(proyectoData)
     }
 
-    cerrarFormularioProyecto()
-
-    // Mostrar notificación de éxito
-    console.log('Proyecto guardado exitosamente')
+    if (resultado.success) {
+      cerrarFormularioProyecto()
+      console.log('✅ Proyecto guardado exitosamente')
+    } else {
+      console.error('❌ Error al guardar proyecto:', resultado.error)
+      // Aquí podrías mostrar una notificación de error
+    }
 
   } catch (error) {
-    console.error('Error al guardar proyecto:', error)
+    console.error('❌ Error inesperado al guardar proyecto:', error)
   } finally {
     guardandoProyecto.value = false
   }

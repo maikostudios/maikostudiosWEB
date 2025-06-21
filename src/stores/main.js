@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { contactService, cvService, statsService } from "@/firebase/services";
+import { proyectosService } from "@/services/proyectosService";
 
 export const useMainStore = defineStore("main", () => {
   // Estado
@@ -9,10 +10,12 @@ export const useMainStore = defineStore("main", () => {
   const user = ref(null);
   const mensajes = ref([]);
   const solicitudesCV = ref([]);
+  const proyectos = ref([]);
   const estadisticas = ref({
     totalVisitas: 0,
     totalMensajes: 0,
     totalSolicitudesCV: 0,
+    totalProyectos: 0,
   });
 
   // Getters
@@ -141,15 +144,107 @@ export const useMainStore = defineStore("main", () => {
     }
   };
 
+  // Actions para proyectos
+  const cargarProyectos = async () => {
+    loading.value = true;
+    try {
+      const resultado = await proyectosService.obtenerProyectos();
+      if (resultado.success) {
+        proyectos.value = resultado.data;
+        estadisticas.value.totalProyectos = resultado.data.length;
+      }
+      return resultado;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const crearProyecto = async (datosProyecto) => {
+    loading.value = true;
+    try {
+      const resultado = await proyectosService.crearProyecto(datosProyecto);
+      if (resultado.success) {
+        // Recargar proyectos para obtener la lista actualizada
+        await cargarProyectos();
+      }
+      return resultado;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const actualizarProyecto = async (proyectoId, datosProyecto) => {
+    loading.value = true;
+    try {
+      const resultado = await proyectosService.actualizarProyecto(
+        proyectoId,
+        datosProyecto
+      );
+      if (resultado.success) {
+        // Actualizar el proyecto en el estado local
+        const index = proyectos.value.findIndex((p) => p.id === proyectoId);
+        if (index > -1) {
+          proyectos.value[index] = {
+            ...proyectos.value[index],
+            ...resultado.data,
+          };
+        }
+      }
+      return resultado;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const eliminarProyecto = async (proyectoId) => {
+    loading.value = true;
+    try {
+      const resultado = await proyectosService.eliminarProyecto(proyectoId);
+      if (resultado.success) {
+        // Remover el proyecto del estado local
+        const index = proyectos.value.findIndex((p) => p.id === proyectoId);
+        if (index > -1) {
+          proyectos.value.splice(index, 1);
+          estadisticas.value.totalProyectos = proyectos.value.length;
+        }
+      }
+      return resultado;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const obtenerProyectosActivos = async () => {
+    try {
+      const resultado = await proyectosService.obtenerProyectosActivos();
+      return resultado;
+    } catch (error) {
+      console.error("Error al obtener proyectos activos:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const obtenerProyectoEstrella = async () => {
+    try {
+      const resultado = await proyectosService.obtenerProyectoEstrella();
+      return resultado;
+    } catch (error) {
+      console.error("Error al obtener proyecto estrella:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   // Función para limpiar el estado (logout)
   const limpiarEstado = () => {
     user.value = null;
     mensajes.value = [];
     solicitudesCV.value = [];
+    proyectos.value = [];
     estadisticas.value = {
       totalVisitas: 0,
       totalMensajes: 0,
       totalSolicitudesCV: 0,
+      totalProyectos: 0,
     };
   };
 
@@ -159,6 +254,7 @@ export const useMainStore = defineStore("main", () => {
     user,
     mensajes,
     solicitudesCV,
+    proyectos,
     estadisticas,
 
     // Getters
@@ -175,6 +271,15 @@ export const useMainStore = defineStore("main", () => {
     actualizarEstadoCVReclutador,
     registrarVisita,
     cargarEstadisticas,
+
+    // Actions para proyectos
+    cargarProyectos,
+    crearProyecto,
+    actualizarProyecto,
+    eliminarProyecto,
+    obtenerProyectosActivos,
+    obtenerProyectoEstrella,
+
     limpiarEstado,
   };
 });
