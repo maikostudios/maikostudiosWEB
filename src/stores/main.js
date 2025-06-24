@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { contactService, cvService, statsService } from "@/firebase/services";
 import { proyectosService } from "@/services/proyectosService";
+import { geminiService } from "@/services/geminiService";
 
 export const useMainStore = defineStore("main", () => {
   // Estado
@@ -254,6 +255,71 @@ export const useMainStore = defineStore("main", () => {
     }
   };
 
+  // Función para generar CV personalizado con Gemini
+  const generarCVPersonalizado = async (datosSolicitud) => {
+    try {
+      console.log("🤖 Generando CV personalizado con Gemini...");
+      console.log("📋 Datos recibidos:", datosSolicitud);
+
+      // Crear prompt personalizado basado en los datos de la solicitud
+      const userPrompt = `
+🎯 PERSONALIZACIÓN ESPECÍFICA PARA ESTA SOLICITUD:
+
+📋 POSICIÓN OBJETIVO: ${datosSolicitud.posicion}
+🏢 EMPRESA: ${datosSolicitud.empresa || "No especificada"}
+👤 RECLUTADOR: ${datosSolicitud.reclutador || "No especificado"}
+
+🔧 HABILIDADES REQUERIDAS:
+${datosSolicitud.habilidades.map((h) => `- ${h}`).join("\n")}
+
+📝 DESCRIPCIÓN DEL CARGO:
+${datosSolicitud.descripcionCargo}
+
+💡 INSTRUCCIONES DE PERSONALIZACIÓN:
+- Adapta el perfil profesional para destacar experiencia relevante para "${
+        datosSolicitud.posicion
+      }"
+- Prioriza las habilidades técnicas mencionadas: ${datosSolicitud.habilidades.join(
+        ", "
+      )}
+- Optimiza las descripciones de experiencia laboral para incluir palabras clave del cargo
+- Enfoca el CV hacia las responsabilidades descritas en la oferta laboral
+- Mantén un tono profesional y técnico apropiado para el sector IT
+- Asegúrate de que el CV sea ATS-friendly con las palabras clave correctas
+
+🎯 OBJETIVO: Crear un CV altamente personalizado que maximice las posibilidades de pasar filtros ATS y captar la atención del reclutador para la posición de "${
+        datosSolicitud.posicion
+      }".
+      `;
+
+      // Llamar al servicio de Gemini para generar el CV
+      const resultado = await geminiService.generarCVPersonalizado(userPrompt);
+
+      if (resultado.success) {
+        console.log("✅ CV personalizado generado exitosamente");
+        return {
+          success: true,
+          html: resultado.html,
+          message: "CV personalizado generado exitosamente",
+        };
+      } else {
+        console.error("❌ Error en generación de CV:", resultado.error);
+        return {
+          success: false,
+          error: resultado.error || "Error al generar CV personalizado",
+          message: "Error al generar CV personalizado",
+        };
+      }
+    } catch (error) {
+      console.error("❌ Error inesperado en generación de CV:", error);
+      return {
+        success: false,
+        error: error.message,
+        message: "Error inesperado al generar CV personalizado",
+      };
+    }
+  };
+
   // Función para limpiar el estado (logout)
   const limpiarEstado = () => {
     user.value = null;
@@ -301,6 +367,9 @@ export const useMainStore = defineStore("main", () => {
     obtenerProyectoEstrella,
     obtenerProyectosEstrella,
     obtenerProyectosHome,
+
+    // Actions para CV
+    generarCVPersonalizado,
 
     limpiarEstado,
   };

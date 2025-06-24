@@ -265,7 +265,7 @@
                 formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
               <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{
                 solicitudSeleccionada.tipoSolicitud
-              }}</div>
+                }}</div>
             </div>
 
             <!-- Habilidades seleccionadas -->
@@ -616,9 +616,69 @@ const responderMensaje = () => {
   }
 }
 
-const generarCVPersonalizado = () => {
-  // Aquí se implementaría la lógica para generar el CV personalizado
-  console.log('Generando CV personalizado para:', solicitudSeleccionada.value)
+const generarCVPersonalizado = async () => {
+  if (!solicitudSeleccionada.value) {
+    console.error('❌ No hay solicitud seleccionada')
+    return
+  }
+
+  try {
+    console.log('🚀 Iniciando generación de CV personalizado para:', solicitudSeleccionada.value)
+
+    // Mostrar loading
+    loading.value = true
+
+    // Preparar datos para el CV
+    const datosSolicitud = {
+      posicion: solicitudSeleccionada.value.posicion,
+      habilidades: solicitudSeleccionada.value.habilidadesSeleccionadas || [],
+      descripcionCargo: solicitudSeleccionada.value.descripcionCargo || solicitudSeleccionada.value.descripcionPuesto || '',
+      empresa: solicitudSeleccionada.value.empresa || '',
+      reclutador: solicitudSeleccionada.value.reclutador || ''
+    }
+
+    console.log('📋 Datos de la solicitud:', datosSolicitud)
+
+    // Llamar al servicio de generación de CV
+    const resultado = await store.generarCVPersonalizado(datosSolicitud)
+
+    if (resultado.success) {
+      console.log('✅ CV generado exitosamente')
+
+      // Crear y descargar el archivo HTML
+      const blob = new Blob([resultado.html], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      // Mostrar mensaje de éxito
+      snackbar.value = true
+      snackbarText.value = '✅ CV personalizado generado y descargado exitosamente'
+      snackbarColor.value = 'success'
+
+      // Cerrar el dialog
+      dialogCV.value = false
+
+    } else {
+      console.error('❌ Error al generar CV:', resultado.error)
+      snackbar.value = true
+      snackbarText.value = `❌ Error al generar CV: ${resultado.error}`
+      snackbarColor.value = 'error'
+    }
+
+  } catch (error) {
+    console.error('❌ Error inesperado al generar CV:', error)
+    snackbar.value = true
+    snackbarText.value = `❌ Error inesperado: ${error.message}`
+    snackbarColor.value = 'error'
+  } finally {
+    loading.value = false
+  }
 }
 
 const formatearFecha = (fecha) => {
