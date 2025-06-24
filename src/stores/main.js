@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { contactService, cvService, statsService } from "@/firebase/services";
 import { proyectosService } from "@/services/proyectosService";
-import { geminiService } from "@/services/geminiService";
+import geminiService from "@/services/geminiService";
 
 export const useMainStore = defineStore("main", () => {
   // Estado
