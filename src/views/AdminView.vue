@@ -443,6 +443,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Snackbar para notificaciones -->
+    <v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="4000" location="top">
+      {{ snackbarText }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar = false">
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </BaseLayout>
 </template>
 
@@ -487,6 +497,11 @@ const formularioValido = ref(false)
 const guardandoProyecto = ref(false)
 const formProyecto = ref(null)
 const poblando = ref(false)
+
+// Variables para snackbar
+const snackbar = ref(false)
+const snackbarText = ref('')
+const snackbarColor = ref('success')
 
 // Datos reactivos
 const estadisticas = reactive({
@@ -645,20 +660,37 @@ const generarCVPersonalizado = async () => {
     if (resultado.success) {
       console.log('✅ CV generado exitosamente')
 
-      // Crear y descargar el archivo HTML
-      const blob = new Blob([resultado.html], { type: 'text/html' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+      // Generar PDF usando html2pdf.js
+      const { default: html2pdf } = await import('html2pdf.js')
+
+      // Configuración para PDF
+      const opt = {
+        margin: 0.5,
+        filename: `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }
+
+      // Crear elemento temporal para el HTML
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = resultado.html
+      tempDiv.style.position = 'absolute'
+      tempDiv.style.left = '-9999px'
+      document.body.appendChild(tempDiv)
+
+      try {
+        // Generar y descargar PDF
+        await html2pdf().set(opt).from(tempDiv).save()
+        console.log('📄 PDF generado y descargado exitosamente')
+      } finally {
+        // Limpiar elemento temporal
+        document.body.removeChild(tempDiv)
+      }
 
       // Mostrar mensaje de éxito
       snackbar.value = true
-      snackbarText.value = '✅ CV personalizado generado y descargado exitosamente'
+      snackbarText.value = '✅ CV personalizado generado y descargado como PDF exitosamente'
       snackbarColor.value = 'success'
 
       // Cerrar el dialog

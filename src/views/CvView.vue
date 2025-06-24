@@ -41,7 +41,8 @@
                                     <v-icon left>mdi-form-select</v-icon>
                                     {{ mostrarFormularioIntegrado ? 'Ocultar Formulario' : 'Personalizar CV' }}
                                 </v-btn>
-                                <v-btn variant="outlined" block @click="generarCVDinamico" :disabled="!formularioCompleto" class="mt-2">
+                                <v-btn variant="outlined" block @click="generarCVDinamico"
+                                    :disabled="!formularioCompleto" class="mt-2">
                                     <v-icon left>mdi-magic-staff</v-icon>
                                     Generar CV Personalizado
                                 </v-btn>
@@ -71,335 +72,253 @@
                     </div>
                 </div>
 
-            <!-- Formulario integrado para personalizar CV -->
-            <div v-if="mostrarFormularioIntegrado" id="formulario-integrado" class="formulario-integrado">
-                <v-card class="form-card">
-                    <v-card-title class="form-title">
-                        <v-icon left color="secondary">mdi-account-edit</v-icon>
-                        Personalizar CV para Oferta Específica
-                    </v-card-title>
+                <!-- Formulario integrado para personalizar CV -->
+                <div v-if="mostrarFormularioIntegrado" id="formulario-integrado" class="formulario-integrado">
+                    <v-card class="form-card">
+                        <v-card-title class="form-title">
+                            <v-icon left color="secondary">mdi-account-edit</v-icon>
+                            Personalizar CV para Oferta Específica
+                        </v-card-title>
 
-                    <v-card-text>
-                        <v-form ref="formRef" v-model="valid">
-                            <!-- Información del reclutador -->
+                        <v-card-text>
+                            <v-form ref="formRef" v-model="valid">
+                                <!-- Información del reclutador -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <v-icon left>mdi-account-tie</v-icon>
+                                        Información del Reclutador
+                                    </h3>
+                                    <v-row>
+                                        <v-col cols="12" md="6">
+                                            <v-text-field v-model="formulario.nombreReclutador"
+                                                label="Nombre del Reclutador" :rules="[rules.required]"
+                                                variant="outlined" density="comfortable" />
+                                        </v-col>
+                                        <v-col cols="12" md="6">
+                                            <v-text-field v-model="formulario.email" label="Email del Reclutador"
+                                                :rules="[rules.required, rules.email]" variant="outlined"
+                                                density="comfortable" />
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" md="6">
+                                            <v-text-field v-model="formulario.empresa" label="Empresa"
+                                                :rules="[rules.required]" variant="outlined" density="comfortable" />
+                                        </v-col>
+                                        <v-col cols="12" md="6">
+                                            <v-text-field v-model="formulario.posicion" label="Posición/Cargo"
+                                                :rules="[rules.required]" variant="outlined" density="comfortable" />
+                                        </v-col>
+                                    </v-row>
+                                </div>
+
+                                <!-- Habilidades -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <v-icon left>mdi-brain</v-icon>
+                                        Habilidades Requeridas
+                                    </h3>
+                                    <p class="section-description">
+                                        Selecciona o escribe las habilidades más relevantes para esta posición
+                                    </p>
+
+
+
+                                    <!-- Selector de habilidades simplificado -->
+                                    <v-text-field v-model="nuevaHabilidad"
+                                        label="Agregar habilidad (ej: Vue.js, Python, Figma)" variant="outlined"
+                                        density="comfortable" prepend-inner-icon="mdi-plus"
+                                        hint="Escribe una habilidad y presiona Enter para agregar" persistent-hint
+                                        @keyup.enter="agregarHabilidadSimple" />
+
+                                    <!-- Habilidades seleccionadas -->
+                                    <div v-if="formulario.habilidadesSeleccionadas.length > 0" class="selected-skills">
+                                        <h4 class="selected-title">
+                                            <v-icon left>mdi-check-circle</v-icon>
+                                            Habilidades Seleccionadas ({{ formulario.habilidadesSeleccionadas.length }})
+                                        </h4>
+                                        <div class="selected-chips">
+                                            <v-chip v-for="skill in formulario.habilidadesSeleccionadas" :key="skill"
+                                                color="primary" variant="flat" size="small" closable
+                                                class="selected-chip" @click:close="removeSkill(skill)">
+                                                <v-icon left size="small">mdi-star</v-icon>
+                                                {{ skill }}
+                                            </v-chip>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Descripción del cargo -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <v-icon left>mdi-text-box</v-icon>
+                                        Descripción del Cargo
+                                    </h3>
+                                    <v-textarea v-model="formulario.descripcionCargo"
+                                        label="Pega aquí la descripción completa del trabajo"
+                                        :rules="[rules.required, rules.minLength]" variant="outlined" rows="6"
+                                        counter="500"
+                                        hint="Incluye responsabilidades, requisitos y cualquier información relevante (mínimo 50 caracteres)" />
+                                </div>
+                            </v-form>
+                        </v-card-text>
+
+                        <v-card-actions class="form-actions">
+                            <v-btn color="primary" size="large" :disabled="!formularioCompleto"
+                                :loading="generandoConGemini" @click="generarCVPersonalizadoConGemini"
+                                class="generate-btn">
+                                <v-icon left>mdi-robot</v-icon>
+                                Generar CV Personalizado con IA
+                            </v-btn>
+
+                            <v-btn variant="outlined" @click="limpiarFormulario" class="ml-2">
+                                <v-icon left>mdi-refresh</v-icon>
+                                Limpiar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </div>
+
+                <!-- Formulario Gemini AI -->
+                <div v-if="mostrarFormularioGemini" id="formulario-gemini" class="formulario-integrado">
+                    <v-card class="form-card" style="border: 2px solid #2196f3;">
+                        <v-card-title class="form-title"
+                            style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.2));">
+                            <v-icon left color="blue">mdi-google</v-icon>
+                            Generar CV con Gemini AI
+                            <v-chip color="blue" size="small" class="ml-2">1.5 Flash</v-chip>
+                        </v-card-title>
+
+                        <v-card-text>
+                            <!-- Estado de conexión -->
+                            <v-alert v-if="conexionGemini" :type="conexionGemini.success ? 'success' : 'error'"
+                                class="mb-4">
+                                <template v-if="conexionGemini.testing">
+                                    <v-progress-circular indeterminate size="16" class="mr-2"></v-progress-circular>
+                                    Probando conexión con Gemini...
+                                </template>
+                                <template v-else-if="conexionGemini.success">
+                                    ✅ Conexión exitosa con Gemini: {{ conexionGemini.response }}
+                                </template>
+                                <template v-else>
+                                    ❌ Error de conexión: {{ conexionGemini.error }}
+                                </template>
+                            </v-alert>
+
+                            <!-- Prompts rápidos -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <v-icon left>mdi-account-tie</v-icon>
-                                    Información del Reclutador
-                                </h3>
-                                <v-row>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field
-                                            v-model="formulario.nombreReclutador"
-                                            label="Nombre del Reclutador"
-                                            :rules="[rules.required]"
-                                            variant="outlined"
-                                            density="comfortable"
-                                        />
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field
-                                            v-model="formulario.email"
-                                            label="Email del Reclutador"
-                                            :rules="[rules.required, rules.email]"
-                                            variant="outlined"
-                                            density="comfortable"
-                                        />
-                                    </v-col>
-                                </v-row>
-                                <v-row>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field
-                                            v-model="formulario.empresa"
-                                            label="Empresa"
-                                            :rules="[rules.required]"
-                                            variant="outlined"
-                                            density="comfortable"
-                                        />
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field
-                                            v-model="formulario.posicion"
-                                            label="Posición/Cargo"
-                                            :rules="[rules.required]"
-                                            variant="outlined"
-                                            density="comfortable"
-                                        />
-                                    </v-col>
-                                </v-row>
-                            </div>
-
-                            <!-- Habilidades -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <v-icon left>mdi-brain</v-icon>
-                                    Habilidades Requeridas
+                                    <v-icon left>mdi-lightning-bolt</v-icon>
+                                    Prompts Rápidos
                                 </h3>
                                 <p class="section-description">
-                                    Selecciona o escribe las habilidades más relevantes para esta posición
+                                    Selecciona un tipo de CV o escribe tu propio prompt personalizado
                                 </p>
 
-
-
-                                <!-- Selector de habilidades simplificado -->
-                                <v-text-field
-                                    v-model="nuevaHabilidad"
-                                    label="Agregar habilidad (ej: Vue.js, Python, Figma)"
-                                    variant="outlined"
-                                    density="comfortable"
-                                    prepend-inner-icon="mdi-plus"
-                                    hint="Escribe una habilidad y presiona Enter para agregar"
-                                    persistent-hint
-                                    @keyup.enter="agregarHabilidadSimple"
-                                />
-
-                                <!-- Habilidades seleccionadas -->
-                                <div v-if="formulario.habilidadesSeleccionadas.length > 0" class="selected-skills">
-                                    <h4 class="selected-title">
-                                        <v-icon left>mdi-check-circle</v-icon>
-                                        Habilidades Seleccionadas ({{ formulario.habilidadesSeleccionadas.length }})
-                                    </h4>
-                                    <div class="selected-chips">
-                                        <v-chip
-                                            v-for="skill in formulario.habilidadesSeleccionadas"
-                                            :key="skill"
-                                            color="primary"
-                                            variant="flat"
-                                            size="small"
-                                            closable
-                                            class="selected-chip"
-                                            @click:close="removeSkill(skill)"
-                                        >
-                                            <v-icon left size="small">mdi-star</v-icon>
-                                            {{ skill }}
-                                        </v-chip>
-                                    </div>
+                                <div class="skills-grid mb-4">
+                                    <v-chip color="blue" variant="outlined" class="skill-chip"
+                                        @click="generarPromptOptimizado('frontend')">
+                                        Frontend Developer
+                                    </v-chip>
+                                    <v-chip color="blue" variant="outlined" class="skill-chip"
+                                        @click="generarPromptOptimizado('backend')">
+                                        Backend Developer
+                                    </v-chip>
+                                    <v-chip color="blue" variant="outlined" class="skill-chip"
+                                        @click="generarPromptOptimizado('fullstack')">
+                                        Full Stack
+                                    </v-chip>
+                                    <v-chip color="blue" variant="outlined" class="skill-chip"
+                                        @click="generarPromptOptimizado('lider')">
+                                        Tech Lead
+                                    </v-chip>
+                                    <v-chip color="blue" variant="outlined" class="skill-chip"
+                                        @click="generarPromptOptimizado('docente')">
+                                        Facilitador/Docente
+                                    </v-chip>
                                 </div>
                             </div>
 
-                            <!-- Descripción del cargo -->
+                            <!-- Prompt personalizado -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <v-icon left>mdi-text-box</v-icon>
-                                    Descripción del Cargo
+                                    <v-icon left>mdi-message-text</v-icon>
+                                    Describe tu CV ideal
                                 </h3>
-                                <v-textarea
-                                    v-model="formulario.descripcionCargo"
-                                    label="Pega aquí la descripción completa del trabajo"
-                                    :rules="[rules.required, rules.minLength]"
-                                    variant="outlined"
-                                    rows="6"
-                                    counter="500"
-                                    hint="Incluye responsabilidades, requisitos y cualquier información relevante (mínimo 50 caracteres)"
-                                />
+                                <v-textarea v-model="promptGemini" label="Describe cómo quieres que sea tu CV"
+                                    placeholder="Ejemplo: 'CV para desarrollador frontend en startup, destacar Vue.js y experiencia en UX, para empresa tecnológica innovadora'"
+                                    variant="outlined" rows="4" counter="500"
+                                    hint="Sé específico: menciona el tipo de empresa, posición, tecnologías a destacar, etc." />
                             </div>
-                        </v-form>
-                    </v-card-text>
+                        </v-card-text>
 
-                    <v-card-actions class="form-actions">
-                        <v-btn
-                            color="primary"
-                            size="large"
-                            :disabled="!formularioCompleto"
-                            :loading="generandoConGemini"
-                            @click="generarCVPersonalizadoConGemini"
-                            class="generate-btn"
-                        >
-                            <v-icon left>mdi-robot</v-icon>
-                            Generar CV Personalizado con IA
-                        </v-btn>
+                        <v-card-actions class="form-actions">
+                            <v-btn color="blue" size="large" :disabled="!promptGemini.trim()"
+                                :loading="generandoConGemini" @click="generarCVConGemini" class="generate-btn">
+                                <v-icon left>mdi-google</v-icon>
+                                Generar con Gemini AI
+                            </v-btn>
 
-                        <v-btn
-                            variant="outlined"
-                            @click="limpiarFormulario"
-                            class="ml-2"
-                        >
-                            <v-icon left>mdi-refresh</v-icon>
-                            Limpiar
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </div>
+                            <v-btn variant="outlined" @click="limpiarResultadoGemini" class="ml-2">
+                                <v-icon left>mdi-refresh</v-icon>
+                                Limpiar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </div>
 
-            <!-- Formulario Gemini AI -->
-            <div v-if="mostrarFormularioGemini" id="formulario-gemini" class="formulario-integrado">
-                <v-card class="form-card" style="border: 2px solid #2196f3;">
-                    <v-card-title class="form-title" style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.2));">
-                        <v-icon left color="blue">mdi-google</v-icon>
-                        Generar CV con Gemini AI
-                        <v-chip color="blue" size="small" class="ml-2">1.5 Flash</v-chip>
-                    </v-card-title>
-
-                    <v-card-text>
-                        <!-- Estado de conexión -->
-                        <v-alert
-                            v-if="conexionGemini"
-                            :type="conexionGemini.success ? 'success' : 'error'"
-                            class="mb-4"
-                        >
-                            <template v-if="conexionGemini.testing">
-                                <v-progress-circular indeterminate size="16" class="mr-2"></v-progress-circular>
-                                Probando conexión con Gemini...
-                            </template>
-                            <template v-else-if="conexionGemini.success">
-                                ✅ Conexión exitosa con Gemini: {{ conexionGemini.response }}
-                            </template>
-                            <template v-else>
-                                ❌ Error de conexión: {{ conexionGemini.error }}
-                            </template>
-                        </v-alert>
-
-                        <!-- Prompts rápidos -->
-                        <div class="form-section">
-                            <h3 class="section-title">
-                                <v-icon left>mdi-lightning-bolt</v-icon>
-                                Prompts Rápidos
-                            </h3>
-                            <p class="section-description">
-                                Selecciona un tipo de CV o escribe tu propio prompt personalizado
-                            </p>
-
-                            <div class="skills-grid mb-4">
-                                <v-chip
-                                    color="blue"
-                                    variant="outlined"
-                                    class="skill-chip"
-                                    @click="generarPromptOptimizado('frontend')"
-                                >
-                                    Frontend Developer
-                                </v-chip>
-                                <v-chip
-                                    color="blue"
-                                    variant="outlined"
-                                    class="skill-chip"
-                                    @click="generarPromptOptimizado('backend')"
-                                >
-                                    Backend Developer
-                                </v-chip>
-                                <v-chip
-                                    color="blue"
-                                    variant="outlined"
-                                    class="skill-chip"
-                                    @click="generarPromptOptimizado('fullstack')"
-                                >
-                                    Full Stack
-                                </v-chip>
-                                <v-chip
-                                    color="blue"
-                                    variant="outlined"
-                                    class="skill-chip"
-                                    @click="generarPromptOptimizado('lider')"
-                                >
-                                    Tech Lead
-                                </v-chip>
-                                <v-chip
-                                    color="blue"
-                                    variant="outlined"
-                                    class="skill-chip"
-                                    @click="generarPromptOptimizado('docente')"
-                                >
-                                    Facilitador/Docente
-                                </v-chip>
-                            </div>
-                        </div>
-
-                        <!-- Prompt personalizado -->
-                        <div class="form-section">
-                            <h3 class="section-title">
-                                <v-icon left>mdi-message-text</v-icon>
-                                Describe tu CV ideal
-                            </h3>
-                            <v-textarea
-                                v-model="promptGemini"
-                                label="Describe cómo quieres que sea tu CV"
-                                placeholder="Ejemplo: 'CV para desarrollador frontend en startup, destacar Vue.js y experiencia en UX, para empresa tecnológica innovadora'"
-                                variant="outlined"
-                                rows="4"
-                                counter="500"
-                                hint="Sé específico: menciona el tipo de empresa, posición, tecnologías a destacar, etc."
-                            />
-                        </div>
-                    </v-card-text>
-
-                    <v-card-actions class="form-actions">
-                        <v-btn
-                            color="blue"
-                            size="large"
-                            :disabled="!promptGemini.trim()"
-                            :loading="generandoConGemini"
-                            @click="generarCVConGemini"
-                            class="generate-btn"
-                        >
+                <!-- Resultado Gemini -->
+                <div v-if="resultadoGemini" class="formulario-integrado">
+                    <v-card class="form-card">
+                        <v-card-title v-if="resultadoGemini.success" class="success-title">
                             <v-icon left>mdi-google</v-icon>
-                            Generar con Gemini AI
-                        </v-btn>
-
-                        <v-btn
-                            variant="outlined"
-                            @click="limpiarResultadoGemini"
-                            class="ml-2"
-                        >
-                            <v-icon left>mdi-refresh</v-icon>
-                            Limpiar
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </div>
-
-            <!-- Resultado Gemini -->
-            <div v-if="resultadoGemini" class="formulario-integrado">
-                <v-card class="form-card">
-                    <v-card-title v-if="resultadoGemini.success" class="success-title">
-                        <v-icon left>mdi-google</v-icon>
-                        <div>
-                            ¡CV Generado con Gemini AI!
-                            <div class="subtitle">{{ resultadoGemini.metadata?.candidato }} - {{ resultadoGemini.metadata?.modelo }}</div>
-                        </div>
-                    </v-card-title>
-
-                    <v-card-title v-else style="background: #f44336; color: white;">
-                        <v-icon left>mdi-alert-circle</v-icon>
-                        Error en Gemini AI
-                    </v-card-title>
-
-                    <v-card-text v-if="resultadoGemini.success" class="text-center py-6">
-                        <div class="success-content">
-                            <p class="success-description mb-4">
-                                Gemini 1.5 Flash ha generado tu CV personalizado usando IA de Google.
-                            </p>
-
-                            <div class="action-buttons">
-                                <v-btn
-                                    color="blue"
-                                    size="large"
-                                    @click="descargarCVGemini"
-                                    class="download-btn-main"
-                                >
-                                    <v-icon left>mdi-download</v-icon>
-                                    Descargar CV Gemini (PDF)
-                                </v-btn>
+                            <div>
+                                ¡CV Generado con Gemini AI!
+                                <div class="subtitle">{{ resultadoGemini.metadata?.candidato }} - {{
+                                    resultadoGemini.metadata?.modelo }}
+                                </div>
                             </div>
-                        </div>
-                    </v-card-text>
+                        </v-card-title>
 
-                    <v-card-text v-else class="text-center py-6">
-                        <p class="error-description">{{ resultadoGemini.error }}</p>
-                        <v-btn color="blue" @click="generarCVConGemini" class="mt-4">
-                            <v-icon left>mdi-refresh</v-icon>
-                            Intentar de nuevo
-                        </v-btn>
-                    </v-card-text>
+                        <v-card-title v-else style="background: #f44336; color: white;">
+                            <v-icon left>mdi-alert-circle</v-icon>
+                            Error en Gemini AI
+                        </v-card-title>
 
-                    <v-card-actions class="justify-center pb-4">
-                        <v-btn variant="text" @click="limpiarResultadoGemini">
-                            <v-icon left>mdi-close</v-icon>
-                            Cerrar
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </div>
+                        <v-card-text v-if="resultadoGemini.success" class="text-center py-6">
+                            <div class="success-content">
+                                <p class="success-description mb-4">
+                                    Gemini 1.5 Flash ha generado tu CV personalizado usando IA de Google.
+                                </p>
 
-            <!-- Vista previa del CV -->
+                                <div class="action-buttons">
+                                    <v-btn color="blue" size="large" @click="descargarCVGemini"
+                                        class="download-btn-main">
+                                        <v-icon left>mdi-download</v-icon>
+                                        Descargar CV Gemini (PDF)
+                                    </v-btn>
+                                </div>
+                            </div>
+                        </v-card-text>
+
+                        <v-card-text v-else class="text-center py-6">
+                            <p class="error-description">{{ resultadoGemini.error }}</p>
+                            <v-btn color="blue" @click="generarCVConGemini" class="mt-4">
+                                <v-icon left>mdi-refresh</v-icon>
+                                Intentar de nuevo
+                            </v-btn>
+                        </v-card-text>
+
+                        <v-card-actions class="justify-center pb-4">
+                            <v-btn variant="text" @click="limpiarResultadoGemini">
+                                <v-icon left>mdi-close</v-icon>
+                                Cerrar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </div>
+
+                <!-- Vista previa del CV -->
                 <div class="cv-preview" v-if="mostrarVistaPrevia">
                     <h2>Vista Previa</h2>
                     <div class="cv-container">
@@ -478,21 +397,12 @@
                         </p>
 
                         <div class="action-buttons">
-                            <v-btn
-                                color="primary"
-                                size="large"
-                                @click="descargarCVDirecto"
-                                class="download-btn-main"
-                            >
+                            <v-btn color="primary" size="large" @click="descargarCVDirecto" class="download-btn-main">
                                 <v-icon left>mdi-download</v-icon>
                                 Descargar CV (PDF)
                             </v-btn>
 
-                            <v-btn
-                                variant="outlined"
-                                @click="imprimirCVDinamico"
-                                class="print-btn"
-                            >
+                            <v-btn variant="outlined" @click="imprimirCVDinamico" class="print-btn">
                                 <v-icon left>mdi-printer</v-icon>
                                 Imprimir CV
                             </v-btn>
@@ -534,11 +444,11 @@ import geminiService from '@/services/geminiService'
 
 // Composable para generación de CV
 const {
-  generando,
-  estadoActual,
-  generarCVPersonalizado,
-  limpiarEstado,
-  cvHTML
+    generando,
+    estadoActual,
+    generarCVPersonalizado,
+    limpiarEstado,
+    cvHTML
 } = useCVGenerator()
 
 // Estado del componente
@@ -565,86 +475,86 @@ const conexionGemini = ref(null)
 
 // Datos del formulario dinámico
 const formulario = reactive({
-  nombreReclutador: '',
-  empresa: '',
-  email: '',
-  posicion: '',
-  habilidadesSeleccionadas: [],
-  descripcionCargo: ''
+    nombreReclutador: '',
+    empresa: '',
+    email: '',
+    posicion: '',
+    habilidadesSeleccionadas: [],
+    descripcionCargo: ''
 })
 
 // Habilidades predefinidas organizadas por categorías
 const habilidadesPredefinidas = {
-  tecnologias: [
-    'HTML', 'CSS', 'JavaScript', 'Vue.js', 'React', 'Angular',
-    'Node.js', 'Python', 'Java', 'Spring Boot', 'Express.js',
-    'TypeScript', 'PHP', 'Laravel', 'Django', 'Flask',
-    'PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'Firebase'
-  ],
-  ia: [
-    'LangChain', 'Genkit', 'Prompt Engineering', 'OpenAI API',
-    'Machine Learning', 'TensorFlow', 'PyTorch', 'Hugging Face',
-    'Computer Vision', 'NLP', 'GPT Integration', 'AI Automation'
-  ],
-  diseno: [
-    'Figma', 'Adobe XD', 'Canva', 'Photoshop', 'Illustrator',
-    'Sketch', 'InVision', 'Principle', 'Framer', 'UI/UX Design'
-  ],
-  metodologias: [
-    'Scrum', 'Kanban', 'Agile', 'DevOps', 'CI/CD', 'Git',
-    'Docker', 'Kubernetes', 'AWS', 'Azure', 'Google Cloud'
-  ],
-  servicios: [
-    'Formateo de equipos', 'Cursos de Computación', 'Asesoría Pymes',
-    'Desarrollo Web', 'Automatizaciones IA', 'Creación de empresas',
-    'Ventas de equipos y seguridad', 'Consultoría tecnológica',
-    'Mentorías técnicas', 'Transformación digital'
-  ]
+    tecnologias: [
+        'HTML', 'CSS', 'JavaScript', 'Vue.js', 'React', 'Angular',
+        'Node.js', 'Python', 'Java', 'Spring Boot', 'Express.js',
+        'TypeScript', 'PHP', 'Laravel', 'Django', 'Flask',
+        'PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'Firebase'
+    ],
+    ia: [
+        'LangChain', 'Genkit', 'Prompt Engineering', 'OpenAI API',
+        'Machine Learning', 'TensorFlow', 'PyTorch', 'Hugging Face',
+        'Computer Vision', 'NLP', 'GPT Integration', 'AI Automation'
+    ],
+    diseno: [
+        'Figma', 'Adobe XD', 'Canva', 'Photoshop', 'Illustrator',
+        'Sketch', 'InVision', 'Principle', 'Framer', 'UI/UX Design'
+    ],
+    metodologias: [
+        'Scrum', 'Kanban', 'Agile', 'DevOps', 'CI/CD', 'Git',
+        'Docker', 'Kubernetes', 'AWS', 'Azure', 'Google Cloud'
+    ],
+    servicios: [
+        'Formateo de equipos', 'Cursos de Computación', 'Asesoría Pymes',
+        'Desarrollo Web', 'Automatizaciones IA', 'Creación de empresas',
+        'Ventas de equipos y seguridad', 'Consultoría tecnológica',
+        'Mentorías técnicas', 'Transformación digital'
+    ]
 }
 
 // Variables simplificadas para habilidades (ya declarada arriba)
 
 // Funciones para obtener colores e iconos por categoría
 const obtenerColorCategoria = (categoria) => {
-  const colores = {
-    tecnologias: 'blue',
-    ia: 'purple',
-    diseno: 'pink',
-    metodologias: 'green',
-    servicios: 'orange',
-    personalizada: 'secondary'
-  }
-  return colores[categoria] || 'secondary'
+    const colores = {
+        tecnologias: 'blue',
+        ia: 'purple',
+        diseno: 'pink',
+        metodologias: 'green',
+        servicios: 'orange',
+        personalizada: 'secondary'
+    }
+    return colores[categoria] || 'secondary'
 }
 
 const obtenerIconoCategoria = (categoria) => {
-  const iconos = {
-    tecnologias: 'mdi-code-tags',
-    ia: 'mdi-brain',
-    diseno: 'mdi-palette',
-    metodologias: 'mdi-cog',
-    servicios: 'mdi-briefcase',
-    personalizada: 'mdi-star'
-  }
-  return iconos[categoria] || 'mdi-star'
+    const iconos = {
+        tecnologias: 'mdi-code-tags',
+        ia: 'mdi-brain',
+        diseno: 'mdi-palette',
+        metodologias: 'mdi-cog',
+        servicios: 'mdi-briefcase',
+        personalizada: 'mdi-star'
+    }
+    return iconos[categoria] || 'mdi-star'
 }
 
 // Reglas de validación
 const rules = {
-  required: value => !!value || 'Este campo es obligatorio',
-  email: value => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return pattern.test(value) || 'Ingresa un email válido'
-  },
-  minLength: value => value.length >= 50 || 'La descripción debe tener al menos 50 caracteres',
-  minSkills: value => (value && value.length >= 1) || 'Selecciona al menos una habilidad'
+    required: value => !!value || 'Este campo es obligatorio',
+    email: value => {
+        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return pattern.test(value) || 'Ingresa un email válido'
+    },
+    minLength: value => value.length >= 50 || 'La descripción debe tener al menos 50 caracteres',
+    minSkills: value => (value && value.length >= 1) || 'Selecciona al menos una habilidad'
 }
 
 // Computed para verificar si el formulario está completo
 const formularioCompleto = computed(() => {
-  return valid.value &&
-    formulario.habilidadesSeleccionadas.length > 0 &&
-    formulario.descripcionCargo.length >= 50
+    return valid.value &&
+        formulario.habilidadesSeleccionadas.length > 0 &&
+        formulario.descripcionCargo.length >= 50
 })
 
 // Función para descargar CV genérico usando el nuevo servicio
@@ -816,7 +726,7 @@ const descargarCVDirecto = async () => {
             contenedorOculto.innerHTML = cvHTML.value
         }
 
-        const nombreArchivo = `cv-${formulario.empresa.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`
+        const nombreArchivo = `CV_${formulario.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
 
         const { default: cvGeneratorService } = await import('@/services/cvGeneratorService')
         const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(cvHTML.value, nombreArchivo)
@@ -971,7 +881,7 @@ const descargarCVGemini = async () => {
 
     try {
         const { default: cvGeneratorService } = await import('@/services/cvGeneratorService')
-        const nombreArchivo = `cv-gemini-${Date.now()}.pdf`
+        const nombreArchivo = `CV_Gemini_AI_${new Date().toISOString().split('T')[0]}.pdf`
         const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(resultadoGemini.value.html, nombreArchivo)
         cvGeneratorService.descargarPDF(pdfBlob, nombreArchivo)
 
@@ -1231,6 +1141,7 @@ const generarPromptOptimizado = (tipo) => {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1355,6 +1266,7 @@ const generarPromptOptimizado = (tipo) => {
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
