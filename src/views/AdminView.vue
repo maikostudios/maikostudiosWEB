@@ -265,7 +265,7 @@
                 formatearFecha(solicitudSeleccionada.fechaSolicitud) }}</div>
               <div v-if="solicitudSeleccionada.tipoSolicitud"><strong>Tipo:</strong> {{
                 solicitudSeleccionada.tipoSolicitud
-                }}</div>
+              }}</div>
             </div>
 
             <!-- Habilidades seleccionadas -->
@@ -659,6 +659,17 @@ const generarCVPersonalizado = async () => {
 
     if (resultado.success) {
       console.log('✅ CV generado exitosamente')
+
+      // DEBUG: Mostrar HTML generado
+      console.log('🔍 HTML GENERADO:')
+      console.log('Longitud:', resultado.html.length)
+      console.log('Primeras 500 caracteres:', resultado.html.substring(0, 500))
+      console.log('Últimas 200 caracteres:', resultado.html.substring(resultado.html.length - 200))
+
+      // Verificar estructura básica
+      console.log('Tiene DOCTYPE:', resultado.html.includes('<!DOCTYPE html>'))
+      console.log('Tiene <body>:', resultado.html.includes('<body>'))
+      console.log('Tiene contenido en body:', resultado.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1]?.trim().length > 0)
 
       // Generar PDF usando html2pdf.js
       const { default: html2pdf } = await import('html2pdf.js')
