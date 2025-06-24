@@ -228,7 +228,15 @@ ${datosJSON}
 7. Para subtítulos usa <div class="entry-subtitle">
 8. Ordena cronológicamente de más reciente a más antiguo
 9. Optimiza descripciones para ATS con palabras clave técnicas
-10. Devuelve SOLO el HTML final, sin explicaciones ni comentarios`;
+10. Devuelve SOLO el HTML final, sin explicaciones ni comentarios
+
+🔧 CORRECCIONES OBLIGATORIAS DE FORMATO:
+- HEADER debe mostrar: "Desarrollador Full Stack" (CON espacio, no "DesarrolladorFull Stack")
+- HEADER debe mostrar: "m.saezc@maikostudios.com | +56983833148 | LinkedIn"
+- HEADER debe mostrar: "Chile | maikostudios.com" (NO "Temucą IX Región Chile")
+- FOOTER debe mostrar: "Contacto: m.saezc@maikostudios.com | LinkedIn | maikostudios.com"
+- SIEMPRE incluir el punto en "maikostudios.com" (NUNCA "maikostudioscom")
+- SIEMPRE usar "Chile" (NUNCA "Temucą" con ą)`;
 
     if (userPrompt.trim()) {
       prompt += `
