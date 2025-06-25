@@ -49,6 +49,8 @@
                             </v-card-actions>
                         </v-card>
 
+                        <!-- Componente 3 oculto temporalmente para versión BETA -->
+                        <!--
                         <v-card class="option-card" elevation="2">
                             <v-card-title>
                                 <v-icon color="blue" size="32">mdi-google</v-icon>
@@ -69,6 +71,7 @@
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
+                        -->
                     </div>
                 </div>
 
@@ -164,9 +167,8 @@
                         </v-card-text>
 
                         <v-card-actions class="form-actions">
-                            <v-btn color="primary" size="large" :disabled="!formularioCompleto"
-                                :loading="generandoConGemini" @click="generarCVPersonalizadoConGemini"
-                                class="generate-btn">
+                            <v-btn color="primary" size="large" :disabled="!formularioCompleto" :loading="generando"
+                                @click="generarCVPersonalizadoConGemini" class="generate-btn">
                                 <v-icon left>mdi-robot</v-icon>
                                 Generar CV Personalizado con IA
                             </v-btn>
@@ -179,8 +181,8 @@
                     </v-card>
                 </div>
 
-                <!-- Formulario Gemini AI -->
-                <div v-if="mostrarFormularioGemini" id="formulario-gemini" class="formulario-integrado">
+                <!-- Formulario Gemini AI - Oculto temporalmente para versión BETA -->
+                <!-- <div v-if="mostrarFormularioGemini" id="formulario-gemini" class="formulario-integrado">
                     <v-card class="form-card" style="border: 2px solid #2196f3;">
                         <v-card-title class="form-title"
                             style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.2));">
@@ -191,83 +193,84 @@
 
                         <v-card-text>
                             <!-- Estado de conexión -->
-                            <v-alert v-if="conexionGemini" :type="conexionGemini.success ? 'success' : 'error'"
-                                class="mb-4">
-                                <template v-if="conexionGemini.testing">
-                                    <v-progress-circular indeterminate size="16" class="mr-2"></v-progress-circular>
-                                    Probando conexión con Gemini...
-                                </template>
-                                <template v-else-if="conexionGemini.success">
-                                    ✅ Conexión exitosa con Gemini: {{ conexionGemini.response }}
-                                </template>
-                                <template v-else>
-                                    ❌ Error de conexión: {{ conexionGemini.error }}
-                                </template>
-                            </v-alert>
+                <v-alert v-if="conexionGemini" :type="conexionGemini.success ? 'success' : 'error'" class="mb-4">
+                    <template v-if="conexionGemini.testing">
+                        <v-progress-circular indeterminate size="16" class="mr-2"></v-progress-circular>
+                        Probando conexión con Gemini...
+                    </template>
+                    <template v-else-if="conexionGemini.success">
+                        ✅ Conexión exitosa con Gemini: {{ conexionGemini.response }}
+                    </template>
+                    <template v-else>
+                        ❌ Error de conexión: {{ conexionGemini.error }}
+                    </template>
+                </v-alert>
 
-                            <!-- Prompts rápidos -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <v-icon left>mdi-lightning-bolt</v-icon>
-                                    Prompts Rápidos
-                                </h3>
-                                <p class="section-description">
-                                    Selecciona un tipo de CV o escribe tu propio prompt personalizado
-                                </p>
+                <!-- Prompts rápidos -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <v-icon left>mdi-lightning-bolt</v-icon>
+                        Prompts Rápidos
+                    </h3>
+                    <p class="section-description">
+                        Selecciona un tipo de CV o escribe tu propio prompt personalizado
+                    </p>
 
-                                <div class="skills-grid mb-4">
-                                    <v-chip color="blue" variant="outlined" class="skill-chip"
-                                        @click="generarPromptOptimizado('frontend')">
-                                        Frontend Developer
-                                    </v-chip>
-                                    <v-chip color="blue" variant="outlined" class="skill-chip"
-                                        @click="generarPromptOptimizado('backend')">
-                                        Backend Developer
-                                    </v-chip>
-                                    <v-chip color="blue" variant="outlined" class="skill-chip"
-                                        @click="generarPromptOptimizado('fullstack')">
-                                        Full Stack
-                                    </v-chip>
-                                    <v-chip color="blue" variant="outlined" class="skill-chip"
-                                        @click="generarPromptOptimizado('lider')">
-                                        Tech Lead
-                                    </v-chip>
-                                    <v-chip color="blue" variant="outlined" class="skill-chip"
-                                        @click="generarPromptOptimizado('docente')">
-                                        Facilitador/Docente
-                                    </v-chip>
-                                </div>
-                            </div>
-
-                            <!-- Prompt personalizado -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <v-icon left>mdi-message-text</v-icon>
-                                    Describe tu CV ideal
-                                </h3>
-                                <v-textarea v-model="promptGemini" label="Describe cómo quieres que sea tu CV"
-                                    placeholder="Ejemplo: 'CV para desarrollador frontend en startup, destacar Vue.js y experiencia en UX, para empresa tecnológica innovadora'"
-                                    variant="outlined" rows="4" counter="500"
-                                    hint="Sé específico: menciona el tipo de empresa, posición, tecnologías a destacar, etc." />
-                            </div>
-                        </v-card-text>
-
-                        <v-card-actions class="form-actions">
-                            <v-btn color="blue" size="large" :disabled="!promptGemini.trim()"
-                                :loading="generandoConGemini" @click="generarCVConGemini" class="generate-btn">
-                                <v-icon left>mdi-google</v-icon>
-                                Generar con Gemini AI
-                            </v-btn>
-
-                            <v-btn variant="outlined" @click="limpiarResultadoGemini" class="ml-2">
-                                <v-icon left>mdi-refresh</v-icon>
-                                Limpiar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
+                    <div class="skills-grid mb-4">
+                        <v-chip color="blue" variant="outlined" class="skill-chip"
+                            @click="generarPromptOptimizado('frontend')">
+                            Frontend Developer
+                        </v-chip>
+                        <v-chip color="blue" variant="outlined" class="skill-chip"
+                            @click="generarPromptOptimizado('backend')">
+                            Backend Developer
+                        </v-chip>
+                        <v-chip color="blue" variant="outlined" class="skill-chip"
+                            @click="generarPromptOptimizado('fullstack')">
+                            Full Stack
+                        </v-chip>
+                        <v-chip color="blue" variant="outlined" class="skill-chip"
+                            @click="generarPromptOptimizado('lider')">
+                            Tech Lead
+                        </v-chip>
+                        <v-chip color="blue" variant="outlined" class="skill-chip"
+                            @click="generarPromptOptimizado('docente')">
+                            Facilitador/Docente
+                        </v-chip>
+                    </div>
                 </div>
 
-                <!-- Resultado Gemini -->
+                <!-- Prompt personalizado -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <v-icon left>mdi-message-text</v-icon>
+                        Describe tu CV ideal
+                    </h3>
+                    <v-textarea v-model="promptGemini" label="Describe cómo quieres que sea tu CV"
+                        placeholder="Ejemplo: 'CV para desarrollador frontend en startup, destacar Vue.js y experiencia en UX, para empresa tecnológica innovadora'"
+                        variant="outlined" rows="4" counter="500"
+                        hint="Sé específico: menciona el tipo de empresa, posición, tecnologías a destacar, etc." />
+                </div>
+                </v-card-text>
+
+                <v-card-actions class="form-actions">
+                    <v-btn color="blue" size="large" :disabled="!promptGemini.trim()" :loading="generandoConGemini"
+                        @click="generarCVConGemini" class="generate-btn">
+                        <v-icon left>mdi-google</v-icon>
+                        Generar con Gemini AI
+                    </v-btn>
+
+                    <v-btn variant="outlined" @click="limpiarResultadoGemini" class="ml-2">
+                        <v-icon left>mdi-refresh</v-icon>
+                        Limpiar
+                    </v-btn>
+                </v-card-actions>
+                </v-card>
+                </div>
+                -->
+
+                <!-- Resultado Gemini - Oculto temporalmente para versión BETA -->
+                <!--
                 <div v-if="resultadoGemini" class="formulario-integrado">
                     <v-card class="form-card">
                         <v-card-title v-if="resultadoGemini.success" class="success-title">
@@ -317,6 +320,7 @@
                         </v-card-actions>
                     </v-card>
                 </div>
+                -->
 
                 <!-- Vista previa del CV -->
                 <div class="cv-preview" v-if="mostrarVistaPrevia">
@@ -906,67 +910,30 @@ const generarCVPersonalizadoConGemini = async () => {
         return
     }
 
-    generandoConGemini.value = true
-    resultadoGemini.value = null
+    // Mostrar dialog de estado de generación
+    mostrarEstadoGeneracion.value = true
 
     try {
-        // Crear prompt personalizado con los datos del formulario
-        const habilidadesTexto = formulario.habilidadesSeleccionadas.join(', ')
-        const promptPersonalizado = `
-CV personalizado para la posición de ${formulario.posicion} en ${formulario.empresa}.
-
-HABILIDADES CLAVE A DESTACAR: ${habilidadesTexto}
-
-DESCRIPCIÓN DEL CARGO:
-${formulario.descripcionCargo}
-
-INSTRUCCIONES:
-- Adapta el CV para destacar las habilidades mencionadas: ${habilidadesTexto}
-- Optimiza el contenido para la posición de ${formulario.posicion}
-- Incluye palabras clave relevantes para ${formulario.empresa}
-- Asegúrate de que el CV sea atractivo para reclutadores de ${formulario.empresa}
-- Destaca experiencias y proyectos relacionados con las tecnologías solicitadas
-        `.trim()
-
-        console.log('🤖 Generando CV personalizado con Gemini...', {
-            empresa: formulario.empresa,
-            posicion: formulario.posicion,
-            habilidades: habilidadesTexto
-        })
-
-        const resultado = await geminiService.generarCVPersonalizado(promptPersonalizado)
+        // Usar el composable para generar CV con interfaz de carga elaborada
+        const resultado = await generarCVPersonalizado(formulario, 'dinamico')
 
         if (resultado.success) {
-            resultadoGemini.value = {
-                success: true,
-                html: resultado.html,
-                metadata: {
-                    ...resultado.metadata,
-                    empresa: formulario.empresa,
-                    posicion: formulario.posicion,
-                    habilidades: habilidadesTexto
-                },
-                provider: 'gemini'
-            }
-
             // Guardar información del reclutador en Firebase
             await guardarSolicitudCV()
 
-            console.log('✅ CV personalizado generado con Gemini:', resultado.metadata)
+            // Mostrar resultado exitoso
+            mostrarEstadoGeneracion.value = false
+            mostrarResultado.value = true
+
+            console.log('✅ CV personalizado generado exitosamente:', resultado.id)
         } else {
-            throw new Error(resultado.error || 'Error desconocido en Gemini')
+            throw new Error(resultado.error || 'Error al generar CV')
         }
 
     } catch (error) {
-        console.error('❌ Error generando CV personalizado con Gemini:', error)
-        resultadoGemini.value = {
-            success: false,
-            error: error.message,
-            provider: 'gemini'
-        }
+        console.error('❌ Error generando CV personalizado:', error)
+        mostrarEstadoGeneracion.value = false
         alert(`Error al generar CV personalizado: ${error.message}`)
-    } finally {
-        generandoConGemini.value = false
     }
 }
 
