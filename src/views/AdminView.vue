@@ -660,44 +660,15 @@ const generarCVPersonalizado = async () => {
     if (resultado.success) {
       console.log('✅ CV generado exitosamente')
 
-      // DEBUG: Mostrar HTML generado
-      console.log('🔍 HTML GENERADO:')
-      console.log('Longitud:', resultado.html.length)
-      console.log('Primeras 500 caracteres:', resultado.html.substring(0, 500))
-      console.log('Últimas 200 caracteres:', resultado.html.substring(resultado.html.length - 200))
+      // Usar el servicio existente que ya funciona en /cv
+      const { default: cvGeneratorService } = await import('@/services/cvGeneratorService')
+      const nombreArchivo = `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
 
-      // Verificar estructura básica
-      console.log('Tiene DOCTYPE:', resultado.html.includes('<!DOCTYPE html>'))
-      console.log('Tiene <body>:', resultado.html.includes('<body>'))
-      console.log('Tiene contenido en body:', resultado.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1]?.trim().length > 0)
+      // Generar PDF usando el servicio probado
+      const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(resultado.html, nombreArchivo)
+      cvGeneratorService.descargarPDF(pdfBlob, nombreArchivo)
 
-      // Generar PDF usando html2pdf.js
-      const { default: html2pdf } = await import('html2pdf.js')
-
-      // Configuración para PDF
-      const opt = {
-        margin: 0.5,
-        filename: `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      }
-
-      // Crear elemento temporal para el HTML
-      const tempDiv = document.createElement('div')
-      tempDiv.innerHTML = resultado.html
-      tempDiv.style.position = 'absolute'
-      tempDiv.style.left = '-9999px'
-      document.body.appendChild(tempDiv)
-
-      try {
-        // Generar y descargar PDF
-        await html2pdf().set(opt).from(tempDiv).save()
-        console.log('📄 PDF generado y descargado exitosamente')
-      } finally {
-        // Limpiar elemento temporal
-        document.body.removeChild(tempDiv)
-      }
+      console.log('📄 PDF generado y descargado exitosamente usando cvGeneratorService')
 
       // Mostrar mensaje de éxito
       snackbar.value = true
