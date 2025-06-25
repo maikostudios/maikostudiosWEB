@@ -434,24 +434,39 @@ const formularioCompleto = computed(() => {
         formulario.descripcionCargo.length >= 50
 })
 
-// Función para descargar CV genérico usando el nuevo servicio
+// Función para descargar CV genérico desde GitHub
 const descargarCVGenerico = async () => {
     try {
-        // Usar el nuevo servicio especializado
-        const { default: cvPDFService } = await import('@/services/cvPDFService')
-        const nombreArchivo = `cv-michael-saez-${Date.now()}.pdf`
+        console.log('📥 Descargando CV genérico desde GitHub...')
 
-        const resultado = await cvPDFService.generarYDescargarCV(nombreArchivo)
+        // URL directa del PDF en GitHub (raw)
+        const urlPDF = 'https://raw.githubusercontent.com/maikostudios/assets_maikostudio/main/assets/cv/CV_Michael_Saez_General.pdf'
+        const nombreArchivo = 'CV_Michael_Saez_General.pdf'
 
-        if (resultado.success) {
-            console.log(`CV descargado exitosamente: ${resultado.filename} (${resultado.size} bytes)`)
-        } else {
-            throw new Error(resultado.error)
+        // Descargar el archivo
+        const response = await fetch(urlPDF)
+
+        if (!response.ok) {
+            throw new Error(`Error al descargar: ${response.status} ${response.statusText}`)
         }
 
+        const blob = await response.blob()
+
+        // Crear enlace de descarga
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = nombreArchivo
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+
+        console.log(`✅ CV genérico descargado exitosamente: ${nombreArchivo}`)
+
     } catch (error) {
-        console.error('Error al descargar CV:', error)
-        alert('Error al descargar el CV. Inténtalo de nuevo.')
+        console.error('❌ Error al descargar CV genérico:', error)
+        alert('Error al descargar el CV. Verifica tu conexión e inténtalo de nuevo.')
     }
 }
 
