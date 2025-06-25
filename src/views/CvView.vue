@@ -344,6 +344,9 @@ const generandoConGemini = ref(false)
 const resultadoGemini = ref(null)
 const conexionGemini = ref(null)
 
+// HTML del CV personalizado generado
+const cvPersonalizadoHTML = ref('')
+
 // Datos del formulario dinámico
 const formulario = reactive({
     nombreReclutador: '',
@@ -615,7 +618,7 @@ const descargarCVDirecto = async () => {
 
 // Función para imprimir CV dinámico
 const imprimirCVDinamico = async () => {
-    if (cvHTML.value) {
+    if (cvHTML.value || cvPersonalizadoHTML.value) {
         try {
             const htmlContent = `
                 <!DOCTYPE html>
@@ -631,7 +634,7 @@ const imprimirCVDinamico = async () => {
                   </style>
                 </head>
                 <body>
-                  ${cvHTML.value}
+                  ${cvPersonalizadoHTML.value || cvHTML.value}
                 </body>
                 </html>
             `
@@ -655,7 +658,7 @@ const imprimirCVDinamico = async () => {
             alert('Error al imprimir el CV. Inténtalo de nuevo.')
         }
     } else {
-        alert('No hay CV disponible para imprimir.')
+        alert('No hay CV disponible para imprimir. Genera un CV primero.')
     }
 }
 
@@ -804,6 +807,9 @@ const generarCVPersonalizadoConGemini = async () => {
 
         if (resultado.success) {
             console.log('✅ CV generado exitosamente')
+
+            // Guardar HTML para funciones de impresión
+            cvPersonalizadoHTML.value = resultado.html
 
             // Actualizar estado UX
             estadoActual.value = "Generando PDF..."
