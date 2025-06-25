@@ -264,12 +264,13 @@
                         </p>
 
                         <div class="action-buttons">
-                            <v-btn color="primary" size="large" @click="descargarCVDirecto" class="download-btn-main">
+                            <v-btn color="primary" size="large" @click="descargarCVPersonalizado"
+                                class="download-btn-main">
                                 <v-icon left>mdi-download</v-icon>
                                 Descargar CV (PDF)
                             </v-btn>
 
-                            <v-btn variant="outlined" @click="imprimirCVDinamico" class="print-btn">
+                            <v-btn variant="outlined" @click="imprimirCVPersonalizado" class="print-btn">
                                 <v-icon left>mdi-printer</v-icon>
                                 Imprimir CV
                             </v-btn>
@@ -344,8 +345,10 @@ const generandoConGemini = ref(false)
 const resultadoGemini = ref(null)
 const conexionGemini = ref(null)
 
-// HTML del CV personalizado generado
+// HTML y PDF del CV personalizado generado
 const cvPersonalizadoHTML = ref('')
+const cvPersonalizadoPDF = ref(null)
+const nombreArchivoPDF = ref('')
 
 // Datos del formulario dinámico
 const formulario = reactive({
@@ -766,6 +769,59 @@ const descargarCVGemini = async () => {
     }
 }
 
+// Función para descargar PDF personalizado guardado
+const descargarCVPersonalizado = () => {
+    if (!cvPersonalizadoPDF.value) {
+        alert('No hay CV disponible para descargar. Genera un CV primero.')
+        return
+    }
+
+    try {
+        const url = URL.createObjectURL(cvPersonalizadoPDF.value)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = nombreArchivoPDF.value
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+
+        console.log('✅ CV personalizado descargado:', nombreArchivoPDF.value)
+    } catch (error) {
+        console.error('❌ Error descargando CV:', error)
+        alert('Error al descargar el CV. Inténtalo de nuevo.')
+    }
+}
+
+// Función para imprimir PDF personalizado guardado
+const imprimirCVPersonalizado = () => {
+    if (!cvPersonalizadoPDF.value) {
+        alert('No hay CV disponible para imprimir. Genera un CV primero.')
+        return
+    }
+
+    try {
+        const url = URL.createObjectURL(cvPersonalizadoPDF.value)
+        const iframe = document.createElement('iframe')
+        iframe.style.display = 'none'
+        iframe.src = url
+        document.body.appendChild(iframe)
+
+        iframe.onload = () => {
+            iframe.contentWindow.print()
+            setTimeout(() => {
+                document.body.removeChild(iframe)
+                URL.revokeObjectURL(url)
+            }, 1000)
+        }
+
+        console.log('✅ CV personalizado enviado a imprimir')
+    } catch (error) {
+        console.error('❌ Error imprimiendo CV:', error)
+        alert('Error al imprimir el CV. Inténtalo de nuevo.')
+    }
+}
+
 // Función para limpiar resultado Gemini
 const limpiarResultadoGemini = () => {
     resultadoGemini.value = null
@@ -823,6 +879,12 @@ const generarCVPersonalizadoConGemini = async () => {
 
             // Generar PDF usando el servicio probado
             const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(resultado.html, nombreArchivo)
+
+            // Guardar PDF para reutilizar en botones
+            cvPersonalizadoPDF.value = pdfBlob
+            nombreArchivoPDF.value = nombreArchivo
+
+            // Descargar automáticamente
             cvGeneratorService.descargarPDF(pdfBlob, nombreArchivo)
 
             console.log('📄 PDF generado y descargado exitosamente usando cvGeneratorService')
