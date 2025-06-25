@@ -308,6 +308,10 @@ import ExperienciaLaboralCv from '../components/cv_components/ExperienciaLaboral
 import cvGeneratorService from '@/services/cvGeneratorService'
 import { useCVGenerator } from '@/composables/useCVGenerator'
 import geminiService from '@/services/geminiService'
+import { useMainStore } from '@/stores/main'
+
+// Store principal
+const store = useMainStore()
 
 // Composable para generación de CV
 const {
