@@ -170,7 +170,7 @@
                             <v-btn color="primary" size="large" :disabled="!formularioCompleto" :loading="generando"
                                 @click="generarCVPersonalizadoConGemini" class="generate-btn">
                                 <v-icon left>mdi-robot</v-icon>
-                                Generar CV Personalizado con IA
+                                {{ generando ? estadoActual : 'Generar CV Personalizado con IA' }}
                             </v-btn>
 
                             <v-btn variant="outlined" @click="limpiarFormulario" class="ml-2">
@@ -773,28 +773,67 @@ const generarCVPersonalizadoConGemini = async () => {
         return
     }
 
-    // Mostrar dialog de estado de generación
+    // Mostrar loading con UX mejorada
+    generando.value = true
     mostrarEstadoGeneracion.value = true
+    estadoActual.value = "Iniciando generación..."
 
     try {
-        // Usar el composable para generar CV con interfaz de carga elaborada
-        const resultado = await generarCVPersonalizado(formulario, 'dinamico')
+        console.log('🚀 Iniciando generación de CV personalizado desde /cv')
+
+        // Preparar datos exactamente como en el admin
+        const datosSolicitud = {
+            posicion: formulario.posicion,
+            habilidades: formulario.habilidadesSeleccionadas || [],
+            descripcionCargo: formulario.descripcionCargo || '',
+            empresa: formulario.empresa || '',
+            reclutador: formulario.nombreReclutador || ''
+        }
+
+        console.log('📋 Datos de la solicitud:', datosSolicitud)
+
+        // Actualizar estado UX
+        estadoActual.value = "Conectando con Gemini AI..."
+
+        // Usar exactamente el mismo servicio que el admin
+        const resultado = await store.generarCVPersonalizado(datosSolicitud)
 
         if (resultado.success) {
+            console.log('✅ CV generado exitosamente')
+
+            // Actualizar estado UX
+            estadoActual.value = "Generando PDF..."
+
             // Guardar información del reclutador en Firebase
             await guardarSolicitudCV()
 
-            // Mostrar resultado exitoso
-            mostrarEstadoGeneracion.value = false
-            mostrarResultado.value = true
+            // Usar el mismo servicio de PDF que el admin
+            const { default: cvGeneratorService } = await import('@/services/cvGeneratorService')
+            const nombreArchivo = `CV_${datosSolicitud.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
 
-            console.log('✅ CV personalizado generado exitosamente:', resultado.id)
+            // Generar PDF usando el servicio probado
+            const pdfBlob = await cvGeneratorService.convertirHTMLaPDF(resultado.html, nombreArchivo)
+            cvGeneratorService.descargarPDF(pdfBlob, nombreArchivo)
+
+            console.log('📄 PDF generado y descargado exitosamente usando cvGeneratorService')
+
+            // Actualizar estado final
+            estadoActual.value = "¡CV generado exitosamente!"
+
+            // Mostrar resultado exitoso después de un breve delay
+            setTimeout(() => {
+                generando.value = false
+                mostrarEstadoGeneracion.value = false
+                mostrarResultado.value = true
+            }, 1000)
+
         } else {
             throw new Error(resultado.error || 'Error al generar CV')
         }
 
     } catch (error) {
         console.error('❌ Error generando CV personalizado:', error)
+        generando.value = false
         mostrarEstadoGeneracion.value = false
         alert(`Error al generar CV personalizado: ${error.message}`)
     }
