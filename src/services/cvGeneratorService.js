@@ -15,11 +15,14 @@ class CVGeneratorService {
    * @returns {Promise<Object>} - Resultado con HTML del CV
    */
   async generarCVConMaikoAgent(formData) {
+    // Declarar perfilCandidato fuera del try block para que esté disponible en catch
+    let perfilCandidato = null;
+
     try {
       // Obtener datos del perfil desde Firebase
       const { perfilService } = await import("@/firebase/services");
       const perfilResult = await perfilService.obtenerPerfilCandidato();
-      const perfilCandidato = perfilResult.success ? perfilResult.data : null;
+      perfilCandidato = perfilResult.success ? perfilResult.data : null;
 
       // Preparar el prompt para MaikoCV con datos reales
       const prompt = this.construirPromptMaikoCV(formData, perfilCandidato);
