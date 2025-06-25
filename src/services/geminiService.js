@@ -228,7 +228,9 @@ ${datosJSON}
 7. Para subtítulos usa <div class="entry-subtitle">
 8. Ordena cronológicamente de más reciente a más antiguo
 9. Optimiza descripciones para ATS con palabras clave técnicas
-10. Devuelve SOLO el HTML final, sin explicaciones ni comentarios
+10. ESTRUCTURA COMPACTA: Mantén secciones concisas para evitar cortes de página
+11. ESPACIADO INTELIGENTE: No dejes secciones muy largas que puedan cortarse
+12. Devuelve SOLO el HTML final, sin explicaciones ni comentarios
 
 🔧 CORRECCIONES OBLIGATORIAS DE FORMATO:
 - HEADER debe mostrar: "Desarrollador Full Stack" (CON espacio, no "DesarrolladorFull Stack")
@@ -236,7 +238,15 @@ ${datosJSON}
 - HEADER debe mostrar: "Chile | maikostudios.com" (NO "Temucą IX Región Chile")
 - FOOTER debe mostrar: "Contacto: m.saezc@maikostudios.com | LinkedIn | maikostudios.com"
 - SIEMPRE incluir el punto en "maikostudios.com" (NUNCA "maikostudioscom")
-- SIEMPRE usar "Chile" (NUNCA "Temucą" con ą)`;
+- SIEMPRE usar "Chile" (NUNCA "Temucą" con ą)
+
+📄 REGLAS CRÍTICAS PARA PDF (EVITAR CORTES DE PÁGINA):
+- NUNCA cortar títulos h2 entre páginas - usar page-break-inside: avoid
+- NUNCA cortar entradas de experiencia/educación entre páginas
+- Mantener secciones completas juntas cuando sea posible
+- Usar page-break-before: auto para secciones largas
+- Asegurar que títulos h2 tengan suficiente espacio debajo
+- Si una sección no cabe completa, moverla a la siguiente página`;
 
     if (userPrompt.trim()) {
       prompt += `

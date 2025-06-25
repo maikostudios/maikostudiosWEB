@@ -288,6 +288,9 @@ class CVGeneratorService {
    * @returns {Promise<Blob>} - Blob del PDF generado
    */
   async convertirHTMLaPDF(htmlContent, filename = "cv-personalizado.pdf") {
+    // Agregar CSS para evitar cortes de página
+    const htmlConCSS = this.agregarCSSPageBreaks(htmlContent);
+
     const options = {
       margin: 0.5,
       filename: filename,
@@ -296,18 +299,21 @@ class CVGeneratorService {
         scale: 2,
         useCORS: true,
         letterRendering: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
       },
       jsPDF: {
         unit: "in",
         format: "letter",
         orientation: "portrait",
       },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
 
     try {
       const pdf = await html2pdf()
         .set(options)
-        .from(htmlContent)
+        .from(htmlConCSS)
         .toPdf()
         .get("pdf");
       return pdf.output("blob");
@@ -346,6 +352,70 @@ class CVGeneratorService {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Agrega CSS específico para evitar cortes de página
+   * @param {string} htmlContent - HTML original
+   * @returns {string} - HTML con CSS mejorado
+   */
+  agregarCSSPageBreaks(htmlContent) {
+    const cssPageBreaks = `
+    <style>
+      /* CSS para evitar cortes de página */
+      h1, h2, h3, h4, h5, h6 {
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      section {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .entry {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .entry-title {
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Evitar huérfanas y viudas */
+      p {
+        orphans: 3 !important;
+        widows: 3 !important;
+      }
+
+      /* Mantener header y footer juntos */
+      header {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .footer {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Espaciado para evitar cortes */
+      h2 {
+        margin-top: 20px !important;
+        margin-bottom: 15px !important;
+      }
+    </style>`;
+
+    // Insertar CSS antes del cierre de </head>
+    if (htmlContent.includes("</head>")) {
+      return htmlContent.replace("</head>", cssPageBreaks + "\n</head>");
+    } else {
+      // Si no hay head, agregar al inicio del body
+      return htmlContent.replace("<body>", "<body>" + cssPageBreaks);
+    }
   }
 }
 
