@@ -56,6 +56,10 @@
               <strong>Consultoría Digital</strong>
               <p>Estrategias para digitalizar tu emprendimiento</p>
             </li>
+            <li>
+              <strong>Armado de PC Gamers</strong>
+              <p>Configuraciones personalizadas para gaming, streaming y trabajo profesional con componentes de última generación</p>
+            </li>
           </ul>
           <v-btn color="secondary" variant="outlined" block to="/contacto">
             Solicitar Cotización
