@@ -341,6 +341,28 @@
                 <v-switch v-model="formularioProyecto.mostrarEnPortafolio" label="Mostrar en Portafolio" color="secondary" inset />
                 <small class="text-caption text-grey">Página de portafolio</small>
               </v-col>
+              <v-col cols="12" md="3">
+                <v-switch v-model="formularioProyecto.estaPublicado" label="¿Proyecto Publicado?" color="success" inset />
+                <small class="text-caption text-grey">Proyecto real en funcionamiento</small>
+              </v-col>
+            </v-row>
+
+            <!-- Mensaje de publicación condicional -->
+            <v-row v-if="formularioProyecto.estaPublicado">
+              <v-col cols="12">
+                <v-textarea
+                  v-model="formularioProyecto.mensajePublicacion"
+                  label="Mensaje de Estado de Publicación"
+                  placeholder="Ej: 🍰 ¡Publicado y funcionando! 🧁"
+                  rows="2"
+                  counter="100"
+                  maxlength="100"
+                  variant="outlined"
+                  color="success"
+                  hint="Este mensaje aparecerá como badge en la tarjeta del proyecto"
+                  persistent-hint
+                />
+              </v-col>
             </v-row>
 
             <v-row>
@@ -532,6 +554,8 @@ const formularioProyecto = reactive({
   esEstrella: false,
   mostrarEnHome: false,
   mostrarEnPortafolio: true, // Por defecto true para mostrar en portafolio
+  estaPublicado: false,
+  mensajePublicacion: '',
   caracteristicas: []
 })
 
@@ -746,6 +770,8 @@ const abrirFormularioProyecto = (proyecto = null) => {
       esEstrella: Boolean(proyecto.esEstrella),
       mostrarEnHome: Boolean(proyecto.mostrarEnHome),
       mostrarEnPortafolio: proyecto.mostrarEnPortafolio !== undefined ? Boolean(proyecto.mostrarEnPortafolio) : true,
+      estaPublicado: Boolean(proyecto.estaPublicado),
+      mensajePublicacion: proyecto.mensajePublicacion || '',
       caracteristicas: proyecto.caracteristicas || []
     })
   } else {
@@ -761,6 +787,8 @@ const abrirFormularioProyecto = (proyecto = null) => {
       esEstrella: false,
       mostrarEnHome: false,
       mostrarEnPortafolio: true, // Por defecto true para nuevos proyectos
+      estaPublicado: false,
+      mensajePublicacion: '',
       caracteristicas: []
     })
   }
@@ -816,6 +844,8 @@ const guardarProyecto = async () => {
       esEstrella: formularioProyecto.esEstrella,
       mostrarEnHome: formularioProyecto.mostrarEnHome,
       mostrarEnPortafolio: formularioProyecto.mostrarEnPortafolio,
+      estaPublicado: formularioProyecto.estaPublicado,
+      mensajePublicacion: formularioProyecto.mensajePublicacion,
       caracteristicas: formularioProyecto.caracteristicas
     }
 

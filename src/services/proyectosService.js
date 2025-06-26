@@ -86,6 +86,8 @@ export class ProyectosService {
         esEstrella: Boolean(datosProyecto.esEstrella),
         mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
         mostrarEnPortafolio: Boolean(datosProyecto.mostrarEnPortafolio),
+        estaPublicado: Boolean(datosProyecto.estaPublicado),
+        mensajePublicacion: datosProyecto.mensajePublicacion?.trim() || "",
         caracteristicas: datosProyecto.caracteristicas || [],
         activo: true,
         fechaCreacion: serverTimestamp(),
@@ -144,6 +146,8 @@ export class ProyectosService {
         esEstrella: Boolean(datosProyecto.esEstrella),
         mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
         mostrarEnPortafolio: Boolean(datosProyecto.mostrarEnPortafolio),
+        estaPublicado: Boolean(datosProyecto.estaPublicado),
+        mensajePublicacion: datosProyecto.mensajePublicacion?.trim() || "",
         caracteristicas: datosProyecto.caracteristicas || [],
         fechaActualizacion: serverTimestamp(),
       };

@@ -33,6 +33,13 @@
           <div class="proyecto-imagen">
             <img :src="proyecto.imagen || 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'"
               :alt="proyecto.titulo" loading="lazy" decoding="async" @error="onImageError" />
+            <!-- Badge de publicación en Home -->
+            <v-chip v-if="proyecto.estaPublicado && proyecto.mensajePublicacion"
+                    color="success"
+                    size="small"
+                    class="publicacion-badge-home">
+              {{ proyecto.mensajePublicacion }}
+            </v-chip>
           </div>
           <div class="proyecto-info">
             <h3>{{ proyecto.titulo }}</h3>
@@ -191,6 +198,28 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+}
+
+/* Badge de publicación en Home */
+.publicacion-badge-home {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  font-weight: 600;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: gentle-glow 3s ease-in-out infinite;
+}
+
+/* Animación suave para el badge en Home */
+@keyframes gentle-glow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
+  }
 }
 
 .proyecto-card:hover .proyecto-imagen img {

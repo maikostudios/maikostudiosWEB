@@ -39,6 +39,13 @@
                                         <v-icon left>mdi-star</v-icon>
                                         Proyecto Estrella
                                     </v-chip>
+                                    <!-- Badge de publicación -->
+                                    <v-chip v-if="proyectoEstrella.estaPublicado && proyectoEstrella.mensajePublicacion"
+                                            color="success"
+                                            size="small"
+                                            class="publicacion-badge">
+                                        {{ proyectoEstrella.mensajePublicacion }}
+                                    </v-chip>
                                 </div>
                             </div>
                             <div class="proyecto-contenido">
@@ -105,6 +112,13 @@
                                 <div class="proyecto-imagen">
                                     <img :src="proyecto.imagen" :alt="proyecto.titulo" loading="lazy"
                                         decoding="async" />
+                                    <!-- Badge de publicación para otros proyectos -->
+                                    <v-chip v-if="proyecto.estaPublicado && proyecto.mensajePublicacion"
+                                            color="success"
+                                            size="x-small"
+                                            class="publicacion-badge-small">
+                                        {{ proyecto.mensajePublicacion }}
+                                    </v-chip>
                                 </div>
                                 <div class="proyecto-info">
                                     <h3>{{ proyecto.titulo }}</h3>
@@ -491,6 +505,43 @@ onMounted(async () => {
     top: 1rem;
     right: 1rem;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Badge de publicación en proyecto estrella */
+.publicacion-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: pulse-success 2s infinite;
+}
+
+/* Badge de publicación en otros proyectos */
+.publicacion-badge-small {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 3;
+    font-weight: 600;
+    font-size: 0.7rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación sutil para el badge */
+@keyframes pulse-success {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
 }
 
 .proyecto-contenido {
