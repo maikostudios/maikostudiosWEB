@@ -68,12 +68,12 @@
 
                                     <div class="proyecto-acciones">
                                         <v-btn v-if="proyectoEstrella.enlaceDemo" color="primary" size="large"
-                                            :href="proyectoEstrella.enlaceDemo" target="_blank">
+                                            :href="validarEnlace(proyectoEstrella.enlaceDemo)" target="_blank" rel="noopener noreferrer">
                                             <v-icon left>mdi-eye</v-icon>
                                             Ver Demo
                                         </v-btn>
                                         <v-btn v-if="proyectoEstrella.enlaceGithub" color="secondary" variant="outlined"
-                                            size="large" :href="proyectoEstrella.enlaceGithub" target="_blank">
+                                            size="large" :href="validarEnlace(proyectoEstrella.enlaceGithub)" target="_blank" rel="noopener noreferrer">
                                             <v-icon left>mdi-github</v-icon>
                                             Ver Código
                                         </v-btn>
@@ -120,12 +120,12 @@
                                     </div>
                                     <div class="proyecto-links">
                                         <v-btn v-if="proyecto.enlaceDemo" color="primary" variant="outlined"
-                                            size="small" :href="proyecto.enlaceDemo" target="_blank">
+                                            size="small" :href="validarEnlace(proyecto.enlaceDemo)" target="_blank" rel="noopener noreferrer">
                                             <v-icon left>mdi-eye</v-icon>
                                             Ver
                                         </v-btn>
                                         <v-btn v-if="proyecto.enlaceGithub" color="secondary" variant="text"
-                                            size="small" :href="proyecto.enlaceGithub" target="_blank">
+                                            size="small" :href="validarEnlace(proyecto.enlaceGithub)" target="_blank" rel="noopener noreferrer">
                                             <v-icon left>mdi-github</v-icon>
                                             Código
                                         </v-btn>
@@ -365,6 +365,24 @@ const obtenerIconoCaracteristica = (texto) => {
     if (textoLower.includes('stripe') || textoLower.includes('pago')) return 'mdi-credit-card'
 
     return 'mdi-check-circle' // Icono por defecto
+}
+
+// Función para validar y corregir enlaces
+const validarEnlace = (enlace) => {
+    if (!enlace) return '#'
+
+    // Si ya es una URL completa, devolverla tal como está
+    if (enlace.startsWith('http://') || enlace.startsWith('https://')) {
+        return enlace
+    }
+
+    // Si parece ser un dominio sin protocolo, agregar https://
+    if (enlace.includes('.') && !enlace.includes('/')) {
+        return `https://${enlace}`
+    }
+
+    // Para cualquier otro caso, agregar https://
+    return enlace.startsWith('//') ? `https:${enlace}` : `https://${enlace}`
 }
 
 // Cargar proyectos al montar el componente
