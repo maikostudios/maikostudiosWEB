@@ -222,13 +222,27 @@ const enviarFormulario = async () => {
   enviando.value = true
 
   try {
+    // Sanitizar datos de entrada
     const datos = {
-      nombre: formulario.nombre,
-      email: formulario.email,
-      telefono: formulario.telefono || null,
-      asunto: formulario.asunto,
-      mensaje: formulario.mensaje,
+      nombre: formulario.nombre.trim().substring(0, 100),
+      email: formulario.email.trim().toLowerCase().substring(0, 254),
+      telefono: formulario.telefono ? formulario.telefono.trim().substring(0, 20) : null,
+      asunto: formulario.asunto.trim().substring(0, 200),
+      mensaje: formulario.mensaje.trim().substring(0, 5000),
       origen: 'formulario_web'
+    }
+
+    // Validaciones adicionales de seguridad
+    if (datos.nombre.length < 2) {
+      throw new Error('El nombre debe tener al menos 2 caracteres');
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) {
+      throw new Error('Email inválido');
+    }
+
+    if (datos.mensaje.length < 10) {
+      throw new Error('El mensaje debe tener al menos 10 caracteres');
     }
 
     const resultado = await store.enviarMensajeContacto(datos)

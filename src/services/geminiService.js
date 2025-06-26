@@ -20,9 +20,46 @@ class GeminiService {
    * @returns {Promise<string>} - HTML generado
    */
   async generarCV(promptSystem, promptUser) {
-    if (!this.apiKey || this.apiKey === "tu_gemini_api_key_aqui") {
+    // Validación de API key
+    if (
+      !this.apiKey ||
+      this.apiKey === "tu_gemini_api_key_aqui" ||
+      this.apiKey.length < 20
+    ) {
       throw new Error(
-        "API key de Gemini no configurada. Configura VITE_GEMINI_API_KEY en .env"
+        "API key de Gemini no configurada o inválida. Configura VITE_GEMINI_API_KEY en .env"
+      );
+    }
+
+    // Sanitizar y validar prompts
+    if (
+      !promptSystem ||
+      typeof promptSystem !== "string" ||
+      promptSystem.trim().length === 0
+    ) {
+      throw new Error(
+        "Prompt del sistema es requerido y debe ser una cadena válida"
+      );
+    }
+
+    if (
+      !promptUser ||
+      typeof promptUser !== "string" ||
+      promptUser.trim().length === 0
+    ) {
+      throw new Error(
+        "Prompt del usuario es requerido y debe ser una cadena válida"
+      );
+    }
+
+    // Limitar longitud de prompts para evitar ataques
+    const maxPromptLength = 50000;
+    if (
+      promptSystem.length > maxPromptLength ||
+      promptUser.length > maxPromptLength
+    ) {
+      throw new Error(
+        `Los prompts no pueden exceder ${maxPromptLength} caracteres`
       );
     }
 

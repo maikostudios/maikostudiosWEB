@@ -2,7 +2,7 @@
 const axios = require("axios");
 const fs = require("fs");
 
-const DEEPSEEK_API_KEY = "sk-6498ea9eeb2e4d6f89ccdf3ffc920d02";
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "YOUR_API_KEY_HERE";
 
 async function probarDeepSeek() {
   console.log("🤖 Probando conexión con DeepSeek API...\n");

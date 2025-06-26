@@ -1,39 +1,38 @@
 // Script para probar la generación de CV con estilos corregidos
-const fs = require('fs')
+const fs = require("fs");
 
 // Configuración de Gemini
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-const API_KEY = "AIzaSyALnEe3chHJOMiXS0dOUQ6GZ61oXfBaqxU"
+const GEMINI_API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const API_KEY = process.env.GEMINI_API_KEY || "YOUR_GEMINI_API_KEY_HERE";
 
 async function generarCV(promptCombinado) {
   const body = {
-    contents: [
-      { role: "user", parts: [{ text: promptCombinado }] }
-    ]
-  }
+    contents: [{ role: "user", parts: [{ text: promptCombinado }] }],
+  };
 
   const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
-  })
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
-    const error = await response.json()
-    console.error("Error de Gemini:", error)
-    throw new Error(error.error?.message || `HTTP ${response.status}`)
+    const error = await response.json();
+    console.error("Error de Gemini:", error);
+    throw new Error(error.error?.message || `HTTP ${response.status}`);
   }
 
-  const data = await response.json()
-  const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || ""
-  return respuesta
+  const data = await response.json();
+  const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return respuesta;
 }
 
 async function probarEstilosCorregidos() {
-  console.log('🎨 PROBANDO CV CON ESTILOS CSS CORREGIDOS\n')
-  console.log('=' .repeat(80))
+  console.log("🎨 PROBANDO CV CON ESTILOS CSS CORREGIDOS\n");
+  console.log("=".repeat(80));
 
   // PROMPT SISTEMA ACTUALIZADO
   const promptSystem = `Eres MaikoCV, un agente experto en Recursos Humanos del sector TI y Generación de CVs Profesionales para Michael Esteban Sáez Contreras.
@@ -74,7 +73,7 @@ async function probarEstilosCorregidos() {
 - Devuelve exclusivamente el HTML con las variables reemplazadas.
 
 💡 TU MISIÓN:
-Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros automáticos (ATS) como para reclutadores humanos en tecnología, utilizando al máximo los datos proporcionados y tu experiencia en el área de RRHH técnico.`
+Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros automáticos (ATS) como para reclutadores humanos en tecnología, utilizando al máximo los datos proporcionados y tu experiencia en el área de RRHH técnico.`;
 
   // PLANTILLA HTML CORREGIDA
   const plantillaHTML = `<!DOCTYPE html>
@@ -134,67 +133,73 @@ Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros au
     Contacto: <a href="mailto:{{email}}">{{email}}</a> | <a href="{{linkedin}}">LinkedIn</a>
   </div>
 </body>
-</html>`
+</html>`;
 
   // DATOS JSON
   const datosJSON = {
-    "nombre_completo": "Michael Esteban Sáez Contreras",
-    "cargo_principal": "Desarrollador Full Stack",
-    "email": "m.saezc@maikostudios.com",
-    "telefono": "+56983833148",
-    "ubicacion": "Temuco, IX Región, Chile",
-    "linkedin": "https://www.linkedin.com/in/me-saezc/",
-    "web": "https://maikostudios.com/",
-    "perfil_profesional": "Desarrollador Full Stack con experiencia en Vue.js, Node.js y Firebase. Especializado en crear soluciones web completas y escalables.",
-    "experiencia_profesional": [
+    nombre_completo: "Michael Esteban Sáez Contreras",
+    cargo_principal: "Desarrollador Full Stack",
+    email: "m.saezc@maikostudios.com",
+    telefono: "+56983833148",
+    ubicacion: "Temuco, IX Región, Chile",
+    linkedin: "https://www.linkedin.com/in/me-saezc/",
+    web: "https://maikostudios.com/",
+    perfil_profesional:
+      "Desarrollador Full Stack con experiencia en Vue.js, Node.js y Firebase. Especializado en crear soluciones web completas y escalables.",
+    experiencia_profesional: [
       {
-        "cargo": "Fundador y Desarrollador",
-        "empresa": "Maiko Studios",
-        "periodo": "2024 - Actualidad",
-        "descripcion": "Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas."
+        cargo: "Fundador y Desarrollador",
+        empresa: "Maiko Studios",
+        periodo: "2024 - Actualidad",
+        descripcion:
+          "Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas.",
       },
       {
-        "cargo": "Facilitador/Docente Bootcamp Front End",
-        "empresa": "Desafío Latam",
-        "periodo": "Ago 2024 – Dic 2024",
-        "descripcion": "Enseñanza de HTML, CSS, BOOTSTRAP, JAVASCRIPT, y VUE JS en el Programa Talento Digital para Chile."
+        cargo: "Facilitador/Docente Bootcamp Front End",
+        empresa: "Desafío Latam",
+        periodo: "Ago 2024 – Dic 2024",
+        descripcion:
+          "Enseñanza de HTML, CSS, BOOTSTRAP, JAVASCRIPT, y VUE JS en el Programa Talento Digital para Chile.",
       },
       {
-        "cargo": "Developer Full Stack & Soporte TI",
-        "empresa": "Tata Consultancy Services – Metlife Chile",
-        "periodo": "Jul 2021 – Dic 2023",
-        "descripcion": "Desarrollos para área Direct Marketing. Soporte a aplicaciones y resolución de tickets."
-      }
+        cargo: "Developer Full Stack & Soporte TI",
+        empresa: "Tata Consultancy Services – Metlife Chile",
+        periodo: "Jul 2021 – Dic 2023",
+        descripcion:
+          "Desarrollos para área Direct Marketing. Soporte a aplicaciones y resolución de tickets.",
+      },
     ],
-    "habilidades_tecnicas": {
-      "lenguajes": ["JavaScript", "Python", "Java", "HTML", "CSS"],
-      "frontend": ["Vue.js", "React", "Angular", "Bootstrap", "Vuetify"],
-      "backend": ["Node.js", "Express.js", "Spring Boot", "FastAPI"],
-      "databases": ["PostgreSQL", "MongoDB", "Firebase", "MySQL"],
-      "cloud": ["Firebase", "AWS", "Google Cloud"],
-      "tools": ["Git", "Docker", "VS Code", "Figma"]
+    habilidades_tecnicas: {
+      lenguajes: ["JavaScript", "Python", "Java", "HTML", "CSS"],
+      frontend: ["Vue.js", "React", "Angular", "Bootstrap", "Vuetify"],
+      backend: ["Node.js", "Express.js", "Spring Boot", "FastAPI"],
+      databases: ["PostgreSQL", "MongoDB", "Firebase", "MySQL"],
+      cloud: ["Firebase", "AWS", "Google Cloud"],
+      tools: ["Git", "Docker", "VS Code", "Figma"],
     },
-    "educacion": [
+    educacion: [
       {
-        "titulo": "Ingeniería en Informática",
-        "institucion": "Universidad Católica de Temuco",
-        "periodo": "2017-2021"
+        titulo: "Ingeniería en Informática",
+        institucion: "Universidad Católica de Temuco",
+        periodo: "2017-2021",
       },
       {
-        "titulo": "Técnico en Programación",
-        "institucion": "Instituto AIEP",
-        "periodo": "2015-2017"
-      }
+        titulo: "Técnico en Programación",
+        institucion: "Instituto AIEP",
+        periodo: "2015-2017",
+      },
     ],
-    "idiomas": [
-      { "idioma": "Español", "nivel": "Nativo" },
-      { "idioma": "Inglés", "nivel": "Intermedio" }
+    idiomas: [
+      { idioma: "Español", nivel: "Nativo" },
+      { idioma: "Inglés", nivel: "Intermedio" },
     ],
-    "habilidades_blandas": "Liderazgo de equipos, Comunicación efectiva, Resolución de problemas, Adaptabilidad, Trabajo en equipo, Mentoría técnica"
-  }
+    habilidades_blandas:
+      "Liderazgo de equipos, Comunicación efectiva, Resolución de problemas, Adaptabilidad, Trabajo en equipo, Mentoría técnica",
+  };
 
   // PROMPT USUARIO ACTUALIZADO
-  const userPrompt = "CV para desarrollador Frontend especializado en Vue.js, destacar experiencia en interfaces modernas y UX"
+  const userPrompt =
+    "CV para desarrollador Frontend especializado en Vue.js, destacar experiencia en interfaces modernas y UX";
 
   const promptUser = `📄 PLANTILLA HTML MAESTRA (NO MODIFICAR ESTRUCTURA):
 La siguiente plantilla contiene variables {{variable}} que debes reemplazar con los datos del JSON:
@@ -240,69 +245,71 @@ Aplica esta personalización:
 - Mantén estructura HTML base intacta
 
 ✅ RESULTADO ESPERADO:
-HTML completo con todas las variables {{}} reemplazadas, optimizado para ATS y reclutadores técnicos, listo para renderizar o convertir a PDF.`
+HTML completo con todas las variables {{}} reemplazadas, optimizado para ATS y reclutadores técnicos, listo para renderizar o convertir a PDF.`;
 
   // PROMPT COMBINADO
-  const promptCombinado = `${promptSystem}\n\n---\n\n${promptUser}`
+  const promptCombinado = `${promptSystem}\n\n---\n\n${promptUser}`;
 
-  console.log('📊 ESTADÍSTICAS:')
-  console.log(`🔤 Longitud prompt combinado: ${promptCombinado.length} caracteres`)
-  console.log(`🎯 Personalización: "${userPrompt}"`)
+  console.log("📊 ESTADÍSTICAS:");
+  console.log(
+    `🔤 Longitud prompt combinado: ${promptCombinado.length} caracteres`
+  );
+  console.log(`🎯 Personalización: "${userPrompt}"`);
 
   try {
-    console.log('\n🤖 Generando CV con estilos corregidos...')
-    
-    const htmlGenerado = await generarCV(promptCombinado)
+    console.log("\n🤖 Generando CV con estilos corregidos...");
 
-    console.log('\n✅ CV generado exitosamente!')
-    console.log(`📏 Longitud HTML: ${htmlGenerado.length} caracteres`)
-    
+    const htmlGenerado = await generarCV(promptCombinado);
+
+    console.log("\n✅ CV generado exitosamente!");
+    console.log(`📏 Longitud HTML: ${htmlGenerado.length} caracteres`);
+
     // Guardar el HTML generado
-    fs.writeFileSync('cv-estilos-corregidos.html', htmlGenerado)
-    console.log('💾 CV guardado como: cv-estilos-corregidos.html')
+    fs.writeFileSync("cv-estilos-corregidos.html", htmlGenerado);
+    console.log("💾 CV guardado como: cv-estilos-corregidos.html");
 
     // Verificar que no hay elementos con colores grises
-    const tieneGris = htmlGenerado.includes('color: gray') || 
-                     htmlGenerado.includes('color: grey') || 
-                     htmlGenerado.includes('color:#gray') ||
-                     htmlGenerado.includes('color:#grey')
+    const tieneGris =
+      htmlGenerado.includes("color: gray") ||
+      htmlGenerado.includes("color: grey") ||
+      htmlGenerado.includes("color:#gray") ||
+      htmlGenerado.includes("color:#grey");
 
-    console.log('\n🔍 VERIFICACIÓN DE COLORES:')
+    console.log("\n🔍 VERIFICACIÓN DE COLORES:");
     if (tieneGris) {
-      console.log('❌ ADVERTENCIA: Se encontraron elementos con color gris')
+      console.log("❌ ADVERTENCIA: Se encontraron elementos con color gris");
     } else {
-      console.log('✅ No se encontraron elementos con color gris')
+      console.log("✅ No se encontraron elementos con color gris");
     }
 
     // Contar elementos h3
-    const h3Count = (htmlGenerado.match(/<h3>/g) || []).length
-    console.log(`📋 Elementos <h3> generados: ${h3Count}`)
+    const h3Count = (htmlGenerado.match(/<h3>/g) || []).length;
+    console.log(`📋 Elementos <h3> generados: ${h3Count}`);
 
-    console.log('\n🎯 MEJORAS APLICADAS:')
-    console.log('✅ Estilos CSS para h1, h2, h3, h4, h5, h6')
-    console.log('✅ Color negro (#000) para todos los encabezados')
-    console.log('✅ Color negro (#000) para párrafos y texto')
-    console.log('✅ Color turquesa (#00cccc) solo para h2 y enlaces')
-    console.log('✅ Color blanco para enlaces en header')
+    console.log("\n🎯 MEJORAS APLICADAS:");
+    console.log("✅ Estilos CSS para h1, h2, h3, h4, h5, h6");
+    console.log("✅ Color negro (#000) para todos los encabezados");
+    console.log("✅ Color negro (#000) para párrafos y texto");
+    console.log("✅ Color turquesa (#00cccc) solo para h2 y enlaces");
+    console.log("✅ Color blanco para enlaces en header");
 
-    return true
-
+    return true;
   } catch (error) {
-    console.error('\n❌ Error generando CV:')
-    console.error('Message:', error.message)
-    return false
+    console.error("\n❌ Error generando CV:");
+    console.error("Message:", error.message);
+    return false;
   }
 }
 
 // Verificar si fetch está disponible
 async function main() {
-  if (typeof fetch === 'undefined') {
-    const { default: fetch } = await import('node-fetch')
-    global.fetch = fetch
+  if (typeof fetch === "undefined") {
+    const { default: fetch } = await import("node-fetch");
+    global.fetch = fetch;
   }
 
-  await probarEstilosCorregidos()
-  console.log('\n✅ Prueba de estilos corregidos completada')
+  await probarEstilosCorregidos();
+  console.log("\n✅ Prueba de estilos corregidos completada");
 }
 
-main().catch(console.error)
+main().catch(console.error);

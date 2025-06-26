@@ -8,14 +8,18 @@ import {
   addDoc,
 } from "firebase/firestore";
 
-// Configuración de Firebase
+// Configuración de Firebase desde variables de entorno
 const firebaseConfig = {
-  apiKey: "AIzaSyCDjbp0MSQ_5_GcBBZiDo6LV4qtjwHRNok",
-  authDomain: "maikostudios-dev.firebaseapp.com",
-  projectId: "maikostudios-dev",
-  storageBucket: "maikostudios-dev.firebasestorage.app",
-  messagingSenderId: "1084750960472",
-  appId: "1:1084750960472:web:ec847ab51570bb7ec6372d",
+  apiKey: process.env.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain:
+    process.env.VITE_FIREBASE_AUTH_DOMAIN || "demo-project.firebaseapp.com",
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket:
+    process.env.VITE_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId:
+    process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789012",
+  appId:
+    process.env.VITE_FIREBASE_APP_ID || "1:123456789012:web:abcdefghijklmnop",
 };
 
 // Inicializar Firebase

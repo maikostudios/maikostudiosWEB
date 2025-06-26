@@ -1,39 +1,40 @@
 // Script para probar la generación de CV completa en la aplicación
-const fs = require('fs')
+const fs = require("fs");
 
 // Configuración de Gemini
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-const API_KEY = "AIzaSyALnEe3chHJOMiXS0dOUQ6GZ61oXfBaqxU"
+const GEMINI_API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const API_KEY = process.env.GEMINI_API_KEY || "YOUR_GEMINI_API_KEY_HERE";
 
 async function generarCV(promptCombinado) {
   const body = {
-    contents: [
-      { role: "user", parts: [{ text: promptCombinado }] }
-    ]
-  }
+    contents: [{ role: "user", parts: [{ text: promptCombinado }] }],
+  };
 
   const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
-  })
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
-    const error = await response.json()
-    console.error("Error de Gemini:", error)
-    throw new Error(error.error?.message || `HTTP ${response.status}`)
+    const error = await response.json();
+    console.error("Error de Gemini:", error);
+    throw new Error(error.error?.message || `HTTP ${response.status}`);
   }
 
-  const data = await response.json()
-  const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || ""
-  return respuesta
+  const data = await response.json();
+  const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return respuesta;
 }
 
 async function probarCVAplicacionCompleta() {
-  console.log('🚀 PROBANDO CV EN APLICACIÓN COMPLETA CON ESTILOS NEGRO FORZADOS\n')
-  console.log('=' .repeat(80))
+  console.log(
+    "🚀 PROBANDO CV EN APLICACIÓN COMPLETA CON ESTILOS NEGRO FORZADOS\n"
+  );
+  console.log("=".repeat(80));
 
   // PROMPT SISTEMA (igual al de la aplicación)
   const promptSystem = `Eres MaikoCV, un agente experto en Recursos Humanos del sector TI y Generación de CVs Profesionales para Michael Esteban Sáez Contreras.
@@ -74,7 +75,7 @@ async function probarCVAplicacionCompleta() {
 - Devuelve exclusivamente el HTML con las variables reemplazadas.
 
 💡 TU MISIÓN:
-Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros automáticos (ATS) como para reclutadores humanos en tecnología, utilizando al máximo los datos proporcionados y tu experiencia en el área de RRHH técnico.`
+Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros automáticos (ATS) como para reclutadores humanos en tecnología, utilizando al máximo los datos proporcionados y tu experiencia en el área de RRHH técnico.`;
 
   // PLANTILLA HTML ACTUALIZADA (de Firebase)
   const plantillaHTML = `<!DOCTYPE html>
@@ -140,90 +141,98 @@ Entregar un CV altamente profesional, adaptado y atractivo tanto para filtros au
     Contacto: <a href="mailto:{{email}}">{{email}}</a> | <a href="{{linkedin}}">LinkedIn</a>
   </div>
 </body>
-</html>`
+</html>`;
 
   // DATOS JSON (de Firebase)
   const datosJSON = {
-    "nombre_completo": "Michael Esteban Sáez Contreras",
-    "cargo_principal": "Desarrollador Full Stack",
-    "email": "m.saezc@maikostudios.com",
-    "telefono": "+56983833148",
-    "ubicacion": "Temuco, IX Región, Chile",
-    "linkedin": "https://www.linkedin.com/in/me-saezc/",
-    "web": "https://maikostudios.com/",
-    "perfil_profesional": "Desarrollador Full Stack con experiencia en Vue.js, Node.js y Firebase. Especializado en crear soluciones web completas y escalables.",
-    "experiencia_profesional": [
+    nombre_completo: "Michael Esteban Sáez Contreras",
+    cargo_principal: "Desarrollador Full Stack",
+    email: "m.saezc@maikostudios.com",
+    telefono: "+56983833148",
+    ubicacion: "Temuco, IX Región, Chile",
+    linkedin: "https://www.linkedin.com/in/me-saezc/",
+    web: "https://maikostudios.com/",
+    perfil_profesional:
+      "Desarrollador Full Stack con experiencia en Vue.js, Node.js y Firebase. Especializado en crear soluciones web completas y escalables.",
+    experiencia_profesional: [
       {
-        "cargo": "Fundador y Desarrollador",
-        "empresa": "Maiko Studios",
-        "periodo": "2024 - Actualidad",
-        "descripcion": "Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas."
+        cargo: "Fundador y Desarrollador",
+        empresa: "Maiko Studios",
+        periodo: "2024 - Actualidad",
+        descripcion:
+          "Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas.",
       },
       {
-        "cargo": "Facilitador/Docente Bootcamp Front End",
-        "empresa": "Desafío Latam",
-        "periodo": "Ago 2024 – Dic 2024",
-        "descripcion": "Enseñanza de HTML, CSS, BOOTSTRAP, JAVASCRIPT, y VUE JS en el Programa Talento Digital para Chile."
+        cargo: "Facilitador/Docente Bootcamp Front End",
+        empresa: "Desafío Latam",
+        periodo: "Ago 2024 – Dic 2024",
+        descripcion:
+          "Enseñanza de HTML, CSS, BOOTSTRAP, JAVASCRIPT, y VUE JS en el Programa Talento Digital para Chile.",
       },
       {
-        "cargo": "Developer Full Stack & Soporte TI",
-        "empresa": "Tata Consultancy Services – Metlife Chile",
-        "periodo": "Jul 2021 – Dic 2023",
-        "descripcion": "Desarrollos para área Direct Marketing. Soporte a aplicaciones y resolución de tickets."
-      }
+        cargo: "Developer Full Stack & Soporte TI",
+        empresa: "Tata Consultancy Services – Metlife Chile",
+        periodo: "Jul 2021 – Dic 2023",
+        descripcion:
+          "Desarrollos para área Direct Marketing. Soporte a aplicaciones y resolución de tickets.",
+      },
     ],
-    "habilidades_tecnicas": {
-      "lenguajes": ["JavaScript", "Python", "Java", "HTML", "CSS"],
-      "frontend": ["Vue.js", "React", "Angular", "Bootstrap", "Vuetify"],
-      "backend": ["Node.js", "Express.js", "Spring Boot", "FastAPI"],
-      "databases": ["PostgreSQL", "MongoDB", "Firebase", "MySQL"],
-      "cloud": ["Firebase", "AWS", "Google Cloud"],
-      "tools": ["Git", "Docker", "VS Code", "Figma"]
+    habilidades_tecnicas: {
+      lenguajes: ["JavaScript", "Python", "Java", "HTML", "CSS"],
+      frontend: ["Vue.js", "React", "Angular", "Bootstrap", "Vuetify"],
+      backend: ["Node.js", "Express.js", "Spring Boot", "FastAPI"],
+      databases: ["PostgreSQL", "MongoDB", "Firebase", "MySQL"],
+      cloud: ["Firebase", "AWS", "Google Cloud"],
+      tools: ["Git", "Docker", "VS Code", "Figma"],
     },
-    "educacion": [
+    educacion: [
       {
-        "titulo": "Ingeniería en Informática",
-        "institucion": "Universidad Católica de Temuco",
-        "periodo": "2017-2021"
+        titulo: "Ingeniería en Informática",
+        institucion: "Universidad Católica de Temuco",
+        periodo: "2017-2021",
       },
       {
-        "titulo": "Técnico en Programación",
-        "institucion": "Instituto AIEP",
-        "periodo": "2015-2017"
-      }
+        titulo: "Técnico en Programación",
+        institucion: "Instituto AIEP",
+        periodo: "2015-2017",
+      },
     ],
-    "idiomas": [
-      { "idioma": "Español", "nivel": "Nativo" },
-      { "idioma": "Inglés", "nivel": "Intermedio" }
+    idiomas: [
+      { idioma: "Español", nivel: "Nativo" },
+      { idioma: "Inglés", nivel: "Intermedio" },
     ],
-    "habilidades_blandas": "Liderazgo de equipos, Comunicación efectiva, Resolución de problemas, Adaptabilidad, Trabajo en equipo, Mentoría técnica"
-  }
+    habilidades_blandas:
+      "Liderazgo de equipos, Comunicación efectiva, Resolución de problemas, Adaptabilidad, Trabajo en equipo, Mentoría técnica",
+  };
 
   // CASOS DE PRUEBA
   const casosPrueba = [
     {
       nombre: "Frontend Developer",
-      prompt: "CV para desarrollador Frontend especializado en Vue.js, destacar experiencia en interfaces modernas y UX"
+      prompt:
+        "CV para desarrollador Frontend especializado en Vue.js, destacar experiencia en interfaces modernas y UX",
     },
     {
-      nombre: "Backend Developer", 
-      prompt: "CV para desarrollador Backend especializado en Node.js y APIs, destacar experiencia en microservicios"
+      nombre: "Backend Developer",
+      prompt:
+        "CV para desarrollador Backend especializado en Node.js y APIs, destacar experiencia en microservicios",
     },
     {
       nombre: "Tech Lead",
-      prompt: "CV para Tech Lead con experiencia en liderazgo de equipos y arquitectura de software"
-    }
-  ]
+      prompt:
+        "CV para Tech Lead con experiencia en liderazgo de equipos y arquitectura de software",
+    },
+  ];
 
-  console.log('📊 CASOS DE PRUEBA A EJECUTAR:')
+  console.log("📊 CASOS DE PRUEBA A EJECUTAR:");
   casosPrueba.forEach((caso, index) => {
-    console.log(`${index + 1}. ${caso.nombre}: "${caso.prompt}"`)
-  })
+    console.log(`${index + 1}. ${caso.nombre}: "${caso.prompt}"`);
+  });
 
   for (let i = 0; i < casosPrueba.length; i++) {
-    const caso = casosPrueba[i]
-    console.log(`\n🧪 EJECUTANDO CASO ${i + 1}: ${caso.nombre}`)
-    console.log('=' .repeat(60))
+    const caso = casosPrueba[i];
+    console.log(`\n🧪 EJECUTANDO CASO ${i + 1}: ${caso.nombre}`);
+    console.log("=".repeat(60));
 
     const promptUser = `📄 PLANTILLA HTML MAESTRA (NO MODIFICAR ESTRUCTURA):
 La siguiente plantilla contiene variables {{variable}} que debes reemplazar con los datos del JSON:
@@ -257,67 +266,75 @@ Aplica esta personalización:
 - Mantén estructura HTML base intacta
 
 ✅ RESULTADO ESPERADO:
-HTML completo con todas las variables {{}} reemplazadas, optimizado para ATS y reclutadores técnicos, listo para renderizar o convertir a PDF.`
+HTML completo con todas las variables {{}} reemplazadas, optimizado para ATS y reclutadores técnicos, listo para renderizar o convertir a PDF.`;
 
-    const promptCombinado = `${promptSystem}\n\n---\n\n${promptUser}`
+    const promptCombinado = `${promptSystem}\n\n---\n\n${promptUser}`;
 
     try {
-      console.log(`🤖 Generando CV para ${caso.nombre}...`)
-      
-      const htmlGenerado = await generarCV(promptCombinado)
+      console.log(`🤖 Generando CV para ${caso.nombre}...`);
 
-      console.log(`✅ CV generado exitosamente!`)
-      console.log(`📏 Longitud HTML: ${htmlGenerado.length} caracteres`)
-      
+      const htmlGenerado = await generarCV(promptCombinado);
+
+      console.log(`✅ CV generado exitosamente!`);
+      console.log(`📏 Longitud HTML: ${htmlGenerado.length} caracteres`);
+
       // Guardar el HTML generado
-      const nombreArchivo = `cv-aplicacion-${caso.nombre.toLowerCase().replace(/\s+/g, '-')}.html`
-      fs.writeFileSync(nombreArchivo, htmlGenerado)
-      console.log(`💾 CV guardado como: ${nombreArchivo}`)
+      const nombreArchivo = `cv-aplicacion-${caso.nombre
+        .toLowerCase()
+        .replace(/\s+/g, "-")}.html`;
+      fs.writeFileSync(nombreArchivo, htmlGenerado);
+      console.log(`💾 CV guardado como: ${nombreArchivo}`);
 
       // Verificar colores
-      const tieneGris = htmlGenerado.includes('color: gray') || 
-                       htmlGenerado.includes('color: grey') || 
-                       htmlGenerado.includes('color:#gray') ||
-                       htmlGenerado.includes('color:#grey') ||
-                       htmlGenerado.includes('color: #666') ||
-                       htmlGenerado.includes('color: #999') ||
-                       htmlGenerado.includes('color: #ccc')
+      const tieneGris =
+        htmlGenerado.includes("color: gray") ||
+        htmlGenerado.includes("color: grey") ||
+        htmlGenerado.includes("color:#gray") ||
+        htmlGenerado.includes("color:#grey") ||
+        htmlGenerado.includes("color: #666") ||
+        htmlGenerado.includes("color: #999") ||
+        htmlGenerado.includes("color: #ccc");
 
-      const h3Count = (htmlGenerado.match(/<h3>/g) || []).length
+      const h3Count = (htmlGenerado.match(/<h3>/g) || []).length;
 
-      console.log(`🔍 Verificación: ${tieneGris ? '❌ Contiene gris' : '✅ Sin gris'}`)
-      console.log(`📋 Elementos <h3>: ${h3Count}`)
-
+      console.log(
+        `🔍 Verificación: ${tieneGris ? "❌ Contiene gris" : "✅ Sin gris"}`
+      );
+      console.log(`📋 Elementos <h3>: ${h3Count}`);
     } catch (error) {
-      console.error(`❌ Error en caso ${caso.nombre}:`, error.message)
+      console.error(`❌ Error en caso ${caso.nombre}:`, error.message);
     }
 
     // Pausa entre casos
     if (i < casosPrueba.length - 1) {
-      console.log('\n⏳ Esperando 2 segundos antes del siguiente caso...')
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      console.log("\n⏳ Esperando 2 segundos antes del siguiente caso...");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
 
-  console.log('\n🎉 PRUEBA COMPLETA FINALIZADA!')
-  console.log('📁 Archivos generados:')
+  console.log("\n🎉 PRUEBA COMPLETA FINALIZADA!");
+  console.log("📁 Archivos generados:");
   casosPrueba.forEach((caso, index) => {
-    const nombreArchivo = `cv-aplicacion-${caso.nombre.toLowerCase().replace(/\s+/g, '-')}.html`
-    console.log(`${index + 1}. ${nombreArchivo}`)
-  })
+    const nombreArchivo = `cv-aplicacion-${caso.nombre
+      .toLowerCase()
+      .replace(/\s+/g, "-")}.html`;
+    console.log(`${index + 1}. ${nombreArchivo}`);
+  });
 
-  console.log('\n✅ Todos los CVs están listos para verificación visual y conversión a PDF')
+  console.log(
+    "\n✅ Todos los CVs están listos para verificación visual y conversión a PDF"
+  );
 }
 
 // Verificar si fetch está disponible
 async function main() {
-  if (typeof fetch === 'undefined') {
-    const { default: fetch } = await import('node-fetch')
-    global.fetch = fetch
+  if (typeof fetch === "undefined") {
+    const { default: fetch } = await import("node-fetch");
+    global.fetch = fetch;
   }
 
-  await probarCVAplicacionCompleta()
-  console.log('\n🚀 Prueba de aplicación completa terminada')
+  await probarCVAplicacionCompleta();
+  console.log("\n🚀 Prueba de aplicación completa terminada");
 }
 
-main().catch(console.error)
+main().catch(console.error);

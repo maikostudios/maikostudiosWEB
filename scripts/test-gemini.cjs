@@ -4,7 +4,7 @@ const fs = require("fs");
 // Configuración de Gemini
 const GEMINI_API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-const API_KEY = "AIzaSyALnEe3chHJOMiXS0dOUQ6GZ61oXfBaqxU";
+const API_KEY = process.env.GEMINI_API_KEY || "YOUR_GEMINI_API_KEY_HERE";
 
 async function generarCV(promptSystem, promptUser) {
   // Gemini no soporta rol "system", combinamos en un solo mensaje
