@@ -85,6 +85,7 @@ export class ProyectosService {
         enlaceGithub: datosProyecto.enlaceGithub?.trim() || "",
         esEstrella: Boolean(datosProyecto.esEstrella),
         mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
+        mostrarEnPortafolio: Boolean(datosProyecto.mostrarEnPortafolio),
         caracteristicas: datosProyecto.caracteristicas || [],
         activo: true,
         fechaCreacion: serverTimestamp(),
@@ -142,6 +143,7 @@ export class ProyectosService {
         enlaceGithub: datosProyecto.enlaceGithub?.trim() || "",
         esEstrella: Boolean(datosProyecto.esEstrella),
         mostrarEnHome: Boolean(datosProyecto.mostrarEnHome),
+        mostrarEnPortafolio: Boolean(datosProyecto.mostrarEnPortafolio),
         caracteristicas: datosProyecto.caracteristicas || [],
         fechaActualizacion: serverTimestamp(),
       };

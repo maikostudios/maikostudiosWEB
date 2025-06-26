@@ -318,7 +318,9 @@ const proyectoEstrella = computed(() => {
 
 const otrosProyectos = computed(() => {
     return store.proyectos.filter(proyecto =>
-        !proyecto.esEstrella && proyecto.activo !== false
+        !proyecto.esEstrella &&
+        proyecto.activo !== false &&
+        proyecto.mostrarEnPortafolio !== false
     ).slice(0, 4) // Máximo 4 proyectos adicionales
 })
 

@@ -192,6 +192,13 @@
                   </v-chip>
                 </template>
 
+                <template #item.mostrarEnPortafolio="{ item }">
+                  <v-chip :color="item.mostrarEnPortafolio ? 'secondary' : 'default'" size="small">
+                    <v-icon v-if="item.mostrarEnPortafolio" left size="small">mdi-briefcase</v-icon>
+                    {{ item.mostrarEnPortafolio ? 'Sí' : 'No' }}
+                  </v-chip>
+                </template>
+
                 <template #item.tecnologias="{ item }">
                   <div class="tecnologias-mini">
                     <v-chip v-for="tech in item.tecnologias.slice(0, 3)" :key="tech" size="x-small" class="ma-1">
@@ -329,6 +336,10 @@
               <v-col cols="12" md="3">
                 <v-switch v-model="formularioProyecto.mostrarEnHome" label="Mostrar en Home" color="primary" inset />
                 <small class="text-caption text-grey">Página principal (máx 2)</small>
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-switch v-model="formularioProyecto.mostrarEnPortafolio" label="Mostrar en Portafolio" color="secondary" inset />
+                <small class="text-caption text-grey">Página de portafolio</small>
               </v-col>
             </v-row>
 
@@ -520,6 +531,7 @@ const formularioProyecto = reactive({
   enlaceGithub: '',
   esEstrella: false,
   mostrarEnHome: false,
+  mostrarEnPortafolio: true, // Por defecto true para mostrar en portafolio
   caracteristicas: []
 })
 
@@ -570,6 +582,7 @@ const headersProyectos = [
   { title: 'Descripción', key: 'descripcion' },
   { title: 'Estrella', key: 'esEstrella', sortable: false },
   { title: 'En Home', key: 'mostrarEnHome', sortable: false },
+  { title: 'En Portafolio', key: 'mostrarEnPortafolio', sortable: false },
   { title: 'Tecnologías', key: 'tecnologias', sortable: false },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
@@ -736,6 +749,7 @@ const abrirFormularioProyecto = (proyecto = null) => {
       enlaceGithub: '',
       esEstrella: false,
       mostrarEnHome: false,
+      mostrarEnPortafolio: true, // Por defecto true para nuevos proyectos
       caracteristicas: []
     })
   }
@@ -790,6 +804,7 @@ const guardarProyecto = async () => {
       enlaceGithub: formularioProyecto.enlaceGithub,
       esEstrella: formularioProyecto.esEstrella,
       mostrarEnHome: formularioProyecto.mostrarEnHome,
+      mostrarEnPortafolio: formularioProyecto.mostrarEnPortafolio,
       caracteristicas: formularioProyecto.caracteristicas
     }
 
