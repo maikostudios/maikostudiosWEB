@@ -371,15 +371,20 @@ const obtenerIconoCaracteristica = (texto) => {
 onMounted(async () => {
     try {
         loading.value = true
-        const resultado = await store.obtenerProyectosActivos()
+        console.log('📁 Cargando proyectos para portafolio...')
+
+        // Cargar proyectos en el store
+        const resultado = await store.cargarProyectos()
 
         if (!resultado.success) {
             error.value = resultado.error || 'Error al cargar proyectos'
-            console.error('Error al cargar proyectos:', resultado.error)
+            console.error('❌ Error al cargar proyectos:', resultado.error)
+        } else {
+            console.log(`✅ ${store.proyectos.length} proyectos cargados en portafolio`)
         }
     } catch (err) {
         error.value = 'Error inesperado al cargar proyectos'
-        console.error('Error inesperado:', err)
+        console.error('❌ Error inesperado:', err)
     } finally {
         loading.value = false
     }

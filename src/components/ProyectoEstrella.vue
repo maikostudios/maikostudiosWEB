@@ -46,12 +46,12 @@
               </span>
             </div>
             <div class="proyecto-links">
-              <v-btn v-if="proyecto.enlaceDemo" color="primary" variant="outlined" :href="proyecto.enlaceDemo"
+              <v-btn v-if="proyecto.enlaceDemo" color="primary" variant="outlined" :href="validarEnlace(proyecto.enlaceDemo)"
                 target="_blank" rel="noopener noreferrer">
                 <v-icon left>mdi-eye</v-icon>
                 Ver Proyecto
               </v-btn>
-              <v-btn v-if="proyecto.enlaceGithub" color="secondary" variant="text" :href="proyecto.enlaceGithub"
+              <v-btn v-if="proyecto.enlaceGithub" color="secondary" variant="text" :href="validarEnlace(proyecto.enlaceGithub)"
                 target="_blank" rel="noopener noreferrer">
                 <v-icon left>mdi-github</v-icon>
                 Código
@@ -113,6 +113,24 @@ const onImageError = (event) => {
   console.warn('⚠️ Error al cargar imagen:', event.target.src)
   // Fallback a imagen por defecto
   event.target.src = 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
+}
+
+// Función para validar y corregir enlaces
+const validarEnlace = (enlace) => {
+  if (!enlace) return '#'
+
+  // Si ya es una URL completa, devolverla tal como está
+  if (enlace.startsWith('http://') || enlace.startsWith('https://')) {
+    return enlace
+  }
+
+  // Si parece ser un dominio sin protocolo, agregar https://
+  if (enlace.includes('.') && !enlace.includes('/')) {
+    return `https://${enlace}`
+  }
+
+  // Para cualquier otro caso, agregar https://
+  return enlace.startsWith('//') ? `https:${enlace}` : `https://${enlace}`
 }
 
 // Cargar proyectos al montar el componente
