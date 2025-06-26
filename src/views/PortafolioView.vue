@@ -34,14 +34,17 @@
                             <div class="proyecto-imagen">
                                 <img :src="proyectoEstrella.imagen" :alt="proyectoEstrella.titulo" loading="lazy"
                                     decoding="async" />
+                                <!-- Badge Proyecto Estrella (esquina superior izquierda) -->
                                 <div class="proyecto-overlay">
                                     <v-chip color="accent" size="large">
                                         <v-icon left>mdi-star</v-icon>
                                         Proyecto Estrella
                                     </v-chip>
-                                    <!-- Badge de publicación -->
-                                    <v-chip v-if="proyectoEstrella.estaPublicado && proyectoEstrella.mensajePublicacion"
-                                            color="success"
+                                </div>
+                                <!-- Badge de Publicación (esquina superior derecha) -->
+                                <div v-if="proyectoEstrella.estaPublicado && proyectoEstrella.mensajePublicacion"
+                                     class="publicacion-overlay">
+                                    <v-chip color="success"
                                             size="small"
                                             class="publicacion-badge">
                                         {{ proyectoEstrella.mensajePublicacion }}
@@ -503,19 +506,20 @@ onMounted(async () => {
 .proyecto-overlay {
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    left: 1rem;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
 }
 
-/* Badge de publicación en proyecto estrella */
-.publicacion-badge {
+/* Contenedor para badge de publicación */
+.publicacion-overlay {
     position: absolute;
     top: 1rem;
     right: 1rem;
     z-index: 3;
+}
+
+/* Badge de publicación en proyecto estrella */
+.publicacion-badge {
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     animation: pulse-success 2s infinite;
