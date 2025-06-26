@@ -734,9 +734,20 @@ const cargarProyectos = async () => {
 
 const abrirFormularioProyecto = (proyecto = null) => {
   if (proyecto) {
-    // Editar proyecto existente
+    // Editar proyecto existente - asegurar que todos los campos estén definidos
     proyectoEditando.value = proyecto
-    Object.assign(formularioProyecto, proyecto)
+    Object.assign(formularioProyecto, {
+      titulo: proyecto.titulo || '',
+      descripcion: proyecto.descripcion || '',
+      imagen: proyecto.imagen || '',
+      tecnologias: proyecto.tecnologias || [],
+      enlaceDemo: proyecto.enlaceDemo || '',
+      enlaceGithub: proyecto.enlaceGithub || '',
+      esEstrella: Boolean(proyecto.esEstrella),
+      mostrarEnHome: Boolean(proyecto.mostrarEnHome),
+      mostrarEnPortafolio: proyecto.mostrarEnPortafolio !== undefined ? Boolean(proyecto.mostrarEnPortafolio) : true,
+      caracteristicas: proyecto.caracteristicas || []
+    })
   } else {
     // Nuevo proyecto
     proyectoEditando.value = null
