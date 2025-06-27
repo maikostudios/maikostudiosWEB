@@ -199,6 +199,13 @@
                   </v-chip>
                 </template>
 
+                <template #item.estaPublicado="{ item }">
+                  <v-chip :color="item.estaPublicado ? 'success' : 'default'" size="small">
+                    <v-icon v-if="item.estaPublicado" left size="small">mdi-web</v-icon>
+                    {{ item.estaPublicado ? 'Publicado' : 'Demo' }}
+                  </v-chip>
+                </template>
+
                 <template #item.tecnologias="{ item }">
                   <div class="tecnologias-mini">
                     <v-chip v-for="tech in item.tecnologias.slice(0, 3)" :key="tech" size="x-small" class="ma-1">
@@ -607,6 +614,7 @@ const headersProyectos = [
   { title: 'Estrella', key: 'esEstrella', sortable: false },
   { title: 'En Home', key: 'mostrarEnHome', sortable: false },
   { title: 'En Portafolio', key: 'mostrarEnPortafolio', sortable: false },
+  { title: 'Publicado', key: 'estaPublicado', sortable: false },
   { title: 'Tecnologías', key: 'tecnologias', sortable: false },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
