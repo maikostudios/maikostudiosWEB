@@ -5,15 +5,38 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:prod": "vite --mode production",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:dev": "vite build --mode development",
+    "preview": "vite preview",
+    "firebase:dev": "firebase use maikostudios-dev",
+    "firebase:prod": "firebase use maikostudios-a9162",
+    "deploy:dev": "npm run build:dev && firebase deploy --project maikostudios-dev",
+    "deploy:prod": "npm run build && firebase deploy --project maikostudios-a9162",
+    "sync:data": "node scripts/sync-dev-to-prod.js",
+    "deploy:production": "powershell -ExecutionPolicy Bypass -File scripts/deploy-to-production.ps1",
+    "deploy:production:force": "powershell -ExecutionPolicy Bypass -File scripts/deploy-to-production.ps1 -SkipConfirmation"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@mdi/js": "^7.4.47",
+    "axios": "^1.10.0",
+    "firebase": "^11.9.1",
+    "html2pdf.js": "^0.10.3",
     "maikostudios": "file:",
-    "vue": "^3.5.13"
+    "node-fetch": "^3.3.2",
+    "openai": "^5.5.1",
+    "pinia": "^3.0.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.2.0"
+    "sass": "^1.86.3",
+    "unplugin-auto-import": "^19.1.2",
+    "unplugin-vue-components": "^28.4.1",
+    "vite": "^6.2.0",
+    "vuetify": "^3.8.1"
   }
 }

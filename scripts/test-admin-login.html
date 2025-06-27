@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Login Administrador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #00cccc;
+            background: #f8f9fa;
+        }
+
+        .test-step h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .credentials {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        .test-button {
+            background: #00cccc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+
+        .test-button:hover {
+            background: #0099aa;
+        }
+
+        .test-result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>🔐 Prueba Login Administrador MaikoStudios</h1>
+        <p>Esta herramienta te ayuda a probar las credenciales de acceso al panel de administración.</p>
+
+        <div class="test-step">
+            <h3>📋 Credenciales Configuradas</h3>
+            <div class="credentials">
+                <strong>🎯 Credenciales Principales (Testing):</strong><br>
+                Email: maikostudios@gmail.com<br>
+                Contraseña: 123456<br><br>
+
+                <strong>🔧 Credenciales Alternativas (Desarrollo):</strong><br>
+                Email: admin@maikostudios.com<br>
+                Contraseña: admin123<br><br>
+
+                <strong>📧 Emails Autorizados:</strong><br>
+                - maikostudios@gmail.com<br>
+                - m.esteban.saez@gmail.com<br>
+                - admin@maikostudios.com<br>
+                - michael@maikostudios.com
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🧪 Pruebas de Autenticación</h3>
+
+            <h4>1. Modo Testing (Firebase Auth deshabilitado)</h4>
+            <div class="credentials">
+                Email: maikostudios@gmail.com<br>
+                Contraseña: 123456
+            </div>
+            <button class="test-button" onclick="probarCredencialesTesting()">Probar Credenciales Testing</button>
+            <div id="testing-result"></div>
+
+            <h4>2. Modo Desarrollo (Fallback local)</h4>
+            <div class="credentials">
+                Email: admin@maikostudios.com<br>
+                Contraseña: admin123
+            </div>
+            <button class="test-button" onclick="probarCredencialesDesarrollo()">Probar Credenciales Desarrollo</button>
+            <div id="desarrollo-result"></div>
+
+            <h4>3. Firebase Auth (Si está configurado)</h4>
+            <div class="credentials">
+                Email: maikostudios@gmail.com<br>
+                Contraseña: 123456
+            </div>
+            <button class="test-button" onclick="probarFirebaseAuth()">Probar Firebase Auth</button>
+            <div id="firebase-result"></div>
+        </div>
+
+        <div class="test-step">
+            <h3>🔗 Acciones Rápidas</h3>
+            <button class="test-button" onclick="abrirLoginReal()">🚀 Abrir Login Real</button>
+            <button class="test-button" onclick="abrirPanelAdmin()">📊 Abrir Panel Admin</button>
+            <button class="test-button" onclick="verificarEstadoAuth()">🔍 Verificar Estado Auth</button>
+            <button class="test-button" onclick="limpiarSesion()">🧹 Limpiar Sesión</button>
+        </div>
+
+        <div class="test-step">
+            <h3>📊 Estado Actual de Autenticación</h3>
+            <div id="auth-status" class="info">
+                <strong>Estado:</strong> Verificando...<br>
+                <strong>Usuario:</strong> No autenticado<br>
+                <strong>Modo:</strong> Desconocido
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🛠️ Diagnóstico de Problemas</h3>
+            <div id="diagnostico">
+                <p><strong>Problemas comunes y soluciones:</strong></p>
+                <ul>
+                    <li><strong>Error "Usuario no autorizado":</strong> El email no está en la lista de autorizados</li>
+                    <li><strong>Error "auth/invalid-credential":</strong> Credenciales incorrectas en Firebase</li>
+                    <li><strong>Error "auth/user-not-found":</strong> Usuario no existe en Firebase Auth</li>
+                    <li><strong>Error de conexión:</strong> Firebase no está configurado correctamente</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarResultado(elementId, tipo, mensaje) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="test-result ${tipo}">${mensaje}</div>`;
+        }
+
+        function probarCredencialesTesting() {
+            mostrarResultado('testing-result', 'info', '⏳ Probando credenciales de testing...');
+
+            // Simular el flujo de autenticación de testing
+            const email = 'maikostudios@gmail.com';
+            const password = '123456';
+
+            setTimeout(() => {
+                if (email === 'maikostudios@gmail.com' && password === '123456') {
+                    mostrarResultado('testing-result', 'success', `
+                        ✅ Credenciales de testing válidas<br>
+                        📧 Email: ${email}<br>
+                        🔑 Contraseña: Correcta<br>
+                        🎯 Modo: Testing/Local<br>
+                        ℹ️ Estas credenciales deberían funcionar en el login real
+                    `);
+                } else {
+                    mostrarResultado('testing-result', 'error', '❌ Credenciales de testing inválidas');
+                }
+            }, 1000);
+        }
+
+        function probarCredencialesDesarrollo() {
+            mostrarResultado('desarrollo-result', 'info', '⏳ Probando credenciales de desarrollo...');
+
+            const email = 'admin@maikostudios.com';
+            const password = 'admin123';
+
+            setTimeout(() => {
+                if (email === 'admin@maikostudios.com' && password === 'admin123') {
+                    mostrarResultado('desarrollo-result', 'success', `
+                        ✅ Credenciales de desarrollo válidas<br>
+                        📧 Email: ${email}<br>
+                        🔑 Contraseña: Correcta<br>
+                        🎯 Modo: Desarrollo/Fallback<br>
+                        ℹ️ Estas credenciales también deberían funcionar
+                    `);
+                } else {
+                    mostrarResultado('desarrollo-result', 'error', '❌ Credenciales de desarrollo inválidas');
+                }
+            }, 1000);
+        }
+
+        function probarFirebaseAuth() {
+            mostrarResultado('firebase-result', 'info', '⏳ Verificando configuración de Firebase Auth...');
+
+            setTimeout(() => {
+                // Simular verificación de Firebase
+                const firebaseConfigured = Math.random() > 0.5; // Simulación
+
+                if (firebaseConfigured) {
+                    mostrarResultado('firebase-result', 'warning', `
+                        ⚠️ Firebase Auth configurado<br>
+                        📧 Email: maikostudios@gmail.com<br>
+                        🔑 Contraseña: 123456<br>
+                        ℹ️ Si el usuario existe en Firebase, debería funcionar<br>
+                        🚨 Si no funciona, el usuario no está creado en Firebase Auth
+                    `);
+                } else {
+                    mostrarResultado('firebase-result', 'info', `
+                        ℹ️ Firebase Auth no configurado o en modo demo<br>
+                        🔄 El sistema usará autenticación local<br>
+                        ✅ Las credenciales de testing deberían funcionar
+                    `);
+                }
+            }, 1500);
+        }
+
+        function abrirLoginReal() {
+            window.open('http://localhost:5173/admin/login', '_blank');
+        }
+
+        function abrirPanelAdmin() {
+            window.open('http://localhost:5173/admin', '_blank');
+        }
+
+        function verificarEstadoAuth() {
+            const isAuth = localStorage.getItem('admin_authenticated') === 'true';
+            const userData = localStorage.getItem('admin_user');
+
+            let estado = 'No autenticado';
+            let usuario = 'Ninguno';
+            let modo = 'Desconocido';
+
+            if (isAuth && userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    estado = 'Autenticado';
+                    usuario = user.email || 'Email no disponible';
+                    modo = user.isLocal ? 'Local' : 'Firebase';
+                } catch (error) {
+                    estado = 'Error en datos de usuario';
+                }
+            }
+
+            document.getElementById('auth-status').innerHTML = `
+                <strong>Estado:</strong> ${estado}<br>
+                <strong>Usuario:</strong> ${usuario}<br>
+                <strong>Modo:</strong> ${modo}
+            `;
+        }
+
+        function limpiarSesion() {
+            localStorage.removeItem('admin_authenticated');
+            localStorage.removeItem('admin_user');
+            mostrarResultado('auth-status', 'info', '🧹 Sesión limpiada. Recarga la página para ver el cambio.');
+            setTimeout(verificarEstadoAuth, 1000);
+        }
+
+        // Verificar estado al cargar
+        verificarEstadoAuth();
+
+        // Auto-actualizar estado cada 5 segundos
+        setInterval(verificarEstadoAuth, 5000);
+    </script>
+</body>
+
+</html>

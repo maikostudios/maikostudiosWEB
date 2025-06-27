@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-06-20T18:48:00.940Z",
+  "plantilla": {
+    "fuente": "Firebase - colección plantillas",
+    "longitud": 1588,
+    "variables": [
+      "{{nombre_completo}}",
+      "{{cargo_principal}}",
+      "{{email}}",
+      "{{telefono}}",
+      "{{linkedin}}",
+      "{{ubicacion}}",
+      "{{perfil_profesional}}",
+      "{{experiencia_profesional}}",
+      "{{educacion}}",
+      "{{habilidades_tecnicas}}",
+      "{{habilidades_blandas}}",
+      "{{idiomas}}",
+      "{{email}}",
+      "{{email}}",
+      "{{linkedin}}"
+    ]
+  },
+  "datos": {
+    "fuente": "Firebase - colección perfil_candidato",
+    "documento": "michael_saez",
+    "campos": [
+      "nombre_completo",
+      "cargo_principal",
+      "email",
+      "telefono",
+      "ubicacion",
+      "linkedin",
+      "web",
+      "perfil_profesional",
+      "experiencia_profesional",
+      "habilidades_tecnicas",
+      "educacion",
+      "idiomas",
+      "habilidades_blandas",
+      "activo",
+      "fecha_actualizacion"
+    ],
+    "longitud_json": 2004
+  },
+  "prompts": {
+    "sistema": {
+      "longitud": 790,
+      "proposito": "Definir comportamiento MaikoCV"
+    },
+    "usuario": {
+      "longitud": 5045,
+      "componentes": [
+        "plantilla_html",
+        "datos_json",
+        "personalizacion",
+        "instrucciones"
+      ]
+    },
+    "combinado": {
+      "longitud": 5842,
+      "formato": "sistema + --- + usuario"
+    }
+  },
+  "mapeo_variables": {
+    "{{nombre_completo}}": "Michael Esteban Sáez Contreras",
+    "{{cargo_principal}}": "Desarrollador Full Stack",
+    "{{email}}": "m.saezc@maikostudios.com",
+    "{{telefono}}": "+56983833148",
+    "{{ubicacion}}": "Temuco, IX Región, Chile",
+    "{{linkedin}}": "https://www.linkedin.com/in/me-saezc/",
+    "{{perfil_profesional}}": "Desarrollador Full Stack con experiencia en Vue.js, Node.js y Firebase. Especializado en crear soluciones web completas y escalables.",
+    "{{experiencia_profesional}}": "3 trabajos",
+    "{{educacion}}": "2 títulos",
+    "{{habilidades_tecnicas}}": "6 categorías",
+    "{{habilidades_blandas}}": "Liderazgo de equipos, Comunicación efectiva, Resolución de problemas, Adaptabilidad, Trabajo en equipo, Mentoría técnica",
+    "{{idiomas}}": "2 idiomas"
+  },
+  "personalizacion_ejemplo": "CV para desarrollador Full Stack, destacar Vue.js y experiencia en startups"
+}

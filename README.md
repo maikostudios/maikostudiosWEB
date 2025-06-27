@@ -1,15 +1,32 @@
-
 # 🌐 MaikoStudiosWEB
 
 Bienvenido al repositorio oficial del sitio web de **Maiko Studios** — una empresa chilena enfocada en desarrollo web, automatización, educación digital y servicios tecnológicos modernos.
 
+## 🚀 Sistema Completo de Badges y Deployment Automatizado
+
+Implementación completa del sistema de badges de publicación y automatización de deployment con sincronización de datos entre entornos de desarrollo y producción.
+
 ## 🚀 Tecnologías utilizadas
 
-- [Vue 3](https://vuejs.org/)
+- [Vue 3](https://vuejs.org/) + [Vuetify](https://vuetifyjs.com/)
 - [Vite](https://vitejs.dev/)
-- [Firebase Hosting](https://firebase.google.com/products/hosting)
-- HTML5 + CSS3
+- [Firebase](https://firebase.google.com/) (Firestore, Auth, Functions, Hosting)
+- [Pinia](https://pinia.vuejs.org/) para manejo de estado
+- [Gemini AI](https://ai.google.dev/) para generación inteligente de CVs
+- [OpenAI GPT](https://openai.com/) para chatbot inteligente
+- HTML5 + CSS3 + Variables CSS
 - JavaScript ES6+
+
+## ✨ Nuevas Funcionalidades Implementadas
+
+- **🎨 Efecto de luz único**: Sigue al mouse en todas las páginas
+- **🤖 Chatbot GPT**: Asistente virtual inteligente para atención al cliente
+- **📄 CV Dinámico**: Descarga genérica y personalizada para reclutadores
+- **📧 Formulario de contacto**: Funcional con conexión a Firestore
+- **👨‍💼 Panel de administración**: Dashboard completo para gestión
+- **📱 Diseño responsive**: Adaptable a todos los dispositivos
+- **🏷️ Sistema de badges**: Diferenciación entre proyectos publicados y demos
+- **🚀 Deployment automatizado**: Scripts para sincronización y deploy
 
 ## 🧱 Estructura del Proyecto
 
@@ -29,7 +46,39 @@ npm install
 npm run dev
 ```
 
+<<<<<<< HEAD
 Luego abre: [http://localhost:5173](http://localhost:5173)
+=======
+Luego abre: [http://localhost:5174](http://localhost:5174)
+
+## ⚙️ Configuración
+
+### Variables de Entorno
+
+Crea un archivo `.env` basado en `.env.example`:
+
+```env
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=tu_api_key_aqui
+VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=tu_proyecto_id
+
+# OpenAI Configuration (opcional)
+VITE_OPENAI_API_KEY=tu_openai_api_key
+```
+
+### Panel de Administración
+
+- **URL**: `/admin/login`
+- **Credenciales de desarrollo**:
+  - Email: `admin@maikostudios.com`
+  - Password: `admin123`
+
+### Chatbot
+
+El chatbot funciona en modo demo con respuestas predefinidas si no se configura OpenAI.
+
+> > > > > > > BETA
 
 ## 📦 Despliegue
 

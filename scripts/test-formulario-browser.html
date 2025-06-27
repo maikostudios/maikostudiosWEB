@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Formulario CV Personalizado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #00cccc;
+            background: #f8f9fa;
+        }
+        .test-step h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .test-data {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .test-button {
+            background: #00cccc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #0099aa;
+        }
+        .test-result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Prueba Completa del Formulario CV Personalizado</h1>
+        <p>Esta prueba simula el flujo completo del formulario renovado con integración de Gemini IA.</p>
+
+        <div class="test-step">
+            <h3>📝 1. Datos del Formulario de Prueba</h3>
+            <div class="test-data" id="form-data">
+                <strong>Reclutador:</strong> Ana García<br>
+                <strong>Empresa:</strong> TechStartup<br>
+                <strong>Email:</strong> ana@techstartup.com<br>
+                <strong>Posición:</strong> Desarrollador Frontend Vue.js<br>
+                <strong>Habilidades:</strong> Vue.js, TypeScript, Tailwind CSS, Figma<br>
+                <strong>Descripción:</strong> 773 caracteres de descripción detallada del cargo
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🤖 2. Prompt Personalizado Generado</h3>
+            <div class="test-data" id="prompt-preview">
+                <strong>Prompt para Gemini:</strong><br>
+                CV personalizado para la posición de Desarrollador Frontend Vue.js en TechStartup.<br><br>
+                <strong>HABILIDADES CLAVE A DESTACAR:</strong> Vue.js, TypeScript, Tailwind CSS, Figma<br><br>
+                <strong>DESCRIPCIÓN DEL CARGO:</strong><br>
+                Buscamos un desarrollador frontend con experiencia sólida en Vue.js...<br><br>
+                <strong>INSTRUCCIONES:</strong><br>
+                - Adapta el CV para destacar las habilidades mencionadas<br>
+                - Optimiza el contenido para la posición específica<br>
+                - Incluye palabras clave relevantes para TechStartup
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🔗 3. Prueba de Conexión con Gemini</h3>
+            <button class="test-button" onclick="probarConexionGemini()">Probar Conexión</button>
+            <div id="connection-result"></div>
+        </div>
+
+        <div class="test-step">
+            <h3>🚀 4. Generación de CV con IA</h3>
+            <button class="test-button" onclick="generarCVCompleto()">Generar CV Personalizado</button>
+            <div id="generation-result"></div>
+        </div>
+
+        <div class="test-step">
+            <h3>💾 5. Simulación de Guardado en Firebase</h3>
+            <button class="test-button" onclick="simularGuardadoFirebase()">Simular Guardado</button>
+            <div id="firebase-result"></div>
+        </div>
+
+        <div class="test-step">
+            <h3>📊 6. Resumen de la Prueba</h3>
+            <div id="test-summary" class="info">
+                <strong>Estado:</strong> Esperando inicio de pruebas...<br>
+                <strong>Pasos completados:</strong> 0/5<br>
+                <strong>Tiempo transcurrido:</strong> 0s
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🎯 7. Acciones Rápidas</h3>
+            <button class="test-button" onclick="ejecutarPruebaCompleta()">🚀 Ejecutar Prueba Completa</button>
+            <button class="test-button" onclick="abrirFormularioReal()">📝 Abrir Formulario Real</button>
+            <button class="test-button" onclick="limpiarResultados()">🧹 Limpiar Resultados</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Gemini
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        const API_KEY = "AIzaSyALnEe3chHJOMiXS0dOUQ6GZ61oXfBaqxU";
+
+        // Datos de prueba
+        const datosFormulario = {
+            nombreReclutador: "Ana García",
+            empresa: "TechStartup",
+            email: "ana@techstartup.com",
+            posicion: "Desarrollador Frontend Vue.js",
+            habilidadesSeleccionadas: ["Vue.js", "TypeScript", "Tailwind CSS", "Figma"],
+            descripcionCargo: `Buscamos un desarrollador frontend con experiencia sólida en Vue.js para unirse a nuestro equipo de desarrollo.
+
+RESPONSABILIDADES:
+- Desarrollar interfaces de usuario modernas y responsivas
+- Implementar diseños de Figma a código Vue.js
+- Trabajar con TypeScript para mayor robustez del código
+- Utilizar Tailwind CSS para estilos eficientes
+- Colaborar con el equipo de UX/UI
+- Optimizar rendimiento de aplicaciones frontend
+
+REQUISITOS:
+- 3+ años de experiencia con Vue.js
+- Conocimiento sólido de TypeScript
+- Experiencia con Tailwind CSS
+- Manejo de herramientas de diseño como Figma
+- Conocimientos de Git y metodologías ágiles
+- Inglés intermedio
+
+OFRECEMOS:
+- Trabajo remoto flexible
+- Ambiente startup dinámico
+- Oportunidades de crecimiento
+- Tecnologías modernas`
+        };
+
+        let tiempoInicio = Date.now();
+        let pasosCompletados = 0;
+
+        function mostrarResultado(elementId, tipo, mensaje) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="test-result ${tipo}">${mensaje}</div>`;
+        }
+
+        function actualizarResumen() {
+            const tiempoTranscurrido = Math.round((Date.now() - tiempoInicio) / 1000);
+            const estado = pasosCompletados === 5 ? "✅ Prueba Completada" : "🔄 En Progreso";
+            
+            document.getElementById('test-summary').innerHTML = `
+                <strong>Estado:</strong> ${estado}<br>
+                <strong>Pasos completados:</strong> ${pasosCompletados}/5<br>
+                <strong>Tiempo transcurrido:</strong> ${tiempoTranscurrido}s
+            `;
+        }
+
+        async function probarConexionGemini() {
+            mostrarResultado('connection-result', 'info', '⏳ Probando conexión con Gemini...');
+            
+            try {
+                const testPrompt = "Responde solo: 'Conexión exitosa'";
+                const body = {
+                    contents: [{ role: "user", parts: [{ text: testPrompt }] }]
+                };
+
+                const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "OK";
+                    mostrarResultado('connection-result', 'success', `✅ Conexión exitosa: ${respuesta.trim()}`);
+                    pasosCompletados = Math.max(pasosCompletados, 1);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                mostrarResultado('connection-result', 'error', `❌ Error de conexión: ${error.message}`);
+            }
+            
+            actualizarResumen();
+        }
+
+        async function generarCVCompleto() {
+            mostrarResultado('generation-result', 'info', '⏳ Generando CV personalizado con Gemini...');
+            
+            try {
+                // Crear prompt personalizado
+                const habilidadesTexto = datosFormulario.habilidadesSeleccionadas.join(', ');
+                const promptPersonalizado = `
+CV personalizado para la posición de ${datosFormulario.posicion} en ${datosFormulario.empresa}.
+
+HABILIDADES CLAVE A DESTACAR: ${habilidadesTexto}
+
+DESCRIPCIÓN DEL CARGO:
+${datosFormulario.descripcionCargo}
+
+INSTRUCCIONES:
+- Adapta el CV para destacar las habilidades mencionadas: ${habilidadesTexto}
+- Optimiza el contenido para la posición de ${datosFormulario.posicion}
+- Incluye palabras clave relevantes para ${datosFormulario.empresa}
+- Asegúrate de que el CV sea atractivo para reclutadores de ${datosFormulario.empresa}
+- Destaca experiencias y proyectos relacionados con las tecnologías solicitadas
+                `.trim();
+
+                // Simular llamada a Gemini (prompt simplificado para prueba)
+                const promptSimple = `Genera un CV personalizado para ${datosFormulario.posicion} destacando: ${habilidadesTexto}`;
+                
+                const body = {
+                    contents: [{ role: "user", parts: [{ text: promptSimple }] }]
+                };
+
+                const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const cvGenerado = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                    
+                    mostrarResultado('generation-result', 'success', `
+                        ✅ CV generado exitosamente!<br>
+                        📏 Longitud: ${cvGenerado.length} caracteres<br>
+                        🎯 Habilidades destacadas: ${habilidadesTexto}<br>
+                        🏢 Empresa: ${datosFormulario.empresa}<br>
+                        💼 Posición: ${datosFormulario.posicion}
+                    `);
+                    pasosCompletados = Math.max(pasosCompletados, 2);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                mostrarResultado('generation-result', 'error', `❌ Error generando CV: ${error.message}`);
+            }
+            
+            actualizarResumen();
+        }
+
+        function simularGuardadoFirebase() {
+            mostrarResultado('firebase-result', 'info', '⏳ Simulando guardado en Firebase...');
+            
+            setTimeout(() => {
+                const solicitudData = {
+                    nombreReclutador: datosFormulario.nombreReclutador,
+                    empresa: datosFormulario.empresa,
+                    email: datosFormulario.email,
+                    posicion: datosFormulario.posicion,
+                    habilidadesSeleccionadas: datosFormulario.habilidadesSeleccionadas,
+                    descripcionCargo: datosFormulario.descripcionCargo,
+                    tipoSolicitud: 'cv_personalizado_gemini',
+                    fechaSolicitud: new Date().toISOString(),
+                    estado: 'completado'
+                };
+
+                mostrarResultado('firebase-result', 'success', `
+                    ✅ Datos guardados en Firebase (simulado)<br>
+                    📄 Colección: solicitudes_cv<br>
+                    🆔 Tipo: ${solicitudData.tipoSolicitud}<br>
+                    📊 Estado: ${solicitudData.estado}<br>
+                    ⏰ Fecha: ${new Date().toLocaleString()}
+                `);
+                pasosCompletados = Math.max(pasosCompletados, 3);
+                actualizarResumen();
+            }, 1000);
+        }
+
+        async function ejecutarPruebaCompleta() {
+            tiempoInicio = Date.now();
+            pasosCompletados = 0;
+            
+            mostrarResultado('connection-result', 'info', '⏳ Iniciando prueba completa...');
+            mostrarResultado('generation-result', 'info', '⏳ Esperando...');
+            mostrarResultado('firebase-result', 'info', '⏳ Esperando...');
+            
+            // Ejecutar pruebas secuencialmente
+            await probarConexionGemini();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await generarCVCompleto();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            simularGuardadoFirebase();
+        }
+
+        function abrirFormularioReal() {
+            window.open('http://localhost:5173/cv', '_blank');
+        }
+
+        function limpiarResultados() {
+            document.getElementById('connection-result').innerHTML = '';
+            document.getElementById('generation-result').innerHTML = '';
+            document.getElementById('firebase-result').innerHTML = '';
+            pasosCompletados = 0;
+            tiempoInicio = Date.now();
+            actualizarResumen();
+        }
+
+        // Inicializar
+        actualizarResumen();
+    </script>
+</body>
+</html>
