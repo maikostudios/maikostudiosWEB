@@ -36,7 +36,10 @@
                                     decoding="async" />
                                 <!-- Badge Proyecto Estrella (esquina superior izquierda) -->
                                 <div class="proyecto-overlay">
-                                    <v-chip color="accent" size="large">
+                                    <v-chip color="accent"
+                                            size="large"
+                                            variant="elevated"
+                                            class="proyecto-estrella-badge">
                                         <v-icon left>mdi-star</v-icon>
                                         Proyecto Estrella
                                     </v-chip>
@@ -45,7 +48,8 @@
                                 <div v-if="proyectoEstrella.estaPublicado && proyectoEstrella.mensajePublicacion"
                                      class="publicacion-overlay">
                                     <v-chip color="success"
-                                            size="small"
+                                            size="default"
+                                            variant="elevated"
                                             class="publicacion-badge">
                                         {{ proyectoEstrella.mensajePublicacion }}
                                     </v-chip>
@@ -118,7 +122,8 @@
                                     <!-- Badge de publicación para otros proyectos -->
                                     <v-chip v-if="proyecto.estaPublicado && proyecto.mensajePublicacion"
                                             color="success"
-                                            size="x-small"
+                                            size="small"
+                                            variant="elevated"
                                             class="publicacion-badge-small">
                                         {{ proyecto.mensajePublicacion }}
                                     </v-chip>
@@ -518,10 +523,23 @@ onMounted(async () => {
     z-index: 3;
 }
 
+/* Badge Proyecto Estrella */
+.proyecto-estrella-badge {
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    background: rgba(0, 204, 204, 0.95) !important;
+    color: white !important;
+}
+
 /* Badge de publicación en proyecto estrella */
 .publicacion-badge {
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    background: rgba(76, 175, 80, 0.95) !important;
+    color: white !important;
     animation: pulse-success 2s infinite;
 }
 
@@ -531,9 +549,12 @@ onMounted(async () => {
     top: 0.5rem;
     right: 0.5rem;
     z-index: 3;
-    font-weight: 600;
-    font-size: 0.7rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    background: rgba(76, 175, 80, 0.95) !important;
+    color: white !important;
 }
 
 /* Animación sutil para el badge */
