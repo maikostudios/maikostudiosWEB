@@ -83,8 +83,8 @@
                                     <div class="proyecto-acciones">
                                         <v-btn v-if="proyectoEstrella.enlaceDemo" color="primary" size="large"
                                             :href="validarEnlace(proyectoEstrella.enlaceDemo)" target="_blank" rel="noopener noreferrer">
-                                            <v-icon left>mdi-eye</v-icon>
-                                            Ver Demo
+                                            <v-icon left>{{ proyectoEstrella.estaPublicado ? 'mdi-web' : 'mdi-eye' }}</v-icon>
+                                            {{ proyectoEstrella.estaPublicado ? 'Ver Publicación' : 'Ver Demo' }}
                                         </v-btn>
                                         <v-btn v-if="proyectoEstrella.enlaceGithub" color="secondary" variant="outlined"
                                             size="large" :href="validarEnlace(proyectoEstrella.enlaceGithub)" target="_blank" rel="noopener noreferrer">
@@ -143,8 +143,8 @@
                                     <div class="proyecto-links">
                                         <v-btn v-if="proyecto.enlaceDemo" color="primary" variant="outlined"
                                             size="small" :href="validarEnlace(proyecto.enlaceDemo)" target="_blank" rel="noopener noreferrer">
-                                            <v-icon left>mdi-eye</v-icon>
-                                            Ver
+                                            <v-icon left>{{ proyecto.estaPublicado ? 'mdi-web' : 'mdi-eye' }}</v-icon>
+                                            {{ proyecto.estaPublicado ? 'Ver Publicación' : 'Ver Demo' }}
                                         </v-btn>
                                         <v-btn v-if="proyecto.enlaceGithub" color="secondary" variant="text"
                                             size="small" :href="validarEnlace(proyecto.enlaceGithub)" target="_blank" rel="noopener noreferrer">
