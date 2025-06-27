@@ -14,39 +14,10 @@ const ADMIN_EMAILS = [
   "admin@maikostudios.com",
 ];
 
-// Credenciales de desarrollo/testing
-const DEV_CREDENTIALS = {
-  email: "maikostudios@gmail.com",
-  password: "123456",
-};
-
 export const authService = {
   // Iniciar sesión
   async signIn(email, password) {
     try {
-      // Verificar si Firebase Auth está configurado
-      if (!auth || !isFirebaseConfigured()) {
-        // Modo fallback - verificación local
-        if (
-          email === DEV_CREDENTIALS.email &&
-          password === DEV_CREDENTIALS.password
-        ) {
-          const user = {
-            uid: "local-admin",
-            email: DEV_CREDENTIALS.email,
-            displayName: "Michael Sáez (Local)",
-            isLocal: true,
-          };
-
-          localStorage.setItem("admin_authenticated", "true");
-          localStorage.setItem("admin_user", JSON.stringify(user));
-
-          return { success: true, user };
-        } else {
-          throw new Error("Credenciales incorrectas");
-        }
-      }
-
       // Autenticación con Firebase
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -68,11 +39,7 @@ export const authService = {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || "Michael Sáez",
-        isLocal: false,
       };
-
-      localStorage.setItem("admin_authenticated", "true");
-      localStorage.setItem("admin_user", JSON.stringify(userData));
 
       return { success: true, user: userData };
     } catch (error) {
@@ -112,10 +79,6 @@ export const authService = {
         await signOut(auth);
       }
 
-      // Limpiar almacenamiento local
-      localStorage.removeItem("admin_authenticated");
-      localStorage.removeItem("admin_user");
-
       return { success: true };
     } catch (error) {
       console.error("Error en signOut:", error);
@@ -123,37 +86,7 @@ export const authService = {
     }
   },
 
-  // Verificar si el usuario está autenticado
-  isAuthenticated() {
-    const isAuth = localStorage.getItem("admin_authenticated") === "true";
-    const userData = localStorage.getItem("admin_user");
-
-    if (isAuth && userData) {
-      try {
-        const user = JSON.parse(userData);
-        return { isAuthenticated: true, user };
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        this.signOut(); // Limpiar datos corruptos
-        return { isAuthenticated: false, user: null };
-      }
-    }
-
-    return { isAuthenticated: false, user: null };
-  },
-
-  // Obtener usuario actual
-  getCurrentUser() {
-    const { isAuthenticated, user } = this.isAuthenticated();
-    return isAuthenticated ? user : null;
-  },
-
-  // Verificar si el email está autorizado
-  isAuthorizedEmail(email) {
-    return ADMIN_EMAILS.includes(email);
-  },
-
-  // Escuchar cambios en el estado de autenticación
+  // Verificar si el usuario está autenticado (solo con Firebase Auth)
   onAuthStateChange(callback) {
     if (auth && isFirebaseConfigured()) {
       return onAuthStateChanged(auth, (user) => {
@@ -162,7 +95,6 @@ export const authService = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName || "Michael Sáez",
-            isLocal: false,
           };
           callback(userData);
         } else {
@@ -170,18 +102,13 @@ export const authService = {
         }
       });
     } else {
-      // Modo local - verificar periódicamente
-      const checkAuth = () => {
-        const { user } = this.isAuthenticated();
-        callback(user);
-      };
-
-      checkAuth(); // Verificación inicial
-      const interval = setInterval(checkAuth, 5000); // Verificar cada 5 segundos
-
-      // Retornar función de cleanup
-      return () => clearInterval(interval);
+      callback(null);
     }
+  },
+
+  // Verificar si el email está autorizado
+  isAuthorizedEmail(email) {
+    return ADMIN_EMAILS.includes(email);
   },
 
   // Restablecer contraseña (solo para Firebase)

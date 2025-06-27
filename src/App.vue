@@ -17,14 +17,6 @@
     <!-- Chatbot flotante -->
     <ChatbotGPT />
 
-    <!-- Contenido principal -->
-    <div class="app-content">
-      <router-view />
-    </div>
-
-    <!-- Chatbot flotante -->
-    <ChatbotGPT />
-
     <!-- Sistema de notificaciones global -->
     <NotificationContainer position="top-right" />
   </div>

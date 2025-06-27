@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import { auth } from "@/firebase/config";
+import { onAuthStateChanged } from "firebase/auth";
 
 const routes = [
   { path: "/", name: "Home", component: HomeView },
@@ -45,19 +47,14 @@ const router = createRouter({
 
 // Guard de navegación para rutas protegidas
 router.beforeEach((to, from, next) => {
-  // Verificar si la ruta requiere autenticación
   if (to.meta.requiresAuth) {
-    // Aquí verificarías si el usuario está autenticado
-    // Por ahora, simplificamos la verificación
-    const isAuthenticated =
-      localStorage.getItem("admin_authenticated") === "true";
-
-    if (!isAuthenticated) {
-      // Redirigir al login si no está autenticado
-      next("/admin/login");
-    } else {
-      next();
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        next();
+      } else {
+        next("/admin/login");
+      }
+    });
   } else {
     next();
   }

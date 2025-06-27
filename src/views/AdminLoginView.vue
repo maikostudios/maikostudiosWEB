@@ -28,20 +28,10 @@
               Iniciar Sesión
             </v-btn>
           </v-form>
-
-          <!-- Información de acceso para desarrollo -->
-          <v-alert v-if="mostrarInfoDesarrollo" type="info" variant="tonal" class="mt-4">
-            <strong>Credenciales de Acceso:</strong><br>
-            Email: maikostudios@gmail.com<br>
-            Contraseña: 123456
-          </v-alert>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" size="small" @click="mostrarInfoDesarrollo = !mostrarInfoDesarrollo">
-            {{ mostrarInfoDesarrollo ? 'Ocultar' : 'Mostrar' }} info desarrollo
-          </v-btn>
         </v-card-actions>
       </v-card>
 
@@ -82,7 +72,6 @@ const form = ref(null)
 const valid = ref(false)
 const cargando = ref(false)
 const mostrarPassword = ref(false)
-const mostrarInfoDesarrollo = ref(false)
 
 // Credenciales del formulario
 const credenciales = reactive({
@@ -120,40 +109,6 @@ const iniciarSesion = async () => {
   cargando.value = true
 
   try {
-    // Verificar credenciales de desarrollo/testing
-    if (credenciales.email === 'maikostudios@gmail.com' && credenciales.password === '123456') {
-      // Simular usuario autenticado para desarrollo
-      store.user = {
-        uid: 'admin-dev',
-        email: 'maikostudios@gmail.com',
-        displayName: 'Michael Sáez (Testing)'
-      }
-
-      // Guardar estado de autenticación
-      localStorage.setItem('admin_authenticated', 'true')
-
-      mostrarNotificacion('Sesión iniciada correctamente (Modo Testing)', 'success')
-      router.push('/admin')
-      return
-    }
-
-    // También permitir credenciales alternativas para desarrollo
-    if (credenciales.email === 'admin@maikostudios.com' && credenciales.password === 'admin123') {
-      // Simular usuario autenticado para desarrollo
-      store.user = {
-        uid: 'admin-dev-alt',
-        email: 'admin@maikostudios.com',
-        displayName: 'Michael Sáez (Dev)'
-      }
-
-      // Guardar estado de autenticación
-      localStorage.setItem('admin_authenticated', 'true')
-
-      mostrarNotificacion('Sesión iniciada correctamente (Modo Desarrollo)', 'success')
-      router.push('/admin')
-      return
-    }
-
     // Autenticación real con Firebase
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -182,12 +137,9 @@ const iniciarSesion = async () => {
 
     mostrarNotificacion('Sesión iniciada correctamente', 'success')
     router.push('/admin')
-
   } catch (error) {
     console.error('Error al iniciar sesión:', error)
-
     let mensaje = 'Error al iniciar sesión'
-
     switch (error.code) {
       case 'auth/user-not-found':
         mensaje = 'Usuario no encontrado'
@@ -204,7 +156,6 @@ const iniciarSesion = async () => {
       default:
         mensaje = error.message || 'Error desconocido'
     }
-
     mostrarNotificacion(mensaje, 'error')
   } finally {
     cargando.value = false
