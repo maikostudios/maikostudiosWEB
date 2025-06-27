@@ -4,57 +4,96 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Función helper para verificar si el usuario es administrador
     function isAdmin() {
-      return request.auth != null && 
+      return request.auth != null &&
         request.auth.token.email in [
           'maikostudios@gmail.com',
           'm.esteban.saez@gmail.com'
         ];
     }
-    
+
     // Mensajes de contacto
     match /mensajes_contacto/{document} {
       // Permitir creación pública (formularios de contacto)
       allow create: if true;
-      
+
       // Solo administradores pueden leer, actualizar y eliminar
       allow read, update, delete: if isAdmin();
     }
-    
+
     // Solicitudes de CV personalizado
     match /solicitudes_cv/{document} {
       // Permitir creación pública (formulario de CV)
       allow create: if true;
-      
+
       // Solo administradores pueden leer, actualizar y eliminar
       allow read, update, delete: if isAdmin();
     }
-    
+
+    // Reclutadores interesados (para CV personalizado)
+    match /reclutadores_interesados/{document} {
+      // Permitir creación pública (formulario de CV)
+      allow create: if true;
+
+      // Solo administradores pueden leer, actualizar y eliminar
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Proyectos del portafolio
+    match /proyectos/{document} {
+      // Permitir lectura pública para mostrar portafolio
+      allow read: if true;
+
+      // Solo administradores pueden crear, actualizar y eliminar
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Plantillas de CV
+    match /plantillas/{document} {
+      // Solo administradores pueden gestionar plantillas
+      allow read, write: if isAdmin();
+    }
+
+    // Perfil del candidato (datos de CV)
+    match /perfil_candidato/{document} {
+      // Solo administradores pueden gestionar perfil
+      allow read, write: if isAdmin();
+    }
+
+    // Conversaciones del chatbot
+    match /conversaciones_chatbot/{document} {
+      // Permitir creación para el chatbot
+      allow create: if true;
+
+      // Solo administradores pueden leer, actualizar y eliminar
+      allow read, update, delete: if isAdmin();
+    }
+
     // Estadísticas de visitas
     match /visitas/{document} {
       // Permitir creación para tracking de visitas
       allow create: if true;
-      
+
       // Solo administradores pueden leer
       allow read: if isAdmin();
-      
+
       // No permitir actualización ni eliminación
       allow update, delete: if false;
     }
-    
-    // Configuración del sitio (para futuras funcionalidades)
+
+    // Configuración del sitio
     match /configuracion/{document} {
       // Solo administradores pueden gestionar configuración
       allow read, write: if isAdmin();
     }
-    
+
     // Logs del sistema (para debugging)
     match /logs/{document} {
       // Permitir creación para logging automático
       allow create: if true;
-      
+
       // Solo administradores pueden leer
       allow read: if isAdmin();
-      
+
       // No permitir modificación de logs
       allow update, delete: if false;
     }
