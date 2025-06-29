@@ -17,6 +17,11 @@
                         </p>
 
                         <div class="contact-methods">
+                            <!-- Botón de agendar cita Google Calendar -->
+                            <div class="contact-method">
+                                <div ref="calendarBtnContainer" class="calendar-btn-container"></div>
+                            </div>
+
                             <a href="mailto:contacto@maikostudios.com" class="contact-method">
                                 <v-icon color="primary">mdi-email</v-icon>
                                 <div>
@@ -69,8 +74,33 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import BaseLayout from '@/components/BaseLayout.vue'
 import FormularioContacto from '@/components/FormularioContacto.vue'
+
+const calendarBtnContainer = ref(null)
+
+onMounted(() => {
+    const cssLink = document.createElement('link')
+    cssLink.href = 'https://calendar.google.com/calendar/scheduling-button-script.css'
+    cssLink.rel = 'stylesheet'
+    document.head.appendChild(cssLink)
+
+    const script = document.createElement('script')
+    script.src = 'https://calendar.google.com/calendar/scheduling-button-script.js'
+    script.async = true
+    script.onload = () => {
+        if (window.calendar && window.calendar.schedulingButton) {
+            window.calendar.schedulingButton.load({
+                url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2p9Ze-9NKD-jsYpiuZdc2cWMMqELw4D5lXrsOOjEReUHizC-25JERMy5PdYfX3GAwelQoFSB7_?gv=true',
+                color: '#039BE5',
+                label: 'Programar una cita',
+                target: calendarBtnContainer.value
+            })
+        }
+    }
+    document.body.appendChild(script)
+})
 </script>
 
 <style scoped>
@@ -168,6 +198,30 @@ import FormularioContacto from '@/components/FormularioContacto.vue'
 .horarios p {
     color: #cccccc;
     margin-bottom: 0.5rem;
+}
+
+/* 🎯 Estilo para el botón inyectado de Google Calendar */
+.calendar-btn-container>div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.calendar-btn-container .gc-appointment-button {
+    background-color: var(--color-primary);
+    color: white !important;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.calendar-btn-container .gc-appointment-button:hover {
+    background-color: #0288d1;
 }
 
 @media (max-width: 768px) {

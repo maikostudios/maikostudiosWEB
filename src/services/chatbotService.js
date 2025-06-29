@@ -26,7 +26,7 @@ const RESPUESTA_FINAL_STRIKES = `⚠️ Lo siento, no hemos tenido buena comunic
 
 // Regex para temas permitidos
 const PERMITIDO_REGEX =
-  /maiko|servicio|cv|qr|deuna|automatización|web|portafolio|producto|precio|plan|contratar|desarrollo|programación|tecnología|consultoría|proyecto|aplicación|sistema|software|digital|whatsapp|wasap|numero|telefono|contacto|email|correo|llamar|hablar|comunicar|escribir|mensaje|chat/i;
+  /maiko|servicio|cv|qr|deuna|automatización|web|portafolio|producto|precio|plan|contratar|desarrollo|programación|tecnología|consultoría|proyecto|aplicación|sistema|software|digital|whatsapp|wasap|numero|telefono|contacto|email|correo|llamar|hablar|comunicar|escribir|mensaje|chat|horario|atención|atienden|disponibilidad|contactan|cuándo|agenda|agendar/i;
 
 // Palabras a excluir para extracción de nombres
 const STOPWORDS = [
@@ -169,6 +169,17 @@ const PALABRAS_OFENSIVAS = [
   "slut",
   "whore",
   "ass",
+  "conchatumadre",
+  "conchasumadre",
+  "ctm",
+  "poronga",
+  "porno",
+  "puta",
+  "puto",
+  "wn",
+  "wna",
+  "maraca",
+  "maraco",
 ];
 
 // Función para extraer nombre limpio del mensaje del usuario

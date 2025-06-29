@@ -4,6 +4,7 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  signInAnonymously,
 } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/firebase/config";
 
@@ -15,10 +16,9 @@ const ADMIN_EMAILS = [
 ];
 
 export const authService = {
-  // Iniciar sesión
+  // Iniciar sesión (correo/contraseña)
   async signIn(email, password) {
     try {
-      // Autenticación con Firebase
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -26,15 +26,13 @@ export const authService = {
       );
       const user = userCredential.user;
 
-      // Verificar que el usuario está autorizado
       if (!ADMIN_EMAILS.includes(user.email)) {
-        await signOut(auth); // Cerrar sesión inmediatamente
+        await signOut(auth);
         throw new Error(
           "Usuario no autorizado para acceder al panel de administración"
         );
       }
 
-      // Usuario autenticado y autorizado
       const userData = {
         uid: user.uid,
         email: user.email,
@@ -45,9 +43,7 @@ export const authService = {
     } catch (error) {
       console.error("Error en signIn:", error);
 
-      // Mapear errores de Firebase a mensajes amigables
       let message = "Error al iniciar sesión";
-
       switch (error.code) {
         case "auth/user-not-found":
           message = "Usuario no encontrado";
@@ -78,7 +74,6 @@ export const authService = {
       if (auth && isFirebaseConfigured()) {
         await signOut(auth);
       }
-
       return { success: true };
     } catch (error) {
       console.error("Error en signOut:", error);
@@ -86,7 +81,7 @@ export const authService = {
     }
   },
 
-  // Verificar si el usuario está autenticado (solo con Firebase Auth)
+  // Escuchar cambios de sesión (para panel de admin)
   onAuthStateChange(callback) {
     if (auth && isFirebaseConfigured()) {
       return onAuthStateChanged(auth, (user) => {
@@ -106,12 +101,12 @@ export const authService = {
     }
   },
 
-  // Verificar si el email está autorizado
+  // Verifica si el email está autorizado para el panel
   isAuthorizedEmail(email) {
     return ADMIN_EMAILS.includes(email);
   },
 
-  // Restablecer contraseña (solo para Firebase)
+  // Restablecer contraseña
   async resetPassword(email) {
     try {
       if (!auth || !isFirebaseConfigured()) {
@@ -128,6 +123,22 @@ export const authService = {
       return { success: true, message: "Email de restablecimiento enviado" };
     } catch (error) {
       console.error("Error en resetPassword:", error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // ✅ Nueva función: Autenticación anónima para usuarios normales (chatbot u otros)
+  async autenticarAnonimo() {
+    try {
+      const result = await signInAnonymously(auth);
+      console.log("✅ Usuario anónimo autenticado:", result.user.uid);
+      return { success: true, user: result.user };
+    } catch (error) {
+      console.error(
+        "❌ Error al autenticar anónimamente:",
+        error.code,
+        error.message
+      );
       return { success: false, error: error.message };
     }
   },

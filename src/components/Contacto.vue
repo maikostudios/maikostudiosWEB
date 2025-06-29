@@ -4,11 +4,17 @@
       <h2 class="section-title">¿Listo para empezar tu proyecto?</h2>
 
       <div class="contacto-grid">
+        <!-- INFORMACIÓN DE CONTACTO -->
         <div class="contacto-info">
           <h3>Conectemos</h3>
           <p class="lead-text">
             Estoy disponible para nuevos proyectos y colaboraciones. ¡Hablemos sobre cómo puedo ayudarte!
           </p>
+          <!-- BOTÓN DE AGENDA DE GOOGLE CALENDAR -->
+
+          <h3>Agenda una cita !!</h3>
+          <div ref="calendarBtnContainer"></div>
+
 
           <div class="contact-methods">
             <a href="mailto:contacto@maikostudios.com" class="contact-method">
@@ -30,6 +36,9 @@
           </div>
         </div>
 
+
+
+        <!-- FORMULARIO DE CONTACTO -->
         <div class="contacto-form">
           <h3 class="form-title">¿Tienes un proyecto en mente?</h3>
           <p class="form-subtitle">Completa el formulario y conversemos sobre tu idea</p>
@@ -101,36 +110,19 @@
       </div>
     </v-container>
   </section>
-
-
-
 </template>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 
 const store = useMainStore()
 
-// Estado del formulario
+// Refs y estado del formulario
 const formRef = ref(null)
 const valid = ref(false)
 const enviando = ref(false)
+const calendarBtnContainer = ref(null)
 
 const form = ref({
   nombre: '',
@@ -155,21 +147,15 @@ const tiposProyecto = [
   'Otro'
 ]
 
-// Reglas de validación
 const rules = {
   required: value => !!value || 'Este campo es obligatorio',
-  email: value => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return pattern.test(value) || 'Ingresa un email válido'
-  },
+  email: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || 'Ingresa un email válido',
   minLength: value => value.length >= 10 || 'El mensaje debe tener al menos 10 caracteres'
 }
 
 const enviarFormulario = async () => {
   if (!valid.value) return
-
   enviando.value = true
-
   try {
     const datos = {
       nombre: form.value.nombre,
@@ -181,24 +167,13 @@ const enviarFormulario = async () => {
       mensaje: form.value.mensaje,
       origen_formulario: 'componente_contacto'
     }
-
     const resultado = await store.enviarMensajeContacto(datos)
-
     if (resultado.success) {
-      // Limpiar formulario
       form.value = {
-        nombre: '',
-        email: '',
-        telefono: '',
-        empresa: '',
-        tipo: '',
-        origen: '',
-        mensaje: '',
-        aceptaTerminos: false
+        nombre: '', email: '', telefono: '', empresa: '', tipo: '',
+        origen: '', mensaje: '', aceptaTerminos: false
       }
       formRef.value?.resetValidation()
-
-      // Mostrar mensaje de éxito (esto se puede mejorar con un snackbar)
       alert('¡Mensaje enviado correctamente! Te responderé pronto.')
     } else {
       alert('Error al enviar el mensaje. Inténtalo de nuevo.')
@@ -210,6 +185,29 @@ const enviarFormulario = async () => {
     enviando.value = false
   }
 }
+
+// Carga dinámica de script y estilo de Google Calendar
+onMounted(() => {
+  const cssLink = document.createElement('link')
+  cssLink.href = 'https://calendar.google.com/calendar/scheduling-button-script.css'
+  cssLink.rel = 'stylesheet'
+  document.head.appendChild(cssLink)
+
+  const script = document.createElement('script')
+  script.src = 'https://calendar.google.com/calendar/scheduling-button-script.js'
+  script.async = true
+  script.onload = () => {
+    if (window.calendar && window.calendar.schedulingButton) {
+      window.calendar.schedulingButton.load({
+        url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2p9Ze-9NKD-jsYpiuZdc2cWMMqELw4D5lXrsOOjEReUHizC-25JERMy5PdYfX3GAwelQoFSB7_?gv=true',
+        color: '#039BE5',
+        label: 'Programar una cita',
+        target: calendarBtnContainer.value
+      })
+    }
+  }
+  document.body.appendChild(script)
+})
 </script>
 
 <style scoped>

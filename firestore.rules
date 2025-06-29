@@ -64,8 +64,11 @@ service cloud.firestore {
       // Permitir creación para el chatbot
       allow create: if true;
 
-      // Solo administradores pueden leer, actualizar y eliminar
-      allow read, update, delete: if isAdmin();
+      // Permitir lectura y actualización para que el chatbot funcione
+      allow read, update: if true;
+
+      // Solo los administradores pueden eliminar conversaciones
+      allow delete: if isAdmin();
     }
 
     // Estadísticas de visitas
