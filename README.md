@@ -48,6 +48,8 @@ npm run dev
 
 <<<<<<< HEAD
 Luego abre: [http://localhost:5173](http://localhost:5173)
+
+probando desde hoy 30/06/2025 TRAE
 =======
 Luego abre: [http://localhost:5174](http://localhost:5174)
 
