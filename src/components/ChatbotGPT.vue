@@ -21,7 +21,8 @@
             <span class="status">En línea</span>
           </div>
         </div>
-        <v-btn icon size="small" variant="text" @click="cerrarChat">
+        <!-- Botón de cerrar movido a la esquina superior derecha -->
+        <v-btn icon size="small" variant="text" @click="cerrarChat" class="close-btn-absolute">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -309,8 +310,30 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
-
+.close-btn-absolute {
+  position: absolute !important;
+  top: 0.5em;
+  right: 0.5em;
+  z-index: 20;
+  background: rgba(0,0,0,0.04);
+  box-shadow: none;
+}
+@media (max-width: 600px) {
+  .chat-header {
+    padding: 0.5em 0.5em 0.5em 0.7em;
+    border-radius: 1.2em 1.2em 0 0;
+    min-height: 48px;
+    flex-wrap: wrap;
+    gap: 0.2em;
+    position: relative;
+  }
+  .close-btn-absolute {
+    top: 0.3em;
+    right: 0.3em;
+  }
+}
 .header-info {
   display: flex;
   align-items: center;
@@ -461,7 +484,7 @@ onMounted(() => {
     z-index: 9999;
   }
   .chat-window {
-    width: 92vw;
+    width: 96vw;
     max-width: 420px;
     height: 70vh;
     max-height: 80vh;
@@ -472,20 +495,33 @@ onMounted(() => {
     bottom: 0;
   }
   .chat-header {
-    padding: 0.7em 1em 0.7em 1em;
+    padding: 0.5em 0.5em 0.5em 0.7em;
     border-radius: 1.2em 1.2em 0 0;
+    min-height: 48px;
+    flex-wrap: wrap;
+    gap: 0.2em;
+  }
+  .header-info {
+    min-width: 0;
+    flex: 1 1 60%;
+    gap: 0.5em;
+  }
+  .header-text h5, .header-text h6 {
+    font-size: 1em;
+    word-break: break-word;
+  }
+  .header-text {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  .chat-header > .v-btn {
+    flex-shrink: 0;
+    margin-left: 0.2em;
+    z-index: 10;
   }
   .chat-messages {
     padding: 0.7em 0.7em 0.7em 0.7em;
     min-height: 30vh;
-    max-height: 45vh;
-    overflow-y: auto;
-  }
-  .chat-input {
-    padding: 0.7em 0.7em 0.7em 0.7em;
-  }
-  .chat-footer {
-    border-radius: 0 0 0.7em 0.7em;
   }
 }
 </style>
