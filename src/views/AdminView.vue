@@ -752,7 +752,7 @@ const formatearFecha = (fecha) => {
 const cerrarSesion = () => {
   store.limpiarEstado()
   localStorage.removeItem('admin_authenticated')
-  router.push('/admin/login')
+  router.push('/login')
 }
 
 // Funciones para gestión de proyectos
@@ -919,6 +919,11 @@ const poblarBaseDatos = async () => {
 
 // Inicialización
 onMounted(async () => {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      router.replace('/login')
+    }
+  })
   cargarDatos()
   cargarProyectos()
 
@@ -940,7 +945,7 @@ onMounted(async () => {
 
 <style scoped>
 .admin-page {
-  padding: 2rem 0;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
   color: var(--color-text);
 }
 
@@ -948,25 +953,25 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(1.5rem, 5vw, 3rem);
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
   color: var(--color-text);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3em;
 }
 
 .page-subtitle {
   color: var(--color-secondary);
-  font-size: 1.1rem;
+  font-size: 1.1em;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  margin-bottom: clamp(1.5rem, 5vw, 3rem);
 }
 
 .stat-card {
@@ -977,43 +982,39 @@ onMounted(async () => {
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1em;
 }
 
 .stat-info h3 {
-  font-size: 2rem;
+  font-size: 2em;
   color: var(--color-text);
   margin: 0;
 }
 
-.stat-info p {
-  color: #cccccc;
-  margin: 0;
-}
-
 .admin-tabs {
-  margin-bottom: 2rem;
+  margin-bottom: 2em;
 }
 
 .tab-content {
-  padding: 2rem 0;
+  padding: clamp(1.2rem, 4vw, 2rem) 0;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
 }
 
 .section-header h2 {
   color: var(--color-text);
   margin: 0;
+  font-size: 1.3em;
 }
 
 .admin-table {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: 0.5em;
 }
 
 .mensaje-detalle {
@@ -1034,47 +1035,37 @@ onMounted(async () => {
 .cv-info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1em;
+  margin-bottom: 1em;
 }
-
 .habilidades,
 .tecnologias {
-  margin: 1rem 0;
+  margin: 1em 0;
 }
 
 .habilidades-chips,
 .tecnologias-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.5em;
 }
 
 .descripcion-cargo {
-  margin-top: 1.5rem;
+  margin-top: 1.5em;
 }
 
 .descripcion-texto {
-  padding: 1rem;
+  padding: 1em;
   background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid var(--color-primary);
+  border-radius: 0.5em;
+  border-left: 0.25em solid var(--color-primary);
 }
 
-.descripcion-content {
-  margin: 0;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-}
-
-/* Mantener compatibilidad con descripción antigua */
 .descripcion {
-  margin-top: 1rem;
-  padding: 1rem;
+  margin-top: 1em;
+  padding: 1em;
   background: #f5f5f5;
-  border-radius: 8px;
+  border-radius: 0.5em;
 }
 
 @media (max-width: 768px) {

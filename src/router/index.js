@@ -3,6 +3,8 @@ import HomeView from "@/views/HomeView.vue";
 import { auth } from "@/firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 
+import NotFoundView from '@/views/NotFoundView.vue'
+
 const routes = [
   { path: "/", name: "Home", component: HomeView },
   {
@@ -28,9 +30,9 @@ const routes = [
   },
   // Rutas de administración
   {
-    path: "/admin/login",
+    path: "/login",
     name: "AdminLogin",
-    component: () => import("@/views/AdminLoginView.vue"),
+    component: () => import("@/views/LoginView.vue"),
   },
   {
     path: "/admin",
@@ -38,6 +40,8 @@ const routes = [
     component: () => import("@/views/AdminView.vue"),
     meta: { requiresAuth: true },
   },
+  // Catch-all route for 404
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
 ];
 
 const router = createRouter({
@@ -48,13 +52,12 @@ const router = createRouter({
 // Guard de navegación para rutas protegidas
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        next();
-      } else {
-        next("/admin/login");
-      }
-    });
+    const user = auth.currentUser;
+    if (user) {
+      next();
+    } else {
+      next("/login");
+    }
   } else {
     next();
   }

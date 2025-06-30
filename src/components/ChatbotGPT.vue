@@ -284,55 +284,28 @@ onMounted(() => {
 <style scoped>
 .chatbot-container {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: clamp(0.75em, 4vw, 2em);
+  right: clamp(0.75em, 4vw, 2em);
   z-index: 1000;
 }
 
-.chat-toggle-btn {
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-}
-
 .chat-window {
-  width: 380px;
-  height: 500px;
+  width: min(98vw, 24em);
+  height: min(90vh, 32em);
   display: flex;
   flex-direction: column;
-  background: rgba(10, 10, 10, 0.95);
+  background: rgba(10, 10, 10, 0.97);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 1.2em;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 
 .chat-header {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: white;
-  padding: 1rem;
+  padding: 1em;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -341,48 +314,56 @@ onMounted(() => {
 .header-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.75em;
 }
 
-.header-text h4 {
+.header-text h5 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.1em;
+}
+
+.header-text h6 {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 400;
 }
 
 .status {
-  font-size: 0.8rem;
+  font-size: 0.8em;
   opacity: 0.9;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 1em;
   background: var(--color-background);
+  scroll-behavior: smooth;
 }
 
 .mensaje-bienvenida {
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 2em 1em;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .mensaje-bienvenida h3 {
   color: var(--color-primary);
-  margin: 1rem 0 0.5rem 0;
+  margin: 1em 0 0.5em 0;
+  font-size: 1.3em;
 }
 
 .estado-chip {
-  margin: 1rem 0;
+  margin: 1em 0;
 }
 
 .derivacion-humano {
-  margin: 1rem 0;
-  max-width: 300px;
+  margin: 1em 0;
+  max-width: 18em;
 }
 
 .mensaje {
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
   display: flex;
 }
 
@@ -396,9 +377,10 @@ onMounted(() => {
 
 .mensaje-contenido {
   max-width: 80%;
-  padding: 0.75rem 1rem;
-  border-radius: 18px;
+  padding: 0.75em 1em;
+  border-radius: 1.2em;
   position: relative;
+  font-size: 1em;
 }
 
 .mensaje-usuario .mensaje-contenido {
@@ -413,24 +395,24 @@ onMounted(() => {
 }
 
 .mensaje-texto {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.25em;
 }
 
 .mensaje-hora {
-  font-size: 0.7rem;
+  font-size: 0.75em;
   opacity: 0.7;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .typing-indicator {
   display: flex;
-  gap: 4px;
+  gap: 0.3em;
   align-items: center;
 }
 
 .typing-indicator span {
-  width: 8px;
-  height: 8px;
+  width: 0.6em;
+  height: 0.6em;
   border-radius: 50%;
   background: var(--color-primary);
   animation: typing 1.4s infinite ease-in-out;
@@ -445,57 +427,48 @@ onMounted(() => {
 }
 
 @keyframes typing {
-
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-
-  30% {
-    transform: translateY(-10px);
-  }
-}
-
-.respuestas-rapidas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.respuesta-chip {
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.respuesta-chip:hover {
-  transform: scale(1.05);
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-0.6em); }
 }
 
 .chat-input {
-  padding: 1rem;
+  padding: 1em;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .chat-footer {
   text-align: center;
-  padding: 0.5rem;
+  padding: 0.5em;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95em;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .chatbot-container {
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 0.5em;
+    right: 0.5em;
   }
-
   .chat-window {
-    width: calc(100vw - 2rem);
-    height: calc(100vh - 4rem);
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .chat-header {
+    padding: 0.7em;
+  }
+  .chat-messages {
+    padding: 0.7em;
+  }
+  .chat-input {
+    padding: 0.7em;
   }
 }
 </style>

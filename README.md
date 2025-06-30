@@ -71,7 +71,7 @@ VITE_OPENAI_API_KEY=tu_openai_api_key
 
 ### Panel de Administración
 
-- **URL**: `/admin/login`
+- **URL**: `/login`
 - **Credenciales de desarrollo**:
   - Email: `admin@maikostudios.com`
   - Password: `admin123`
