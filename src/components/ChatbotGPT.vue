@@ -451,24 +451,41 @@ onMounted(() => {
 
 @media (max-width: 600px) {
   .chatbot-container {
-    bottom: 0.5em;
-    right: 0.5em;
+    bottom: 1.5em;
+    right: 1.5em;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 9999;
   }
   .chat-window {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-    max-width: 100vw;
-    max-height: 100vh;
+    width: 92vw;
+    max-width: 420px;
+    height: 70vh;
+    max-height: 80vh;
+    margin: 0 auto;
+    border-radius: 1.2em 1.2em 0.7em 0.7em;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.28);
+    position: relative;
+    bottom: 0;
   }
   .chat-header {
-    padding: 0.7em;
+    padding: 0.7em 1em 0.7em 1em;
+    border-radius: 1.2em 1.2em 0 0;
   }
   .chat-messages {
-    padding: 0.7em;
+    padding: 0.7em 0.7em 0.7em 0.7em;
+    min-height: 30vh;
+    max-height: 45vh;
+    overflow-y: auto;
   }
   .chat-input {
-    padding: 0.7em;
+    padding: 0.7em 0.7em 0.7em 0.7em;
+  }
+  .chat-footer {
+    border-radius: 0 0 0.7em 0.7em;
   }
 }
 </style>
