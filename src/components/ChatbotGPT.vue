@@ -51,6 +51,11 @@
           </div>
         </div>
 
+        <!-- Botones de selección de contacto -->
+        <div v-if="estadoConversacion === 'esperandoContacto' && !opcionContactoElegida" class="botones-contacto">
+          <v-btn color="primary" @click="elegirOpcionContacto('telefono')" :disabled="escribiendo">Teléfono</v-btn>
+          <v-btn color="secondary" @click="elegirOpcionContacto('correo')" :disabled="escribiendo">Correo Electrónico</v-btn>
+        </div>
         <!-- Indicador de escritura -->
         <div v-if="escribiendo" class="mensaje mensaje-bot">
           <div class="mensaje-contenido">
@@ -76,9 +81,9 @@
       <!-- Input para escribir mensajes -->
       <v-card-actions class="chat-input">
         <v-text-field v-model="mensajeActual" placeholder="Escribe tu mensaje..." variant="outlined" density="compact"
-          hide-details @keyup.enter="enviarMensaje" :disabled="escribiendo">
+          hide-details @keyup.enter="enviarMensaje" :disabled="escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)">
           <template #append-inner>
-            <v-btn icon size="small" color="primary" :disabled="!mensajeActual.trim() || escribiendo"
+            <v-btn icon size="small" color="primary" :disabled="!mensajeActual.trim() || escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)"
               @click="enviarMensaje">
               <v-icon>mdi-send</v-icon>
             </v-btn>
@@ -132,6 +137,25 @@ const cerrarChat = () => {
 }
 
 // Función para enviar mensaje con nuevo sistema
+const opcionContactoElegida = ref(null)
+
+function elegirOpcionContacto(opcion) {
+  opcionContactoElegida.value = opcion
+  let mensajeBot = ''
+  if (opcion === 'telefono') {
+    mensajeBot = 'Ingresa tu número de teléfono para poder contactarte.'
+  } else {
+    mensajeBot = 'Ingresa tu correo electrónico para poder contactarte.'
+  }
+  mensajes.push({
+    texto: mensajeBot,
+    esUsuario: false,
+    timestamp: new Date()
+  })
+  nextTick(() => scrollToBottom())
+}
+
+// Modificar lógica de enviarMensaje para resetear opcionContactoElegida tras validación
 const enviarMensaje = async () => {
   const mensaje = mensajeActual.value.trim()
   if (!mensaje || escribiendo.value) return
@@ -140,47 +164,21 @@ const enviarMensaje = async () => {
   if (estadoConversacion.value === 'inicio') {
     try {
       const resultado = await crearConversacion(mensaje)
-
       if (resultado.success) {
-        // Nombre extraído correctamente
         nombreUsuario.value = resultado.data.nombre
         conversacionId.value = resultado.id
         estadoConversacion.value = 'esperandoContacto'
-
-        // Agregar mensaje del usuario
-        mensajes.push({
-          texto: mensaje,
-          esUsuario: true,
-          timestamp: new Date()
-        })
-
-        // Respuesta del bot pidiendo contacto con el nombre extraído
-        const respuestaContacto = `¡Hola ${resultado.data.nombre}! 👋 Si se pierde la conversación, agradecería que me dejaras tu WhatsApp o correo electrónico para contactarte más tarde. ¿Cuál prefieres dejar?`
-
-        mensajes.push({
-          texto: respuestaContacto,
-          esUsuario: false,
-          timestamp: new Date()
-        })
-
+        mensajes.push({ texto: mensaje, esUsuario: true, timestamp: new Date() })
+        // Mensaje corto y claro
+        const respuestaContacto = `¡Hola ${resultado.data.nombre}! 👋 Para poder contactarte si se pierde la conversación, ¿qué prefieres dejar?`
+        mensajes.push({ texto: respuestaContacto, esUsuario: false, timestamp: new Date() })
         mensajeActual.value = ''
         await nextTick()
         scrollToBottom()
         return
       } else if (resultado.error === 'nombre_invalido') {
-        // Error en extracción de nombre - mantener estado inicio
-        mensajes.push({
-          texto: mensaje,
-          esUsuario: true,
-          timestamp: new Date()
-        })
-
-        mensajes.push({
-          texto: resultado.mensaje,
-          esUsuario: false,
-          timestamp: new Date()
-        })
-
+        mensajes.push({ texto: mensaje, esUsuario: true, timestamp: new Date() })
+        mensajes.push({ texto: resultado.mensaje, esUsuario: false, timestamp: new Date() })
         mensajeActual.value = ''
         await nextTick()
         scrollToBottom()
@@ -191,6 +189,13 @@ const enviarMensaje = async () => {
     } catch (error) {
       console.error('Error al crear conversación:', error)
     }
+  }
+
+  // Si está esperando contacto y ya se eligió opción, permitir input
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value) {
+    // Aquí puedes agregar validación extra si lo deseas
+    // Después de guardar el dato, resetear la opción para evitar doble input
+    opcionContactoElegida.value = null
   }
 
   // Para mensajes posteriores, usar el sistema de manejo
