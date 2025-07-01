@@ -53,8 +53,33 @@
 
         <!-- Botones de selección de contacto -->
         <div v-if="estadoConversacion === 'esperandoContacto' && !opcionContactoElegida" class="botones-contacto">
-          <v-btn color="primary" @click="elegirOpcionContacto('telefono')" :disabled="escribiendo">Teléfono</v-btn>
-          <v-btn color="secondary" @click="elegirOpcionContacto('correo')" :disabled="escribiendo">Correo Electrónico</v-btn>
+          <v-btn color="primary" @click="elegirOpcionContacto('telefono')" :disabled="escribiendo" aria-label="Elegir Teléfono">Teléfono</v-btn>
+          <v-btn color="secondary" @click="elegirOpcionContacto('correo')" :disabled="escribiendo" aria-label="Elegir Correo Electrónico">Correo Electrónico</v-btn>
+        </div>
+        <!-- Input contextual para Teléfono o Correo -->
+        <div v-if="estadoConversacion === 'esperandoContacto' && opcionContactoElegida">
+          <div v-if="opcionContactoElegida === 'telefono'">
+            <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📞 Ingresa tu número de teléfono para poder contactarte.</div></div>
+            <!-- Eliminado el input de teléfono -->
+            <div v-if="inputContacto && !telefonoValido" class="error-texto">Número inválido. Debe comenzar con 9 o +569 y tener 9 dígitos.</div>
+            <v-btn color="primary" :disabled="!telefonoValido" @click="enviarContacto" aria-label="Enviar Teléfono" style="display: none;">Enviar</v-btn>
+          </div>
+          <div v-else-if="opcionContactoElegida === 'correo'">
+            <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📧 Ingresa tu correo electrónico para continuar.</div></div>
+            <v-text-field
+              v-model="inputContacto"
+              placeholder="ejemplo@ejemplo.com"
+              variant="outlined"
+              density="compact"
+              hide-details
+              :aria-label="'Campo para ingresar correo electrónico'"
+              :disabled="escribiendo"
+              class="input-validacion"
+              @keyup.enter="validarCorreoEnviar"
+            />
+            <div v-if="inputContacto && !correoValido" class="error-texto">Correo electrónico inválido.</div>
+            <v-btn color="primary" :disabled="!correoValido" @click="enviarContacto" aria-label="Enviar Correo Electrónico" style="display: none;">Enviar</v-btn>
+          </div>
         </div>
         <!-- Indicador de escritura -->
         <div v-if="escribiendo" class="mensaje mensaje-bot">
@@ -80,15 +105,25 @@
 
       <!-- Input para escribir mensajes -->
       <v-card-actions class="chat-input">
-        <v-text-field v-model="mensajeActual" placeholder="Escribe tu mensaje..." variant="outlined" density="compact"
-          hide-details @keyup.enter="enviarMensaje" :disabled="escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)">
+        <v-text-field
+          v-model="mensajeActual"
+          :placeholder="placeholderInputChat"
+          variant="outlined"
+          density="compact"
+          hide-details
+          @keyup.enter="enviarMensaje"
+          :disabled="escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)"
+          :error="mostrarErrorInput"
+          :aria-label="ariaLabelInput"
+        >
           <template #append-inner>
-            <v-btn icon size="small" color="primary" :disabled="!mensajeActual.trim() || escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)"
+            <v-btn icon size="small" color="primary" :disabled="!mensajeActual.trim() || escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida) || mostrarErrorInput"
               @click="enviarMensaje">
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </template>
         </v-text-field>
+        <div v-if="mostrarErrorInput" class="error-texto">{{ mensajeErrorInput }}</div>
       </v-card-actions>
 
       <!-- Footer con información -->
@@ -100,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, nextTick, onMounted } from 'vue'
+import { ref, reactive, nextTick, onMounted, computed } from 'vue'
 import {
   obtenerSaludoInicial,
   crearConversacion,
@@ -138,27 +173,107 @@ const cerrarChat = () => {
 
 // Función para enviar mensaje con nuevo sistema
 const opcionContactoElegida = ref(null)
+const inputContacto = ref("")
+const telefonoValido = ref(false)
+const correoValido = ref(false)
+const intentoEnvioFallido = ref(false)
 
 function elegirOpcionContacto(opcion) {
   opcionContactoElegida.value = opcion
-  let mensajeBot = ''
-  if (opcion === 'telefono') {
-    mensajeBot = 'Ingresa tu número de teléfono para poder contactarte.'
-  } else {
-    mensajeBot = 'Ingresa tu correo electrónico para poder contactarte.'
-  }
-  mensajes.push({
-    texto: mensajeBot,
-    esUsuario: false,
-    timestamp: new Date()
-  })
+  inputContacto.value = ""
+  telefonoValido.value = false
+  correoValido.value = false
+  intentoEnvioFallido.value = false // Resetear al cambiar de opción
   nextTick(() => scrollToBottom())
 }
 
-// Modificar lógica de enviarMensaje para resetear opcionContactoElegida tras validación
+function validarTelefono() {
+  // Permite 949475207 o +56949475207 o 9xxxxxxxx sin +56
+  const regex = /^(\+?56)?9\d{8}$/
+  telefonoValido.value = regex.test(inputContacto.value.trim())
+}
+function validarCorreo() {
+  // Validación básica de correo
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  correoValido.value = regex.test(inputContacto.value.trim())
+}
+async function enviarContacto() {
+  if (opcionContactoElegida.value === 'telefono' && telefonoValido.value) {
+    // Evitar duplicar el mensaje en mensajes y en mensajeActual
+    mensajeActual.value = inputContacto.value
+    inputContacto.value = ""
+    telefonoValido.value = false
+    await enviarMensaje()
+    opcionContactoElegida.value = null
+  } else if (opcionContactoElegida.value === 'correo' && correoValido.value) {
+    mensajeActual.value = inputContacto.value
+    inputContacto.value = ""
+    correoValido.value = false
+    await enviarMensaje()
+    opcionContactoElegida.value = null
+  }
+}
+
+const placeholderInputChat = computed(() => {
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
+    return '+56987654321'
+  } else if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
+    return 'ejemplo@ejemplo.com'
+  }
+  return 'Escribe tu mensaje...'
+})
+const ariaLabelInput = computed(() => {
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
+    return 'Campo para ingresar teléfono'
+  } else if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
+    return 'Campo para ingresar correo electrónico'
+  }
+  return 'Campo para escribir mensaje'
+})
+const mostrarErrorInput = computed(() => {
+  if (!intentoEnvioFallido.value) {
+    return false
+  }
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
+    return !/^(\+?56)?9\d{8}$/.test(mensajeActual.value.trim())
+  }
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
+    return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mensajeActual.value.trim())
+  }
+  return false
+})
+const mensajeErrorInput = computed(() => {
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
+    return 'Número inválido. Debe comenzar con 9 o +569 y tener 9 dígitos.'
+  }
+  if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
+    return 'Correo electrónico inválido.'
+  }
+  return ''
+})
+
+// Eliminar inputContacto, telefonoValido, correoValido y enviarContacto
+// Modificar enviarMensaje para validar y restaurar placeholder
 const enviarMensaje = async () => {
   const mensaje = mensajeActual.value.trim()
   if (!mensaje || escribiendo.value) return
+
+  intentoEnvioFallido.value = false // Resetear al intentar enviar
+
+  // Validar si estamos en estado de contacto y el mensaje es inválido
+  if (estadoConversacion.value === 'esperandoContacto') {
+    if (opcionContactoElegida.value === 'telefono') {
+      if (!/^(\+?56)?9\d{8}$/.test(mensaje)) {
+        intentoEnvioFallido.value = true
+        return
+      }
+    } else if (opcionContactoElegida.value === 'correo') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mensaje)) {
+        intentoEnvioFallido.value = true
+        return
+      }
+    }
+  }
 
   // Si es el primer mensaje (estado inicio), crear conversación
   if (estadoConversacion.value === 'inicio') {
@@ -169,7 +284,6 @@ const enviarMensaje = async () => {
         conversacionId.value = resultado.id
         estadoConversacion.value = 'esperandoContacto'
         mensajes.push({ texto: mensaje, esUsuario: true, timestamp: new Date() })
-        // Mensaje corto y claro
         const respuestaContacto = `¡Hola ${resultado.data.nombre}! 👋 Para poder contactarte si se pierde la conversación, ¿qué prefieres dejar?`
         mensajes.push({ texto: respuestaContacto, esUsuario: false, timestamp: new Date() })
         mensajeActual.value = ''
@@ -191,58 +305,39 @@ const enviarMensaje = async () => {
     }
   }
 
-  // Si está esperando contacto y ya se eligió opción, permitir input
+  // Validación de contacto
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value) {
-    // Aquí puedes agregar validación extra si lo deseas
-    // Después de guardar el dato, resetear la opción para evitar doble input
-    opcionContactoElegida.value = null
-  }
-
-  // Para mensajes posteriores, usar el sistema de manejo
-  if (conversacionId.value) {
-    // Agregar mensaje del usuario
-    mensajes.push({
-      texto: mensaje,
-      esUsuario: true,
-      timestamp: new Date()
-    })
-
+    if (opcionContactoElegida.value === 'telefono') {
+      if (!/^(\+?56)?9\d{8}$/.test(mensaje)) return
+    } else if (opcionContactoElegida.value === 'correo') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mensaje)) return
+    }
+    // Evitar duplicar el mensaje en mensajes y en mensajeActual
     mensajeActual.value = ''
-    escribiendo.value = true
-
+    opcionContactoElegida.value = null
     await nextTick()
     scrollToBottom()
+    // Continuar flujo normal
+  }
 
+  if (conversacionId.value) {
+    mensajes.push({ texto: mensaje, esUsuario: true, timestamp: new Date() })
+    mensajeActual.value = ''
+    escribiendo.value = true
+    await nextTick()
+    scrollToBottom()
     try {
       const resultado = await manejarMensajeUsuario(mensaje, conversacionId.value, estadoConversacion.value)
-
       if (resultado.success) {
-        // Agregar respuesta del bot
-        mensajes.push({
-          texto: resultado.respuesta,
-          esUsuario: false,
-          timestamp: new Date()
-        })
-
-        // Actualizar estado
+        mensajes.push({ texto: resultado.respuesta, esUsuario: false, timestamp: new Date() })
         estadoConversacion.value = resultado.nuevoEstado
         derivadoAHumano.value = resultado.derivadoAHumano
-
       } else {
-        mensajes.push({
-          texto: resultado.respuesta || 'Disculpa, hubo un error. ¿Podrías intentar de nuevo?',
-          esUsuario: false,
-          timestamp: new Date()
-        })
+        mensajes.push({ texto: resultado.respuesta || 'Disculpa, hubo un error. ¿Podrías intentar de nuevo?', esUsuario: false, timestamp: new Date() })
       }
-
     } catch (error) {
       console.error('Error en el chat:', error)
-      mensajes.push({
-        texto: 'Disculpa, hubo un error técnico. ¿Podrías intentar de nuevo?',
-        esUsuario: false,
-        timestamp: new Date()
-      })
+      mensajes.push({ texto: 'Disculpa, hubo un error técnico. ¿Podrías intentar de nuevo?', esUsuario: false, timestamp: new Date() })
     } finally {
       escribiendo.value = false
       await nextTick()
