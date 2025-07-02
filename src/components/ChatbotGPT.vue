@@ -60,9 +60,20 @@
         <div v-if="estadoConversacion === 'esperandoContacto' && opcionContactoElegida">
           <div v-if="opcionContactoElegida === 'telefono'">
             <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📞 Ingresa tu número de teléfono para poder contactarte.</div></div>
-            <!-- Eliminado el input de teléfono -->
+            <v-text-field
+              v-model="inputContacto"
+              placeholder="+56987654321"
+              variant="outlined"
+              density="compact"
+              hide-details
+              :aria-label="'Campo para ingresar teléfono'"
+              :disabled="escribiendo"
+              class="input-validacion"
+              @input="validarTelefono"
+              @keyup.enter="enviarContacto"
+            />
             <div v-if="inputContacto && !telefonoValido" class="error-texto">Número inválido. Debe comenzar con 9 o +569 y tener 9 dígitos.</div>
-            <v-btn color="primary" :disabled="!telefonoValido" @click="enviarContacto" aria-label="Enviar Teléfono" style="display: none;">Enviar</v-btn>
+            <!-- Eliminado el botón oculto para enviar teléfono -->
           </div>
           <div v-else-if="opcionContactoElegida === 'correo'">
             <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📧 Ingresa tu correo electrónico para continuar.</div></div>
