@@ -68,6 +68,17 @@
             <v-icon left>mdi-account-tie</v-icon>
             Solicitudes CV
           </v-tab>
+<<<<<<< Updated upstream
+=======
+          <v-tab value="portafolio">
+            <v-icon left>mdi-folder-image</v-icon>
+            Gestión de Portafolio
+          </v-tab>
+          <v-tab value="solicitudes">
+            <v-icon left>mdi-clipboard-list</v-icon>
+            Solicitudes
+          </v-tab>
+>>>>>>> Stashed changes
           <v-tab value="estadisticas">
             <v-icon left>mdi-chart-line</v-icon>
             Estadísticas
@@ -137,6 +148,39 @@
           </v-window-item>
 
           <!-- Tab de Estadísticas -->
+          <!-- Tab de Solicitudes (Leads) -->
+          <v-window-item value="solicitudes">
+            <div class="tab-content">
+              <div class="section-header">
+                <h2>Solicitudes de Servicios</h2>
+                <div class="d-flex gap-4">
+                  <v-select v-model="filtros.estado" :items="estadosDisponibles" label="Estado" class="mr-2" density="compact" clearable></v-select>
+                  <v-select v-model="filtros.fuente" :items="fuentesDisponibles" label="Fuente" class="mr-2" density="compact" clearable></v-select>
+                  <v-btn color="primary" @click="cargarSolicitudes">
+                    <v-icon left>mdi-refresh</v-icon>
+                    Buscar
+                  </v-btn>
+                </div>
+              </div>
+
+              <v-data-table :headers="headersSolicitudes" :items="solicitudes" :loading="loading" class="admin-table" item-value="id">
+                <template #item.fecha="{ item }">
+                  {{ formatearFecha(item.fecha?.toDate?.()) }}
+                </template>
+
+                <template #item.estado="{ item }">
+                  <v-select v-model="item.estado" :items="estadosDisponibles" dense hide-details style="max-width:120px" @update:model-value="val => actualizarEstado(item, val)"></v-select>
+                </template>
+
+                <template #item.actions="{ item }">
+                  <v-btn icon size="small" color="primary" @click="responderSolicitud(item)">
+                    <v-icon>mdi-email</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </div>
+          </v-window-item>
+
           <v-window-item value="estadisticas">
             <div class="tab-content">
               <h2>Estadísticas Detalladas</h2>
@@ -214,6 +258,13 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
+<<<<<<< Updated upstream
+=======
+import { listarSolicitudes, actualizarEstadoSolicitud } from '@/services/firestoreService'
+import { useGitHubAssets } from '@/composables/useGitHubAssets'
+import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js'
+import { globalNotifications } from '@/composables/useNotifications'
+>>>>>>> Stashed changes
 
 const router = useRouter()
 const store = useMainStore()
@@ -256,6 +307,54 @@ const headersCV = [
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
 
+<<<<<<< Updated upstream
+=======
+const estadosDisponibles = ['pendiente', 'en progreso', 'respondido']
+const fuentesDisponibles = ['Home', 'Campañas']
+
+const filtros = reactive({ estado: '', fuente: '' })
+
+const solicitudes = ref([])
+
+async function cargarSolicitudes () {
+  loading.value = true
+  solicitudes.value = await listarSolicitudes({ ...filtros })
+  loading.value = false
+}
+
+async function actualizarEstado (item, nuevoEstado) {
+  const ok = await actualizarEstadoSolicitud(item.id, nuevoEstado)
+  if (ok) success('Estado actualizado')
+  else error('No se pudo actualizar')
+}
+
+function responderSolicitud (item) {
+  info(`Se enviará correo a ${item.email} (lógica pendiente)`) 
+}
+
+const headersSolicitudes = [
+  { title: 'Código', key: 'codigoSeguimiento' },
+  { title: 'Nombre', key: 'nombre' },
+  { title: 'Servicio', key: 'servicio' },
+  { title: 'Estado', key: 'estado' },
+  { title: 'Fuente', key: 'fuente' },
+  { title: 'Fecha', key: 'fecha' },
+  { title: 'Acciones', key: 'actions', sortable: false }
+]
+
+const headersProyectos = [
+  { title: 'Imagen', key: 'imagen', sortable: false },
+  { title: 'Título', key: 'titulo' },
+  { title: 'Descripción', key: 'descripcion' },
+  { title: 'Estrella', key: 'esEstrella', sortable: false },
+  { title: 'En Home', key: 'mostrarEnHome', sortable: false },
+  { title: 'En Portafolio', key: 'mostrarEnPortafolio', sortable: false },
+  { title: 'Publicado', key: 'estaPublicado', sortable: false },
+  { title: 'Tecnologías', key: 'tecnologias', sortable: false },
+  { title: 'Acciones', key: 'actions', sortable: false }
+]
+
+>>>>>>> Stashed changes
 // Funciones
 const cargarDatos = async () => {
   loading.value = true
@@ -334,8 +433,34 @@ const cerrarSesion = () => {
 }
 
 // Inicialización
+<<<<<<< Updated upstream
 onMounted(() => {
   cargarDatos()
+=======
+onMounted(async () => {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      router.replace('/login')
+    }
+  })
+  cargarDatos();
+  cargarSolicitudes()
+  cargarProyectos()
+
+  // Cargar imágenes desde GitHub
+  await cargarImagenesProyectos()
+
+  // Exponer funciones para testing en desarrollo
+  if (import.meta.env.DEV) {
+    window.store = store
+    window.poblarBaseDatos = poblarBaseDatos
+    window.poblarFirebaseConProyectos = poblarFirebaseConProyectos
+    console.log('🔧 Funciones expuestas para testing:')
+    console.log('   - window.store')
+    console.log('   - window.poblarBaseDatos()')
+    console.log('   - window.poblarFirebaseConProyectos()')
+  }
+>>>>>>> Stashed changes
 })
 </script>
 

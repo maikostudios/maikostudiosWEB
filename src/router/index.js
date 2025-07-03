@@ -1,8 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
+<<<<<<< Updated upstream
 import HomeView from "@/views/HomeView.vue";
+=======
+// HomeView se carga perezosamente para mejorar LCP
+// import HomeView from "@/views/HomeView.vue";
+import { auth } from "@/firebase/config";
+import { onAuthStateChanged } from "firebase/auth";
+
+import NotFoundView from '@/views/NotFoundView.vue'
+>>>>>>> Stashed changes
 
 const routes = [
-  { path: "/", name: "Home", component: HomeView },
+  { path: "/", name: "Home", component: () => import(/* webpackChunkName: "home" */ "@/views/HomeView.vue") },
   {
     path: "/sobre-mi",
     name: "SobreMi",
@@ -23,6 +32,17 @@ const routes = [
     path: "/contacto",
     name: "Contacto",
     component: () => import("@/views/ContactoView.vue"),
+  },
+  // Formulario interactivo y seguimiento
+  {
+    path: "/form-interactivo",
+    name: "FormInteractivo",
+    component: () => import("@/views/FormInteractivoView.vue"),
+  },
+  {
+    path: "/seguimiento",
+    name: "Seguimiento",
+    component: () => import("@/views/SeguimientoView.vue"),
   },
   // Rutas de administración
   {

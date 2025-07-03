@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Leads capturados por formulario interactivo
+    match /contactRequests/{docId} {
+      // Cualquier usuario (incluido anónimo) puede crear (enviar formulario)
+      allow create: if true;
+
+      // Lectura: admin autenticado o usuario anónimo que solo lee su propio doc por ID (docId es el código)
+      allow get: if request.auth != null || request.resource.data.codigoSeguimiento == docId;
+
+      // Listar con filtros (solo admin)
+      allow list: if request.auth != null && request.auth.token.email_verified == true;
+
+      // Actualizar estado o responder (solo admin)
+      allow update: if request.auth != null;
+
+      // Nunca borrar desde cliente
+      allow delete: if false;
+    }
+
+    // Por defecto, solo usuarios autenticados pueden acceder a otras colecciones
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

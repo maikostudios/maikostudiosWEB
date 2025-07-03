@@ -1,15 +1,21 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+<<<<<<< Updated upstream
 import path from "path";
 
 // DESACTIVAMOS ESTO TEMPORALMENTE
 // import Components from "unplugin-vue-components/vite";
 // import AutoImport from "unplugin-auto-import/vite";
 // import { VuetifyResolver } from "unplugin-vue-components/resolvers";
+=======
+import viteCompression from 'vite-plugin-compression'
+import { visualizer } from 'rollup-plugin-visualizer'
+>>>>>>> Stashed changes
 
 export default defineConfig({
   plugins: [
     vue(),
+<<<<<<< Updated upstream
 
     // Si más adelante quieres auto-import, puedes reactivarlo aquí:
     /*
@@ -24,10 +30,30 @@ export default defineConfig({
       resolvers: [VuetifyResolver()],
     }),
     */
+=======
+    viteCompression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+      deleteOriginFile: false,
+    }),
+    visualizer({ filename: 'dist/bundle-report.html', open: false })
+>>>>>>> Stashed changes
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+        }
+      }
+    }
+  }
 });
