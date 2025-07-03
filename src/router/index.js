@@ -1,14 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-<<<<<<< Updated upstream
-import HomeView from "@/views/HomeView.vue";
-=======
-// HomeView se carga perezosamente para mejorar LCP
-// import HomeView from "@/views/HomeView.vue";
 import { auth } from "@/firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
-
-import NotFoundView from '@/views/NotFoundView.vue'
->>>>>>> Stashed changes
+import NotFoundView from '@/views/NotFoundView.vue';
 
 const routes = [
   { path: "/", name: "Home", component: () => import(/* webpackChunkName: "home" */ "@/views/HomeView.vue") },
@@ -44,11 +37,11 @@ const routes = [
     name: "Seguimiento",
     component: () => import("@/views/SeguimientoView.vue"),
   },
-  // Rutas de administración
+  // Rutas de autenticación y administración
   {
-    path: "/admin/login",
-    name: "AdminLogin",
-    component: () => import("@/views/AdminLoginView.vue"),
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/AdminLoginView.vue"), // Apunta a la vista de Login existente
   },
   {
     path: "/admin",
@@ -56,6 +49,12 @@ const routes = [
     component: () => import("@/views/AdminView.vue"),
     meta: { requiresAuth: true },
   },
+  // Ruta catch-all para 404 Not Found
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFoundView
+  }
 ];
 
 const router = createRouter({
@@ -63,22 +62,31 @@ const router = createRouter({
   routes,
 });
 
-// Guard de navegación para rutas protegidas
-router.beforeEach((to, from, next) => {
-  // Verificar si la ruta requiere autenticación
-  if (to.meta.requiresAuth) {
-    // Aquí verificarías si el usuario está autenticado
-    // Por ahora, simplificamos la verificación
-    const isAuthenticated =
-      localStorage.getItem("admin_authenticated") === "true";
+// Helper para obtener el estado de autenticación actual de forma asíncrona y segura.
+const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    // onAuthStateChanged devuelve una función para desuscribirse del observador.
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        unsubscribe(); // Nos desuscribimos inmediatamente para evitar memory leaks.
+        resolve(user); // Resolvemos la promesa con el usuario (o null).
+      },
+      reject // Rechazamos la promesa si hay un error.
+    );
+  });
+};
 
-    if (!isAuthenticated) {
-      // Redirigir al login si no está autenticado
-      next("/admin/login");
-    } else {
-      next();
-    }
+// Guard de navegación para rutas protegidas
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const user = await getCurrentUser();
+
+  if (requiresAuth && !user) {
+    // Si la ruta requiere autenticación y no hay usuario, redirigir al login.
+    next({ name: 'Login' });
   } else {
+    // En cualquier otro caso (ruta pública, o ruta protegida con usuario), permitir la navegación.
     next();
   }
 });

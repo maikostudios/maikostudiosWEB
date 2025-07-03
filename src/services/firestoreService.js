@@ -8,7 +8,7 @@ import {
   getDocs
 } from 'firebase/firestore'
 
-const collectionName = 'contactRequests'
+const collectionName = 'mensajes_contacto'
 
 export function generateTrackingCode () {
   return `MAIKO-${Math.floor(Math.random() * 9000 + 1000)}`

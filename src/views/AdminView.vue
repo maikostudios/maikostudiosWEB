@@ -68,8 +68,6 @@
             <v-icon left>mdi-account-tie</v-icon>
             Solicitudes CV
           </v-tab>
-<<<<<<< Updated upstream
-=======
           <v-tab value="portafolio">
             <v-icon left>mdi-folder-image</v-icon>
             Gestión de Portafolio
@@ -78,7 +76,6 @@
             <v-icon left>mdi-clipboard-list</v-icon>
             Solicitudes
           </v-tab>
->>>>>>> Stashed changes
           <v-tab value="estadisticas">
             <v-icon left>mdi-chart-line</v-icon>
             Estadísticas
@@ -255,19 +252,31 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
+import { auth } from '@/firebase/config'
+import { onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
-<<<<<<< Updated upstream
-=======
 import { listarSolicitudes, actualizarEstadoSolicitud } from '@/services/firestoreService'
-import { useGitHubAssets } from '@/composables/useGitHubAssets'
-import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js'
-import { globalNotifications } from '@/composables/useNotifications'
->>>>>>> Stashed changes
+// import { useGitHubAssets } from '@/composables/useGitHubAssets' // Archivo no encontrado.
+// import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js' // Archivo no encontrado.
+// import { globalNotifications } from '@/composables/useNotifications' // Archivo no encontrado.
+
+// Stubs para notificaciones faltantes. Muestra los mensajes en la consola.
+const globalNotifications = {
+  success: (message) => console.log(`%c✅ SUCCESS: ${message}`, 'color: #28a745; font-weight: bold;'),
+  error: (message) => console.error(`❌ ERROR: ${message}`),
+  info: (message) => console.info(`ℹ️ INFO: ${message}`),
+};
+const { success, error, info } = globalNotifications;
 
 const router = useRouter()
 const store = useMainStore()
+
+// Stubs para la funcionalidad desactivada de useGitHubAssets
+const proyectos = ref([])
+const cargarProyectos = () => console.warn('Funcionalidad de cargar proyectos desactivada (useGitHubAssets no encontrado).')
+const cargarImagenesProyectos = async () => console.warn('Funcionalidad de cargar imágenes desactivada (useGitHubAssets no encontrado).')
 
 // Estado del componente
 const tabActiva = ref('mensajes')
@@ -307,8 +316,6 @@ const headersCV = [
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
 
-<<<<<<< Updated upstream
-=======
 const estadosDisponibles = ['pendiente', 'en progreso', 'respondido']
 const fuentesDisponibles = ['Home', 'Campañas']
 
@@ -353,8 +360,6 @@ const headersProyectos = [
   { title: 'Tecnologías', key: 'tecnologias', sortable: false },
   { title: 'Acciones', key: 'actions', sortable: false }
 ]
-
->>>>>>> Stashed changes
 // Funciones
 const cargarDatos = async () => {
   loading.value = true
@@ -433,34 +438,28 @@ const cerrarSesion = () => {
 }
 
 // Inicialización
-<<<<<<< Updated upstream
 onMounted(() => {
-  cargarDatos()
-=======
-onMounted(async () => {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      router.replace('/login')
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Usuario autenticado, ahora podemos cargar los datos de forma segura.
+      console.log('Usuario autenticado detectado en AdminView, cargando datos del panel...');
+      cargarDatos();
+      cargarSolicitudes();
+      cargarProyectos();
+      await cargarImagenesProyectos();
+
+      // Exponer funciones para testing en desarrollo
+      if (import.meta.env.DEV) {
+        window.store = store;
+        console.log('🔧 Funciones expuestas para testing:');
+        console.log('   - window.store');
+      }
+    } else {
+      // El router guard ya debería haber manejado esto, pero como doble chequeo.
+      console.warn('AdminView: No se encontró usuario autenticado. Redirigiendo a /login.');
+      router.replace('/login');
     }
-  })
-  cargarDatos();
-  cargarSolicitudes()
-  cargarProyectos()
-
-  // Cargar imágenes desde GitHub
-  await cargarImagenesProyectos()
-
-  // Exponer funciones para testing en desarrollo
-  if (import.meta.env.DEV) {
-    window.store = store
-    window.poblarBaseDatos = poblarBaseDatos
-    window.poblarFirebaseConProyectos = poblarFirebaseConProyectos
-    console.log('🔧 Funciones expuestas para testing:')
-    console.log('   - window.store')
-    console.log('   - window.poblarBaseDatos()')
-    console.log('   - window.poblarFirebaseConProyectos()')
-  }
->>>>>>> Stashed changes
+  });
 })
 </script>
 

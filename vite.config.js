@@ -10,6 +10,9 @@ import { visualizer } from 'rollup-plugin-visualizer';
 // import { VuetifyResolver } from "unplugin-vue-components/resolvers";
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ['vee-validate'],
+  },
   plugins: [
     vue(),
     // Si más adelante quieres auto-import, puedes reactivarlo aquí:
@@ -50,6 +53,10 @@ export default defineConfig({
         }
       }
     }
+  },
+  server: {
+    port: 5173,
+    open: true
   },
   test: {
     globals: true,

@@ -1,58 +1,61 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
-/**
- * Store para manejar el estado del formulario interactivo tipo wizard
- */
 export const useFormStore = defineStore('form', () => {
-  // Paso actual (1‒4)
-  const currentStep = ref(1)
-  const totalSteps = 4
+  const currentStep = ref(1);
+  const totalSteps = 5; // 4 pasos + pantalla de gracias
 
-  // Datos del formulario
-  const formData = ref({
+  const initialFormData = {
     nombre: '',
     servicio: '',
     email: '',
     telefono: '',
     mensaje: '',
     archivo: null,
-    utm: {},
-    fuente: '', // canal entrada (Home / Campañas / Instagram etc.)
-    formulario: 'interactivo'
-  })
+    utm: {
+      utm_source: '',
+      utm_medium: '',
+      utm_campaign: '',
+      utm_term: '',
+      utm_content: '',
+    },
+    fuente: '',
+    formulario: 'interactivo',
+    enviado: false,
+    codigo: '',
+  };
 
-  // GETTERS --------------------------------------------------------------
-  const progress = computed(() => (currentStep.value / totalSteps) * 100)
-  const isFirstStep = computed(() => currentStep.value === 1)
-  const isLastStep = computed(() => currentStep.value === totalSteps)
+  const formData = ref({ ...initialFormData });
 
-  // ACTIONS --------------------------------------------------------------
+  const progress = computed(() => ((currentStep.value - 1) / (totalSteps - 1)) * 100);
+  const isFirstStep = computed(() => currentStep.value === 1);
+  const isLastStep = computed(() => currentStep.value === totalSteps);
+
   function nextStep() {
-    if (currentStep.value < totalSteps) currentStep.value += 1
+    if (currentStep.value < totalSteps) currentStep.value++;
   }
 
   function prevStep() {
-    if (currentStep.value > 1) currentStep.value -= 1
+    if (currentStep.value > 1) currentStep.value--;
   }
 
   function updateFormData(payload) {
-    formData.value = { ...formData.value, ...payload }
+    formData.value = { ...formData.value, ...payload };
+  }
+
+  function setUtmParams(params) {
+    formData.value.utm = {
+      utm_source: params.utm_source || '',
+      utm_medium: params.utm_medium || '',
+      utm_campaign: params.utm_campaign || '',
+      utm_term: params.utm_term || '',
+      utm_content: params.utm_content || '',
+    };
   }
 
   function resetForm() {
-    currentStep.value = 1
-    formData.value = {
-      nombre: '',
-      servicio: '',
-      email: '',
-      telefono: '',
-      mensaje: '',
-      archivo: null,
-      utm: {},
-      fuente: '',
-      formulario: 'interactivo'
-    }
+    currentStep.value = 1;
+    formData.value = { ...initialFormData };
   }
 
   return {
@@ -65,6 +68,7 @@ export const useFormStore = defineStore('form', () => {
     nextStep,
     prevStep,
     updateFormData,
-    resetForm
-  }
-})
+    resetForm,
+    setUtmParams,
+  };
+});

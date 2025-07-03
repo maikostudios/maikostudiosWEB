@@ -45,17 +45,14 @@ const formStore = useFormStore()
 const showExit = ref(false)
 
 onMounted(() => {
-  // Capturar UTM y canal de entrada
-  const utm = {
-    utm_source: route.query.utm_source,
-    utm_medium: route.query.utm_medium,
-    utm_campaign: route.query.utm_campaign
-  }
+  // Capturar UTM usando la nueva acción del store
+  formStore.setUtmParams(route.query);
+
+  // Capturar canal de entrada
   formStore.updateFormData({
-    utm,
     fuente: route.query.utm_source ? 'Campañas' : 'Home'
-  })
-})
+  });
+});
 
 function confirmExit () {
   showExit.value = true

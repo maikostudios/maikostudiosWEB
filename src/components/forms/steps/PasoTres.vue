@@ -1,11 +1,18 @@
 <template>
-  <Form @submit="handleSubmit(onSubmit)">
-    <Field name="email" v-slot="{ field, errorMessage }">
-      <v-text-field v-bind="field" label="Correo electrónico" :error-messages="errorMessage" />
-    </Field>
-    <Field name="telefono" v-slot="{ field, errorMessage }">
-      <v-text-field v-bind="field" label="Teléfono" placeholder="+56987654321" :error-messages="errorMessage" />
-    </Field>
+  <Form @submit="triggerSubmit">
+    <v-text-field
+      v-model="email"
+      v-bind="emailAttrs"
+      label="Correo electrónico"
+      :error-messages="errors.email"
+    />
+    <v-text-field
+      v-model="telefono"
+      v-bind="telefonoAttrs"
+      label="Teléfono"
+      placeholder="+56987654321"
+      :error-messages="errors.telefono"
+    />
 
     <div class="d-flex justify-space-between mt-4">
       <v-btn variant="outlined" @click="store.prevStep()">Atrás</v-btn>
@@ -15,22 +22,25 @@
 </template>
 
 <script setup>
-import { useFormStore } from '@/stores/formStore'
-import { useForm, Field, Form } from 'vee-validate'
-import { pasoTresSchema } from '@/composables/validationSchemas'
+import { useFormStore } from '@/stores/formStore';
+import { useForm, Form } from 'vee-validate';
+import { pasoTresSchema } from '@/composables/validationSchemas';
 
-const store = useFormStore()
+const store = useFormStore();
 
-const { handleSubmit } = useForm({
+const { handleSubmit, errors, defineField } = useForm({
   validationSchema: pasoTresSchema,
   initialValues: {
     email: store.formData.email,
     telefono: store.formData.telefono
   }
-})
+});
 
-function onSubmit (vals) {
-  store.updateFormData(vals)
-  store.nextStep()
-}
+const [email, emailAttrs] = defineField('email');
+const [telefono, telefonoAttrs] = defineField('telefono');
+
+const triggerSubmit = handleSubmit(values => {
+  store.updateFormData(values);
+  store.nextStep();
+});
 </script>
