@@ -119,17 +119,24 @@ const formulario = reactive({
 // Opciones de asunto
 const asuntos = [
   'Aplicación Móvil',
+  'Armado de PC Gamers/Oficina/Estudios',
+  'Asesoría Contable',
+  'Asesoría Legal Tributaria',
   'Automatización de Procesos',
+  'Códigos QR',
   'Colaboración',
   'Consultoría Tecnológica',
   'Desarrollo Web',
   'Digitalización de Pymes',
+  'Diseño y Logos',
   'Empresa en un Día',
   'Marketing Digital',
   'Mentoría y Capacitación',
+  'Personalización de CV',
   'Soporte Técnico',
   'Otro'
 ];
+
 
 
 // Reglas de validación
