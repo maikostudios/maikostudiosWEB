@@ -8,6 +8,10 @@
                 </div>
 
                 <div class="contacto-content">
+                    <!-- Formulario de contacto -->
+                    <div class="formulario-contacto">
+                        <FormularioContacto />
+                    </div>
                     <!-- Información de contacto -->
                     <div class="contacto-info">
                         <h2>Conectemos</h2>
@@ -63,10 +67,7 @@
                         </div>
                     </div>
 
-                    <!-- Formulario de contacto -->
-                    <div class="formulario-contacto">
-                        <FormularioContacto />
-                    </div>
+
                 </div>
             </v-container>
         </section>
