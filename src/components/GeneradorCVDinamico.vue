@@ -428,7 +428,7 @@ const limpiarFormulario = () => {
 
 // Función para descargar CV como PDF
 const descargarCV = async () => {
-  const nombreArchivo = `cv-${formulario.empresa.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`
+  const nombreArchivo = `CV_${formulario.posicion.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
   const resultado = await descargarCVPDF(nombreArchivo)
 
   if (!resultado.success) {

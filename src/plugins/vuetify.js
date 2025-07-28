@@ -26,8 +26,36 @@ const vuetify = createVuetify({
           accent: "#00a5a5",
           background: "#0a0a0a",
           surface: "#1a1a1a",
+          "surface-variant": "rgba(255, 255, 255, 0.05)",
+          "on-surface": "#ffffff",
+          "on-surface-variant": "#cccccc",
+          success: "#4caf50",
+          warning: "#ff9800",
+          error: "#f44336",
+          info: "#2196f3",
         },
       },
+    },
+  },
+  defaults: {
+    VBtn: {
+      style: "text-transform: none;",
+      ripple: true,
+    },
+    VCard: {
+      elevation: 2,
+    },
+    VTextField: {
+      variant: "outlined",
+      density: "comfortable",
+    },
+    VTextarea: {
+      variant: "outlined",
+      density: "comfortable",
+    },
+    VSelect: {
+      variant: "outlined",
+      density: "comfortable",
     },
   },
 });

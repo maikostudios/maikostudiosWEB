@@ -27,7 +27,7 @@ function scrollToContent() {
 <style scoped>
 .hero-section {
     position: relative;
-    background-color: #0a0a0a;
+    background: transparent;
     color: #ffffff;
     padding: 6rem 1rem;
     text-align: center;
@@ -47,32 +47,55 @@ function scrollToContent() {
 }
 
 .hero-logo {
-    width: 140px;
-    margin-bottom: 1.5rem;
+    width: 220px;
+    height: auto;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.hero-logo:hover {
+    transform: scale(1.05);
 }
 
 .hero-title {
-    font-size: 2.8rem;
+    font-size: 3.5rem;
     font-weight: bold;
+    margin-bottom: 1rem;
 }
 
 .hero-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin-top: 0.5rem;
     color: #ccc;
+    font-weight: 300;
 }
 
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 
     .hero-logo {
-        width: 120px;
+        width: 180px;
+    }
+}
+
+/* Para pantallas muy grandes */
+@media (min-width: 1440px) {
+    .hero-logo {
+        width: 280px;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.6rem;
     }
 }
 </style>

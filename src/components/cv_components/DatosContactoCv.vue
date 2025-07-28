@@ -1,8 +1,8 @@
 <template>
     <section>
         <h2>Contacto</h2>
-        <p><strong>Email:</strong> m.esteban.saez@gmail.com</p>
-        <p><strong>Dirección:</strong> Temuco, IX Región, Chile</p>
+        <p><strong>Email:</strong> m.saezc@maikostudios.com</p>
+        <p><strong>Dirección:</strong> Chile | maikostudios.com</p>
         <p><strong>Teléfono:</strong> +56983833148</p>
         <p><strong>Fecha de nacimiento:</strong> 19 Oct, 1994</p>
         <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/me-saezc/">linkedin.com/in/me-saezc</a></p>

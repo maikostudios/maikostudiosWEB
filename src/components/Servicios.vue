@@ -56,6 +56,10 @@
               <strong>Consultoría Digital</strong>
               <p>Estrategias para digitalizar tu emprendimiento</p>
             </li>
+            <li>
+              <strong>Armado de PC Gamers</strong>
+              <p>Configuraciones personalizadas para gaming, streaming y trabajo profesional con componentes de última generación</p>
+            </li>
           </ul>
           <v-btn color="secondary" variant="outlined" block to="/contacto">
             Solicitar Cotización
@@ -69,7 +73,7 @@
 <style scoped>
 .servicios-section {
   padding: 6rem 0;
-  background: linear-gradient(to bottom, #0d0d0d, var(--color-background));
+  background: transparent;
 }
 
 .section-title {
@@ -81,7 +85,7 @@
 
 .servicios-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -132,6 +136,14 @@
   margin: 0;
 }
 
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+  .servicios-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .servicios-grid {
     grid-template-columns: 1fr;
@@ -149,19 +161,36 @@
   .card-header h3 {
     font-size: 1.3rem;
   }
+
+  .servicios-list li {
+    margin-bottom: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   .servicios-section {
-    padding: 4rem 0;
+    padding: 3rem 0;
   }
 
   .section-title {
     font-size: 1.8rem;
+    margin-bottom: 2rem;
   }
 
   .servicio-card {
     padding: 1rem;
+  }
+
+  .card-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .servicios-list {
+    margin-bottom: 1.5rem;
   }
 }
 </style>

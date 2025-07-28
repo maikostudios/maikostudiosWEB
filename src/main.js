@@ -2,17 +2,17 @@ import "vuetify/styles";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import { createPinia } from "pinia"; // <- Esta línea es vital
+import { createPinia } from "pinia";
 import vuetify from "./plugins/vuetify";
 import "./style.css";
 import authService from "@/services/authService";
-import lazy from '@/directives/lazy';
-const app = createApp(App);
+import lazy from "@/directives/lazy";
 
-app.use(createPinia()); // <- Aquí se inicializa y se aplica
+const app = createApp(App);
+app.use(createPinia());
 app.use(router);
 app.use(vuetify);
-app.directive('lazy', lazy);
+app.directive("lazy", lazy);
 
 // Esperar autenticación anónima antes de montar la app
 authService

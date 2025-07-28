@@ -2,20 +2,23 @@
   <div class="app-container">
     <!-- Banner de modo demo -->
     <div v-if="!isFirebaseConfigured" class="demo-banner">
-      <v-icon color="warning">mdi-information</v-icon>
-      <span>Modo Demo: Configurar Firebase para funcionalidad completa</span>
+      <v-icon left>mdi-information</v-icon>
+      Modo Demo - Configurar Firebase para funcionalidad completa
     </div>
 
-    <!-- Efecto de luz global como capa de fondo -->
+    <!-- Efecto de luz de fondo -->
     <SpotlightEffect />
 
-    <!-- Contenido principal que se renderiza por encima -->
+    <!-- Contenido principal -->
     <div class="app-content">
       <router-view />
     </div>
 
-    <!-- Chatbot GPT disponible en toda la aplicación -->
+    <!-- Chatbot flotante -->
     <ChatbotGPT />
+
+    <!-- Sistema de notificaciones global -->
+    <NotificationContainer position="top-right" />
   </div>
 </template>
 
@@ -23,6 +26,7 @@
 import { computed } from 'vue'
 import SpotlightEffect from '@/components/SpotlightEffect.vue'
 import ChatbotGPT from '@/components/ChatbotGPT.vue'
+import NotificationContainer from '@/components/NotificationContainer.vue'
 import { isFirebaseConfigured as checkFirebaseConfigured } from '@/firebase/config'
 
 // Computed para verificar si Firebase está configurado

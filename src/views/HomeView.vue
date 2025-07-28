@@ -1,5 +1,6 @@
 <script setup>
-import { VContainer } from 'vuetify/components'
+import { onMounted } from 'vue'
+
 import HeroSection from '@/components/HeroSection.vue'
 import SobreMi from '@/components/SobreMi.vue'
 import Servicios from '@/components/Servicios.vue'
@@ -7,6 +8,13 @@ import ProyectoEstrella from '@/components/ProyectoEstrella.vue'
 import Contacto from '@/components/Contacto.vue'
 import Footer from '@/components/Footer.vue'
 import Navbar from '@/components/Navbar.vue'
+import { useSEO } from '@/composables/useSEO'
+
+const { setSEO } = useSEO()
+
+onMounted(() => {
+  setSEO()
+})
 </script>
 
 <template>
@@ -23,7 +31,9 @@ import Navbar from '@/components/Navbar.vue'
 
 <style scoped>
 .home-container {
-  background-color: var(--color-background);
+  background: transparent;
   min-height: 100vh;
+  position: relative;
+  z-index: 2;
 }
 </style>

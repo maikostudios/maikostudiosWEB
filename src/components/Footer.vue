@@ -19,10 +19,10 @@
 
           <div class="link-group">
             <h4>Servicios</h4>
-            <router-link to="/servicios">Desarrollo Web</router-link>
-            <router-link to="/servicios">Automatización</router-link>
-            <router-link to="/servicios">E-commerce</router-link>
-            <router-link to="/servicios">Consultoría</router-link>
+            <router-link to="/servicios#desarrollo-web">Desarrollo Web</router-link>
+            <router-link to="/servicios#automatizacion">Automatización</router-link>
+            <router-link to="/servicios#ecommerce">E-commerce</router-link>
+            <router-link to="/servicios#consultoria">Consultoría</router-link>
           </div>
 
           <div class="link-group">
@@ -30,7 +30,7 @@
             <a href="https://github.com/maikostudios" target="_blank">GitHub</a>
             <a href="https://linkedin.com/in/me-saezc" target="_blank">LinkedIn</a>
             <a href="https://wa.me/56949475207" target="_blank">WhatsApp</a>
-            <a href="mailto:m.esteban.saez@gmail.com">Email</a>
+            <a href="mailto:contacto@maikostudios.com">Email</a>
           </div>
         </div>
       </div>
@@ -44,9 +44,11 @@
 
 <style scoped>
 .footer {
-  background: #0a0a0a;
+  background: transparent;
   padding: 4rem 0 2rem;
   color: var(--color-text);
+  position: relative;
+  z-index: 2;
 }
 
 .footer-content {
