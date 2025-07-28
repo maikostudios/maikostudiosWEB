@@ -16,15 +16,16 @@ const ADMIN_EMAILS = [
 ];
 
 export const authService = {
-<<<<<<< HEAD
   // Autenticación anónima para nuevos visitantes
   async autenticarAnonimo() {
     try {
       if (!auth || !isFirebaseConfigured()) {
-        console.warn('Firebase no configurado, omitiendo autenticación anónima.');
-        return { success: false, error: 'Firebase not configured' };
+        console.warn(
+          "Firebase no configurado, omitiendo autenticación anónima."
+        );
+        return { success: false, error: "Firebase not configured" };
       }
-      
+
       // Si ya hay un usuario (incluso anónimo), no hacer nada
       if (auth.currentUser) {
         return { success: true, user: auth.currentUser };
@@ -33,7 +34,7 @@ export const authService = {
       const userCredential = await signInAnonymously(auth);
       return { success: true, user: userCredential.user };
     } catch (error) {
-      console.error('Error en la autenticación anónima:', error);
+      console.error("Error en la autenticación anónima:", error);
       return { success: false, error };
     }
   },
