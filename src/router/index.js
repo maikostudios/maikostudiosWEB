@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "@/firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
-import NotFoundView from '@/views/NotFoundView.vue';
+import NotFoundView from "@/views/NotFoundView.vue";
 
 const routes = [
-  { path: "/", name: "Home", component: () => import(/* webpackChunkName: "home" */ "@/views/HomeView.vue") },
+  {
+    path: "/",
+    name: "Home",
+    component: () =>
+      import(/* webpackChunkName: "home" */ "@/views/HomeView.vue"),
+  },
   {
     path: "/sobre-mi",
     name: "SobreMi",
@@ -20,6 +25,11 @@ const routes = [
     path: "/servicios",
     name: "Servicios",
     component: () => import("@/views/ServiciosView.vue"),
+  },
+  {
+    path: "/precios",
+    name: "Precios",
+    component: () => import("@/views/Prices.vue"),
   },
   {
     path: "/contacto",
@@ -51,10 +61,10 @@ const routes = [
   },
   // Ruta catch-all para 404 Not Found
   {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
-    component: NotFoundView
-  }
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFoundView,
+  },
 ];
 
 const router = createRouter({
@@ -79,12 +89,12 @@ const getCurrentUser = () => {
 
 // Guard de navegación para rutas protegidas
 router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const user = await getCurrentUser();
 
   if (requiresAuth && !user) {
     // Si la ruta requiere autenticación y no hay usuario, redirigir al login.
-    next({ name: 'Login' });
+    next({ name: "Login" });
   } else {
     // En cualquier otro caso (ruta pública, o ruta protegida con usuario), permitir la navegación.
     next();

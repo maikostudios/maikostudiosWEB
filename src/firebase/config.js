@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getStorage } from "firebase/storage"; // Added import for storage
 
 // Verificar si las variables de entorno están configuradas
 const isFirebaseConfigured = () => {
@@ -30,6 +31,7 @@ let app = null;
 let db = null;
 let auth = null;
 let functions = null;
+let storage = null; // Added storage variable
 
 try {
   app = initializeApp(firebaseConfig);
@@ -39,6 +41,7 @@ try {
     db = getFirestore(app);
     auth = getAuth(app);
     functions = getFunctions(app);
+    storage = getStorage(app); // Initialize storage
     console.log("✅ Firebase configurado correctamente");
   } else {
     // Modo demo - crear instancias pero sin funcionalidad real
@@ -48,14 +51,16 @@ try {
     db = null;
     auth = null;
     functions = null;
+    storage = null; // Set storage to null in demo mode
   }
 } catch (error) {
   console.error("❌ Error al inicializar Firebase:", error);
   db = null;
   auth = null;
   functions = null;
+  storage = null; // Set storage to null on error
 }
 
 // Exportar servicios (pueden ser null en modo demo)
-export { db, auth, functions, isFirebaseConfigured };
+export { db, auth, functions, storage, isFirebaseConfigured };
 export default app;
