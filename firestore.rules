@@ -29,6 +29,15 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // Solicitudes de CV (colección alternativa)
+    match /cv_solicitudes/{document} {
+      // Permitir creación pública (formulario de CV)
+      allow create: if true;
+
+      // Solo administradores pueden leer, actualizar y eliminar
+      allow read, update, delete: if isAdmin();
+    }
+
     // Reclutadores interesados (para CV personalizado)
     match /reclutadores_interesados/{document} {
       // Permitir creación pública (formulario de CV)
@@ -81,6 +90,24 @@ service cloud.firestore {
 
       // No permitir actualización ni eliminación
       allow update, delete: if false;
+    }
+
+    // Packs de precios (pago único)
+    match /pricing_packs/{document} {
+      // Permitir lectura pública para mostrar precios
+      allow read: if true;
+
+      // Solo administradores pueden crear, actualizar y eliminar
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Planes de precios (suscripción)
+    match /pricing_plans/{document} {
+      // Permitir lectura pública para mostrar precios
+      allow read: if true;
+
+      // Solo administradores pueden crear, actualizar y eliminar
+      allow create, update, delete: if isAdmin();
     }
 
     // Configuración del sitio

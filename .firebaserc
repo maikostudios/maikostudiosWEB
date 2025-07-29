@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "maikostudios-a9162"
-  }
+    "default": "maikostudios-a9162",
+    "dev": "portafolio-michaelsaez"
+  },
+  "targets": {},
+  "etags": {}
 }
