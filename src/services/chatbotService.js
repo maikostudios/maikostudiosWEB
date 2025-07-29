@@ -9,6 +9,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import { pricingService } from "@/services/pricingService";
 
 // Configuración del chatbot
 const MAX_STRIKES = 5;
@@ -686,6 +687,63 @@ async function procesarDuda(mensaje, conversacion) {
   };
 }
 
+// Función para obtener información de precios desde Firestore
+async function obtenerInformacionPrecios() {
+  try {
+    const [packs, plans] = await Promise.all([
+      pricingService.getAllPacks(),
+      pricingService.getAllPlans(),
+    ]);
+
+    let infoPreciosTexto = "\n\nINFORMACIÓN DE PRECIOS ACTUALIZADA:\n";
+
+    if (packs.length > 0) {
+      infoPreciosTexto += "\n🎯 PACKS (Pago único):\n";
+      packs.forEach((pack) => {
+        const precio = pack.price?.monthly
+          ? `$${pack.price.monthly.toLocaleString()} CLP`
+          : "Consultar precio";
+        infoPreciosTexto += `- ${pack.name}: ${precio}\n`;
+        if (pack.subtitle) infoPreciosTexto += `  ${pack.subtitle}\n`;
+        if (pack.features && pack.features.length > 0) {
+          infoPreciosTexto += `  Incluye: ${pack.features
+            .slice(0, 3)
+            .join(", ")}\n`;
+        }
+      });
+    }
+
+    if (plans.length > 0) {
+      infoPreciosTexto += "\n📅 PLANES (Suscripción mensual):\n";
+      plans.forEach((plan) => {
+        const precio = plan.price?.monthly
+          ? `$${plan.price.monthly.toLocaleString()} CLP/mes`
+          : "Consultar precio";
+        infoPreciosTexto += `- ${plan.name}: ${precio}\n`;
+        if (plan.subtitle) infoPreciosTexto += `  ${plan.subtitle}\n`;
+        if (plan.features && plan.features.length > 0) {
+          infoPreciosTexto += `  Incluye: ${plan.features
+            .slice(0, 3)
+            .join(", ")}\n`;
+        }
+      });
+    }
+
+    if (packs.length === 0 && plans.length === 0) {
+      infoPreciosTexto +=
+        "\nActualmente estamos preparando nuestros paquetes de precios. Para cotizaciones personalizadas contacta directamente.";
+    }
+
+    infoPreciosTexto +=
+      "\n\nPara más detalles visita: maikostudios.com/precios";
+
+    return infoPreciosTexto;
+  } catch (error) {
+    console.error("Error obteniendo precios:", error);
+    return "\n\nPara información de precios actualizada, contacta directamente o visita maikostudios.com/precios";
+  }
+}
+
 // Obtener respuesta de Gemini AI
 async function obtenerRespuestaIA(mensaje) {
   if (!genAI) {
@@ -695,7 +753,19 @@ async function obtenerRespuestaIA(mensaje) {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `${SYSTEM_PROMPT}\n\nUsuario pregunta: ${mensaje}\n\nResponde de manera profesional, concisa y enfocada en Maikostudios:`;
+    // Verificar si la pregunta es sobre precios
+    const esPreguntaPrecio =
+      /precio|costo|cotización|plan|pack|tarifa|cuánto|valor/i.test(mensaje);
+
+    let promptCompleto = SYSTEM_PROMPT;
+
+    // Si es pregunta sobre precios, agregar información actualizada
+    if (esPreguntaPrecio) {
+      const infoPrecios = await obtenerInformacionPrecios();
+      promptCompleto += infoPrecios;
+    }
+
+    const prompt = `${promptCompleto}\n\nUsuario pregunta: ${mensaje}\n\nResponde de manera profesional, concisa y enfocada en Maikostudios:`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -731,9 +801,11 @@ function getFallbackResponse(mensaje) {
   if (
     mensajeLower.includes("precio") ||
     mensajeLower.includes("costo") ||
-    mensajeLower.includes("cotización")
+    mensajeLower.includes("cotización") ||
+    mensajeLower.includes("plan") ||
+    mensajeLower.includes("pack")
   ) {
-    return "💰 Para cotizaciones personalizadas, te recomiendo contactar directamente a Michael al +56 9 8383 3148 o contacto@maikostudios.com";
+    return "💰 Puedes ver nuestros packs y planes actualizados en maikostudios.com/precios. Para cotizaciones personalizadas, contacta directamente a Michael al +56 9 8383 3148 o contacto@maikostudios.com";
   }
 
   if (mensajeLower.includes("cv") || mensajeLower.includes("currículum")) {

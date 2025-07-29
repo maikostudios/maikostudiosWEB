@@ -53,43 +53,22 @@
 
         <!-- Botones de selección de contacto -->
         <div v-if="estadoConversacion === 'esperandoContacto' && !opcionContactoElegida" class="botones-contacto">
-          <v-btn color="primary" @click="elegirOpcionContacto('telefono')" :disabled="escribiendo" aria-label="Elegir Teléfono">Teléfono</v-btn>
-          <v-btn color="secondary" @click="elegirOpcionContacto('correo')" :disabled="escribiendo" aria-label="Elegir Correo Electrónico">Correo Electrónico</v-btn>
+          <v-btn color="primary" @click="elegirOpcionContacto('telefono')" :disabled="escribiendo"
+            aria-label="Elegir Teléfono">Teléfono</v-btn>
+          <v-btn color="secondary" @click="elegirOpcionContacto('correo')" :disabled="escribiendo"
+            aria-label="Elegir Correo Electrónico">Correo Electrónico</v-btn>
         </div>
-        <!-- Input contextual para Teléfono o Correo -->
+        <!-- Mensaje contextual para Teléfono o Correo -->
         <div v-if="estadoConversacion === 'esperandoContacto' && opcionContactoElegida">
           <div v-if="opcionContactoElegida === 'telefono'">
-            <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📞 Ingresa tu número de teléfono para poder contactarte.</div></div>
-            <v-text-field
-              v-model="inputContacto"
-              placeholder="+56987654321"
-              variant="outlined"
-              density="compact"
-              hide-details
-              :aria-label="'Campo para ingresar teléfono'"
-              :disabled="escribiendo"
-              class="input-validacion"
-              @input="validarTelefono"
-              @keyup.enter="enviarContacto"
-            />
-            <div v-if="inputContacto && !telefonoValido" class="error-texto">Número inválido. Debe comenzar con 9 o +569 y tener 9 dígitos.</div>
-            <!-- Eliminado el botón oculto para enviar teléfono -->
+            <div class="mensaje mensaje-bot">
+              <div class="mensaje-contenido">📞 Ingresa tu número de teléfono para poder contactarte.</div>
+            </div>
           </div>
           <div v-else-if="opcionContactoElegida === 'correo'">
-            <div class="mensaje mensaje-bot"><div class="mensaje-contenido">📧 Ingresa tu correo electrónico para continuar.</div></div>
-            <v-text-field
-              v-model="inputContacto"
-              placeholder="ejemplo@ejemplo.com"
-              variant="outlined"
-              density="compact"
-              hide-details
-              :aria-label="'Campo para ingresar correo electrónico'"
-              :disabled="escribiendo"
-              class="input-validacion"
-              @keyup.enter="validarCorreoEnviar"
-            />
-            <div v-if="inputContacto && !correoValido" class="error-texto">Correo electrónico inválido.</div>
-            <v-btn color="primary" :disabled="!correoValido" @click="enviarContacto" aria-label="Enviar Correo Electrónico" style="display: none;">Enviar</v-btn>
+            <div class="mensaje mensaje-bot">
+              <div class="mensaje-contenido">📧 Ingresa tu correo electrónico para continuar.</div>
+            </div>
           </div>
         </div>
         <!-- Indicador de escritura -->
@@ -116,25 +95,36 @@
 
       <!-- Input para escribir mensajes -->
       <v-card-actions class="chat-input">
-        <v-text-field
-          v-model="mensajeActual"
-          :placeholder="placeholderInputChat"
-          variant="outlined"
-          density="compact"
-          hide-details
-          @keyup.enter="enviarMensaje"
+        <v-text-field v-model="mensajeActual" :placeholder="placeholderInputChat" variant="outlined" density="compact"
+          hide-details @keyup.enter="enviarMensaje" @input="limpiarError"
           :disabled="escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)"
-          :error="mostrarErrorInput"
-          :aria-label="ariaLabelInput"
-        >
+          :error="mostrarErrorInput" :aria-label="ariaLabelInput">
           <template #append-inner>
-            <v-btn icon size="small" color="primary" :disabled="!mensajeActual.trim() || escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida) || mostrarErrorInput"
+            <v-btn icon size="small" color="primary"
+              :disabled="!mensajeActual.trim() || escribiendo || (estadoConversacion === 'esperandoContacto' && !opcionContactoElegida)"
               @click="enviarMensaje">
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </template>
         </v-text-field>
-        <div v-if="mostrarErrorInput" class="error-texto">{{ mensajeErrorInput }}</div>
+
+        <!-- Mensaje de error mejorado con botón de reintentar -->
+        <div v-if="mostrarErrorInput" class="error-container">
+          <div class="error-texto">
+            <v-icon color="error" size="small" class="mr-2">mdi-alert-circle</v-icon>
+            {{ mensajeErrorInput }}
+          </div>
+          <div class="error-actions mt-2">
+            <v-btn size="small" color="primary" variant="outlined" @click="limpiarError" class="mr-2">
+              <v-icon size="small" class="mr-1">mdi-pencil</v-icon>
+              Corregir
+            </v-btn>
+            <v-btn size="small" color="secondary" variant="text" @click="cambiarOpcionContacto">
+              <v-icon size="small" class="mr-1">mdi-swap-horizontal</v-icon>
+              Cambiar método
+            </v-btn>
+          </div>
+        </div>
       </v-card-actions>
 
       <!-- Footer con información -->
@@ -184,46 +174,29 @@ const cerrarChat = () => {
 
 // Función para enviar mensaje con nuevo sistema
 const opcionContactoElegida = ref(null)
-const inputContacto = ref("")
-const telefonoValido = ref(false)
-const correoValido = ref(false)
 const intentoEnvioFallido = ref(false)
 
 function elegirOpcionContacto(opcion) {
   opcionContactoElegida.value = opcion
-  inputContacto.value = ""
-  telefonoValido.value = false
-  correoValido.value = false
   intentoEnvioFallido.value = false // Resetear al cambiar de opción
+  mensajeActual.value = '' // Limpiar input al cambiar opción
   nextTick(() => scrollToBottom())
 }
 
-function validarTelefono() {
-  // Permite 949475207 o +56949475207 o 9xxxxxxxx sin +56
-  const regex = /^(\+?56)?9\d{8}$/
-  telefonoValido.value = regex.test(inputContacto.value.trim())
+// Función para limpiar error y permitir corrección
+function limpiarError() {
+  intentoEnvioFallido.value = false
 }
-function validarCorreo() {
-  // Validación básica de correo
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  correoValido.value = regex.test(inputContacto.value.trim())
+
+// Función para cambiar método de contacto cuando hay error
+function cambiarOpcionContacto() {
+  opcionContactoElegida.value = null
+  intentoEnvioFallido.value = false
+  mensajeActual.value = ''
+  nextTick(() => scrollToBottom())
 }
-async function enviarContacto() {
-  if (opcionContactoElegida.value === 'telefono' && telefonoValido.value) {
-    // Evitar duplicar el mensaje en mensajes y en mensajeActual
-    mensajeActual.value = inputContacto.value
-    inputContacto.value = ""
-    telefonoValido.value = false
-    await enviarMensaje()
-    opcionContactoElegida.value = null
-  } else if (opcionContactoElegida.value === 'correo' && correoValido.value) {
-    mensajeActual.value = inputContacto.value
-    inputContacto.value = ""
-    correoValido.value = false
-    await enviarMensaje()
-    opcionContactoElegida.value = null
-  }
-}
+
+
 
 const placeholderInputChat = computed(() => {
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
@@ -411,7 +384,7 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.2em;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
 
 .chat-header {
@@ -423,14 +396,16 @@ onMounted(() => {
   align-items: center;
   position: relative;
 }
+
 .close-btn-absolute {
   position: absolute !important;
   top: 0.5em;
   right: 0.5em;
   z-index: 20;
-  background: rgba(0,0,0,0.04);
+  background: rgba(0, 0, 0, 0.04);
   box-shadow: none;
 }
+
 @media (max-width: 600px) {
   .chat-header {
     padding: 0.5em 0.5em 0.5em 0.7em;
@@ -440,11 +415,13 @@ onMounted(() => {
     gap: 0.2em;
     position: relative;
   }
+
   .close-btn-absolute {
     top: 0.3em;
     right: 0.3em;
   }
 }
+
 .header-info {
   display: flex;
   align-items: center;
@@ -561,8 +538,16 @@ onMounted(() => {
 }
 
 @keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-0.6em); }
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-0.6em);
+  }
 }
 
 .chat-input {
@@ -594,6 +579,7 @@ onMounted(() => {
     align-items: flex-end;
     z-index: 9999;
   }
+
   .chat-window {
     width: 96vw;
     max-width: 420px;
@@ -601,10 +587,11 @@ onMounted(() => {
     max-height: 80vh;
     margin: 0 auto;
     border-radius: 1.2em 1.2em 0.7em 0.7em;
-    box-shadow: 0 6px 32px rgba(0,0,0,0.28);
+    box-shadow: 0 6px 32px rgba(0, 0, 0, 0.28);
     position: relative;
     bottom: 0;
   }
+
   .chat-header {
     padding: 0.5em 0.5em 0.5em 0.7em;
     border-radius: 1.2em 1.2em 0 0;
@@ -612,27 +599,56 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 0.2em;
   }
+
   .header-info {
     min-width: 0;
     flex: 1 1 60%;
     gap: 0.5em;
   }
-  .header-text h5, .header-text h6 {
+
+  .header-text h5,
+  .header-text h6 {
     font-size: 1em;
     word-break: break-word;
   }
+
   .header-text {
     min-width: 0;
     flex-shrink: 1;
   }
-  .chat-header > .v-btn {
+
+  .chat-header>.v-btn {
     flex-shrink: 0;
     margin-left: 0.2em;
     z-index: 10;
   }
+
   .chat-messages {
     padding: 0.7em 0.7em 0.7em 0.7em;
     min-height: 30vh;
   }
+}
+
+/* Estilos para mensajes de error mejorados */
+.error-container {
+  margin-top: 0.5em;
+  padding: 0.75em;
+  background: rgba(255, 82, 82, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #ff5252;
+}
+
+.error-texto {
+  color: #ff5252;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.error-actions {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
 }
 </style>
