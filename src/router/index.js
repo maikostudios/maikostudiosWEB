@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "@/firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
+import { authService } from "@/services/authService";
 import NotFoundView from "@/views/NotFoundView.vue";
 
 const routes = [
@@ -29,7 +30,7 @@ const routes = [
   {
     path: "/precios",
     name: "Precios",
-    component: () => import("@/views/Prices.vue"),
+    component: () => import("@/views/PreciosView.vue"),
   },
   {
     path: "/contacto",
@@ -51,7 +52,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("@/views/LoginView.vue"), // Apunta a la vista de Login existente
+    component: () => import("@/views/loginview.vue"), // Apunta a la vista de Login existente
   },
   {
     path: "/admin",
@@ -88,17 +89,28 @@ const getCurrentUser = () => {
 };
 
 // Guard de navegación para rutas protegidas
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const user = await getCurrentUser();
 
-  if (requiresAuth && !user) {
-    // Si la ruta requiere autenticación y no hay usuario, redirigir al login.
-    next({ name: "Login" });
-  } else {
-    // En cualquier otro caso (ruta pública, o ruta protegida con usuario), permitir la navegación.
-    next();
+  if (requiresAuth) {
+    const user = await getCurrentUser();
+
+    // Verificar si hay usuario y si es admin autorizado
+    if (
+      !user ||
+      user.isAnonymous ||
+      !authService.isAuthorizedEmail(user.email)
+    ) {
+      console.log("🚫 Acceso denegado a ruta protegida. Redirigiendo a /login");
+      next({ name: "Login" });
+      return;
+    }
+
+    console.log("✅ Usuario admin autorizado:", user.email);
   }
+
+  // Permitir navegación
+  next();
 });
 
 export default router;

@@ -11,6 +11,7 @@
         <RouterLink to="/sobre-mi" class="nav-link">Sobre Mí</RouterLink>
         <RouterLink to="/servicios" class="nav-link">Servicios</RouterLink>
         <RouterLink to="/portafolio" class="nav-link">Portafolio</RouterLink>
+        <RouterLink to="/precios" class="nav-link">Precios</RouterLink>
         <RouterLink to="/cv" class="nav-link">CV</RouterLink>
       </div>
 
@@ -37,6 +38,7 @@
         <RouterLink to="/sobre-mi" class="mobile-link" @click="closeMenu">Sobre Mí</RouterLink>
         <RouterLink to="/servicios" class="mobile-link" @click="closeMenu">Servicios</RouterLink>
         <RouterLink to="/portafolio" class="mobile-link" @click="closeMenu">Portafolio</RouterLink>
+        <RouterLink to="/precios" class="mobile-link" @click="closeMenu">Precios</RouterLink>
         <RouterLink to="/cv" class="mobile-link" @click="closeMenu">CV</RouterLink>
         <RouterLink to="/contacto" class="mobile-link" @click="closeMenu">Contacto</RouterLink>
 

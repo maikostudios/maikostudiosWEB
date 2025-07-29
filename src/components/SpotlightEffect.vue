@@ -10,6 +10,8 @@ let mouseActive = false
 let timeout
 
 function handleMouseMove(e) {
+    if (!spotlight.value) return
+
     mouseActive = true
     clearTimeout(timeout)
 
@@ -19,7 +21,9 @@ function handleMouseMove(e) {
 
     timeout = setTimeout(() => {
         mouseActive = false
-        spotlight.value.style.opacity = '0'
+        if (spotlight.value) {
+            spotlight.value.style.opacity = '0'
+        }
     }, 3000)
 }
 

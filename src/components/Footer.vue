@@ -14,6 +14,7 @@
             <router-link to="/sobre-mi">Sobre Mí</router-link>
             <router-link to="/servicios">Servicios</router-link>
             <router-link to="/portafolio">Portafolio</router-link>
+            <router-link to="/precios">Precios</router-link>
             <router-link to="/contacto">Contacto</router-link>
           </div>
 
