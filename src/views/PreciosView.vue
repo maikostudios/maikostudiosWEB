@@ -487,7 +487,6 @@ onMounted(() => {
   color: white !important;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
-}
   z-index: 3;
 }
 
