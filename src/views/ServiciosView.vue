@@ -175,14 +175,13 @@
                             <p>Conversemos sobre tu proyecto y descubre cómo podemos ayudarte a alcanzar tus objetivos.
                             </p>
                             <div class="cta-buttons">
-                                <v-btn color="primary" size="large" to="/contacto">
-                                    <v-icon left>mdi-email</v-icon>
-                                    Solicitar Cotización
-                                </v-btn>
-                                <v-btn color="secondary" variant="outlined" size="large"
-                                    href="https://wa.me/56949475207" target="_blank">
+                                <v-btn color="green" size="large" href="https://wa.me/56949475207" target="_blank">
                                     <v-icon left>mdi-whatsapp</v-icon>
                                     WhatsApp
+                                </v-btn>
+                                <v-btn color="primary" variant="outlined" size="large" to="/contacto">
+                                    <v-icon left>mdi-email</v-icon>
+                                    Solicitar Cotización
                                 </v-btn>
                             </div>
                         </v-card-text>

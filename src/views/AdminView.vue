@@ -1178,6 +1178,28 @@ onMounted(() => {
           window.runFullTest = module.runFullTest;
         });
 
+        // Importar pruebas de integración del panel admin
+        import('../../scripts/test-admin-integration.js').then(module => {
+          window.runAdminIntegrationTests = module.runAdminIntegrationTests;
+          window.FirebaseConnectivityTests = module.FirebaseConnectivityTests;
+          window.CRUDTests = module.CRUDTests;
+          window.UITests = module.UITests;
+        });
+
+        // Importar monitor de tiempo real y estabilidad
+        import('../../scripts/monitor-realtime-stability.js').then(module => {
+          window.startRealtimeMonitoring = module.startRealtimeMonitoring;
+          window.stopRealtimeMonitoring = module.stopRealtimeMonitoring;
+          window.getMonitorStatus = module.getMonitorStatus;
+        });
+
+        // Importar suite completa de pruebas
+        import('../../scripts/run-all-tests.js').then(module => {
+          window.runAllAdminTests = module.runAllAdminTests;
+          window.testResults = module.testResults;
+          window.TEST_SUITE_CONFIG = module.TEST_SUITE_CONFIG;
+        });
+
         // Importar funciones de creación de datos de muestra
         import('../../scripts/create-pricing-from-browser.js').then(module => {
           window.createSamplePricingData = module.createSamplePricingData;
@@ -1202,6 +1224,23 @@ onMounted(() => {
         console.log('   - window.runFullTest()');
         console.log('   - window.createSamplePricingData()');
         console.log('   - window.testPricingPageLoad()');
+        console.log('');
+        console.log('🧪 NUEVAS FUNCIONES DE PRUEBAS AVANZADAS:');
+        console.log('   - window.runAdminIntegrationTests() - Pruebas completas del panel admin');
+        console.log('   - window.startRealtimeMonitoring() - Monitor de tiempo real y estabilidad');
+        console.log('   - window.stopRealtimeMonitoring() - Detener monitor');
+        console.log('   - window.getMonitorStatus() - Estado actual del monitor');
+        console.log('   - window.runAllAdminTests() - Suite completa de pruebas (RECOMENDADO)');
+        console.log('');
+        console.log('💡 Ejecuta cualquiera de estas funciones en la consola para probar funcionalidades específicas.');
+        console.log('🎯 Para suite completa de pruebas, ejecuta: window.runAllAdminTests()');
+        console.log('🔧 Para pruebas de integración, ejecuta: window.runAdminIntegrationTests()');
+        console.log('📊 Para monitoreo continuo, ejecuta: window.startRealtimeMonitoring()');
+        console.log('🧹 Para limpiar datos, ejecuta: window.limpiarPricingPacks()');
+        console.log('🔍 Para debug, ejecuta: window.debugAuthAndFirestore()');
+        console.log('');
+        console.log('🚀 Panel de administración cargado exitosamente!');
+        console.log('⚡ RECOMENDACIÓN: Ejecuta window.runAllAdminTests() para verificar todo el sistema');
       }
     } else {
       // Usuario no autorizado o anónimo
