@@ -594,6 +594,25 @@ onMounted(() => {
   box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
 }
 
+/* Text Colors for Transparent Cards */
+.transparent-card .v-card-text {
+  color: white !important;
+}
+
+.transparent-card h3 {
+  color: white !important;
+}
+
+.transparent-card .text-body-1,
+.transparent-card .text-body-2,
+.transparent-card .text-caption {
+  color: white !important;
+}
+
+.transparent-card .feature-item span {
+  color: white !important;
+}
+
 /* WhatsApp Button Styles */
 .whatsapp-btn {
   background: #25D366 !important;
