@@ -581,6 +581,9 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   transition: all 0.3s ease;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
 }
 
 .transparent-card:hover {
@@ -611,6 +614,18 @@ onMounted(() => {
 
 .transparent-card .feature-item span {
   color: white !important;
+}
+
+/* Card Content Layout */
+.transparent-card .v-card-text {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.transparent-card .v-card-actions {
+  margin-top: auto !important;
+  flex-shrink: 0 !important;
 }
 
 /* WhatsApp Button Styles */
