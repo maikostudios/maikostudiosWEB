@@ -62,8 +62,8 @@
         <v-row v-else-if="hasPacksData" class="justify-center">
           <v-col v-for="(pack, index) in activePacks" :key="pack.id" cols="12" sm="6" md="4" lg="4" xl="4"
             class="d-flex">
-            <v-card class="pricing-card h-100" :class="{ 'highlighted': pack.styling?.highlighted }"
-              :color="pack.styling?.highlighted ? 'primary' : 'surface'" variant="elevated" elevation="8">
+            <v-card class="pricing-card h-100 transparent-card" :class="{ 'highlighted': pack.styling?.highlighted }"
+              color="transparent" variant="outlined" elevation="0">
               <!-- Badge -->
               <div v-if="pack.badge?.show" class="pack-badge">
                 <v-chip :color="pack.badge.color" size="small" variant="elevated" class="ma-2">
@@ -102,11 +102,10 @@
 
               <!-- CTA -->
               <v-card-actions class="pa-6 pt-0">
-                <v-btn :color="pack.styling?.highlighted ? 'white' : 'primary'"
-                  :variant="pack.styling?.highlighted ? 'elevated' : 'outlined'" size="large" block
-                  @click="contactarPack(pack)">
+                <v-btn color="green" variant="elevated" size="large" block @click="contactarPack(pack)"
+                  class="whatsapp-btn">
+                  <v-icon class="mr-2">mdi-whatsapp</v-icon>
                   {{ pack.cta?.text || 'Contactar' }}
-                  <v-icon v-if="pack.cta?.whatsapp" class="ml-2">mdi-whatsapp</v-icon>
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -147,8 +146,8 @@
         <v-row v-else-if="pricingPlans.length > 0" class="justify-center">
           <v-col v-for="(plan, index) in pricingPlans" :key="plan.id" cols="12" sm="6" md="4" lg="4" xl="4"
             class="d-flex">
-            <v-card class="pricing-card h-100" :class="{ 'highlighted': plan.highlighted }"
-              :color="plan.highlighted ? 'primary' : 'surface'" variant="elevated" elevation="8">
+            <v-card class="pricing-card h-100 transparent-card" :class="{ 'highlighted': plan.highlighted }"
+              color="transparent" variant="outlined" elevation="0">
               <!-- Badge Más Popular -->
               <div v-if="plan.highlighted" class="plan-badge">
                 <v-chip color="success" size="small" variant="elevated" class="ma-2">
@@ -187,10 +186,10 @@
 
               <!-- CTA -->
               <v-card-actions class="pa-6 pt-0">
-                <v-btn :color="plan.highlighted ? 'white' : 'primary'"
-                  :variant="plan.highlighted ? 'elevated' : 'outlined'" size="large" block @click="contactarPlan(plan)">
+                <v-btn color="green" variant="elevated" size="large" block @click="contactarPlan(plan)"
+                  class="whatsapp-btn">
+                  <v-icon class="mr-2">mdi-whatsapp</v-icon>
                   Comenzar Plan
-                  <v-icon class="ml-2">mdi-whatsapp</v-icon>
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -479,6 +478,16 @@ onMounted(() => {
   position: absolute;
   top: -8px;
   right: 16px;
+  z-index: 2;
+}
+
+.pack-badge .v-chip,
+.plan-badge .v-chip {
+  background: #25D366 !important;
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+}
   z-index: 3;
 }
 
@@ -565,6 +574,38 @@ onMounted(() => {
 
 .pricing-card {
   animation: fadeInUp 0.6s ease-out;
+}
+
+/* Transparent Card Styles */
+.transparent-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+.transparent-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(0, 204, 204, 0.3) !important;
+  transform: translateY(-4px);
+}
+
+.transparent-card.highlighted {
+  border-color: rgba(76, 175, 80, 0.5) !important;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+/* WhatsApp Button Styles */
+.whatsapp-btn {
+  background: #25D366 !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  background: #128C7E !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
 
 /* Utilities */
