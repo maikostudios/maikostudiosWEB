@@ -10,7 +10,7 @@
       v-model="telefono"
       v-bind="telefonoAttrs"
       label="Teléfono"
-      placeholder="+56987654321"
+      placeholder="+56920648446"
       :error-messages="errors.telefono"
     />
 
