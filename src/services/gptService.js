@@ -37,7 +37,7 @@ PROYECTO ESTRELLA:
 
 CONTACTO:
 - Email: contacto@maikostudios.com
-- WhatsApp: +56 9 4947 5207
+- WhatsApp: +56 9 2064 8446
 - LinkedIn: linkedin.com/in/me-saezc
 - GitHub: github.com/maikostudios
 
@@ -188,9 +188,9 @@ const getFallbackResponse = (mensaje) => {
     servicios:
       "¡Hola! Maiko Studios ofrece desarrollo web, aplicaciones móviles, consultoría tecnológica y mentoría. ¿Te interesa algún servicio en particular?",
     presupuesto:
-      "Para cotizaciones personalizadas, te recomiendo contactar directamente a Michael al +56 9 4947 5207 o contacto@maikostudios.com",
+      "Para cotizaciones personalizadas, te recomiendo contactar directamente a Michael al +56 9 2064 8446 o contacto@maikostudios.com",
     contacto:
-      "Puedes contactar a Michael Sáez por WhatsApp: +56 9 4947 5207, email: contacto@maikostudios.com o LinkedIn: linkedin.com/in/me-saezc",
+      "Puedes contactar a Michael Sáez por WhatsApp: +56 9 2064 8446, email: contacto@maikostudios.com o LinkedIn: linkedin.com/in/me-saezc",
     cv: "Puedes descargar el CV de Michael desde la sección CV de esta web, incluso personalizado para tu oferta laboral.",
     experiencia:
       "Michael tiene más de 5 años de experiencia en desarrollo Full Stack con tecnologías como Vue.js, React, Node.js, Python y Java.",

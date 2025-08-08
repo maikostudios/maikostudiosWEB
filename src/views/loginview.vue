@@ -27,12 +27,6 @@
               <v-icon left>mdi-login</v-icon>
               Iniciar Sesión
             </v-btn>
-
-            <!-- Botón temporal para desarrollo -->
-            <v-btn v-if="isDev" @click="crearUsuarioAdminDev" color="warning" variant="outlined" size="small" block
-              class="mt-2">
-              🔧 Crear Usuario Admin (DEV)
-            </v-btn>
           </v-form>
         </v-card-text>
 
@@ -65,33 +59,13 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/firebase/config'
 import { useMainStore } from '@/stores/main'
 import SpotlightEffect from '@/components/SpotlightEffect.vue'
 
 const router = useRouter()
 const store = useMainStore()
-
-// Variable para detectar modo desarrollo
-const isDev = import.meta.env.DEV
-
-// Importar funciones de setup admin en desarrollo
-if (import.meta.env.DEV) {
-  import('@/scripts/setupAdmin.js').then(module => {
-    // Exponer funciones globalmente
-    window.crearUsuarioAdmin = module.crearUsuarioAdmin;
-    window.probarLoginAdmin = module.probarLoginAdmin;
-    window.verificarConfiguracion = module.verificarConfiguracion;
-
-    console.log('🔧 Funciones de setup admin disponibles:');
-    console.log('   - window.crearUsuarioAdmin()');
-    console.log('   - window.probarLoginAdmin()');
-    console.log('   - window.verificarConfiguracion()');
-    console.log('');
-    console.log('💡 Si el login falla, ejecuta: await window.crearUsuarioAdmin()');
-  });
-}
 
 // Estado del componente
 const form = ref(null)
@@ -183,45 +157,6 @@ const iniciarSesion = async () => {
         mensaje = error.message || 'Error desconocido'
     }
     mostrarNotificacion(mensaje, 'error')
-  } finally {
-    cargando.value = false
-  }
-}
-
-// Función para crear usuario admin en desarrollo
-const crearUsuarioAdminDev = async () => {
-  try {
-    cargando.value = true
-    console.log('🔧 Creando usuario admin en Firebase Auth...')
-
-    const adminConfig = {
-      email: 'maikostudios@gmail.com',
-      password: '123456'
-    }
-
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      adminConfig.email,
-      adminConfig.password
-    )
-
-    console.log('✅ Usuario admin creado exitosamente:', userCredential.user.email)
-    mostrarNotificacion('Usuario admin creado exitosamente. Ahora puedes hacer login.', 'success')
-
-    // Llenar automáticamente el formulario
-    credenciales.email = adminConfig.email
-    credenciales.password = adminConfig.password
-
-  } catch (error) {
-    console.error('❌ Error creando usuario admin:', error)
-    if (error.code === 'auth/email-already-in-use') {
-      mostrarNotificacion('El usuario admin ya existe. Puedes hacer login normalmente.', 'info')
-      // Llenar automáticamente el formulario
-      credenciales.email = 'maikostudios@gmail.com'
-      credenciales.password = '123456'
-    } else {
-      mostrarNotificacion(`Error creando usuario: ${error.message}`, 'error')
-    }
   } finally {
     cargando.value = false
   }

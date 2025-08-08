@@ -364,7 +364,7 @@ const abrirWhatsApp = () => {
   const mensaje = encodeURIComponent(
     '¡Hola! Me interesa conocer más sobre los servicios de MaikoStudios. ¿Podrían ayudarme a elegir el mejor pack o plan para mi proyecto?'
   )
-  const numeroWhatsApp = '56912345678' // Reemplazar con el número real
+  const numeroWhatsApp = '56920648446'
   window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank')
 }
 
@@ -377,7 +377,7 @@ const contactarPack = (pack) => {
   const mensaje = encodeURIComponent(
     `¡Hola! Me interesa el pack "${pack.name}" de $${formatPrice(pack.price.monthly)}. ¿Podrían darme más información?`
   )
-  const numeroWhatsApp = '56912345678' // Reemplazar con el número real
+  const numeroWhatsApp = '56920648446'
   window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank')
 }
 
@@ -385,7 +385,7 @@ const contactarPlan = (plan) => {
   const mensaje = encodeURIComponent(
     `¡Hola! Me interesa el "${plan.name}" de $${plan.monthlyPrice}/mes. ¿Podrían darme más información sobre el acompañamiento continuo?`
   )
-  const numeroWhatsApp = '56912345678' // Reemplazar con el número real
+  const numeroWhatsApp = '56920648446'
   window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank')
 }
 

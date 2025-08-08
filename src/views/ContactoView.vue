@@ -34,11 +34,11 @@
                                 </div>
                             </a>
 
-                            <a href="https://wa.me/56949475207" target="_blank" class="contact-method">
+                            <a href="https://wa.me/56920648446" target="_blank" class="contact-method">
                                 <v-icon color="primary">mdi-whatsapp</v-icon>
                                 <div>
                                     <strong>WhatsApp</strong>
-                                    <span>+56 9 4947 5207</span>
+                                    <span>+56 9 2064 8446</span>
                                 </div>
                             </a>
 

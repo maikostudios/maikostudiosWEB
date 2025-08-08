@@ -175,7 +175,7 @@
                             <p>Conversemos sobre tu proyecto y descubre cómo podemos ayudarte a alcanzar tus objetivos.
                             </p>
                             <div class="cta-buttons">
-                                <v-btn color="green" size="large" href="https://wa.me/56949475207" target="_blank">
+                                <v-btn color="green" size="large" href="https://wa.me/56920648446" target="_blank">
                                     <v-icon left>mdi-whatsapp</v-icon>
                                     WhatsApp
                                 </v-btn>

@@ -200,7 +200,7 @@ function cambiarOpcionContacto() {
 
 const placeholderInputChat = computed(() => {
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
-    return '+56987654321'
+    return '+56920648446'
   } else if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
     return 'ejemplo@ejemplo.com'
   }
@@ -219,7 +219,7 @@ const mostrarErrorInput = computed(() => {
     return false
   }
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
-    return !/^(\+?56)?9\d{8}$/.test(mensajeActual.value.trim())
+    return !/^(\+?56)?9\d{8,9}$/.test(mensajeActual.value.trim())
   }
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
     return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mensajeActual.value.trim())
@@ -228,7 +228,7 @@ const mostrarErrorInput = computed(() => {
 })
 const mensajeErrorInput = computed(() => {
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'telefono') {
-    return 'Número inválido. Debe comenzar con 9 o +569 y tener 9 dígitos.'
+    return 'Número inválido. Debe comenzar con 9 o +569 y tener 9-10 dígitos.'
   }
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value === 'correo') {
     return 'Correo electrónico inválido.'
@@ -247,7 +247,7 @@ const enviarMensaje = async () => {
   // Validar si estamos en estado de contacto y el mensaje es inválido
   if (estadoConversacion.value === 'esperandoContacto') {
     if (opcionContactoElegida.value === 'telefono') {
-      if (!/^(\+?56)?9\d{8}$/.test(mensaje)) {
+      if (!/^(\+?56)?9\d{8,9}$/.test(mensaje)) {
         intentoEnvioFallido.value = true
         return
       }
@@ -292,7 +292,7 @@ const enviarMensaje = async () => {
   // Validación de contacto
   if (estadoConversacion.value === 'esperandoContacto' && opcionContactoElegida.value) {
     if (opcionContactoElegida.value === 'telefono') {
-      if (!/^(\+?56)?9\d{8}$/.test(mensaje)) return
+      if (!/^(\+?56)?9\d{8,9}$/.test(mensaje)) return
     } else if (opcionContactoElegida.value === 'correo') {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mensaje)) return
     }

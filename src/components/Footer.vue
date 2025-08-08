@@ -30,7 +30,7 @@
             <h4>Conecta</h4>
             <a href="https://github.com/maikostudios" target="_blank">GitHub</a>
             <a href="https://linkedin.com/in/me-saezc" target="_blank">LinkedIn</a>
-            <a href="https://wa.me/56949475207" target="_blank">WhatsApp</a>
+            <a href="https://wa.me/56920648446" target="_blank">WhatsApp</a>
             <a href="mailto:contacto@maikostudios.com">Email</a>
           </div>
         </div>

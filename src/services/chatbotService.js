@@ -21,7 +21,7 @@ const STRIKE_RESPUESTA =
   "💬 Solo puedo ayudarte con información sobre Maikostudios. ¿Sobre qué tema quieres saber?";
 const RESPUESTA_FINAL_STRIKES = `⚠️ Lo siento, no hemos tenido buena comunicación. Por favor, contacta directamente a un humano:
 
-📱 WhatsApp: https://wa.me/56983833148?text=No%20hemos%20podido%20conversar%20bien%20con%20el%20Chatbot,%20por%20eso%20te%20hemos%20derivado%20a%20ti%20humano!
+📱 WhatsApp: https://wa.me/56920648446?text=No%20hemos%20podido%20conversar%20bien%20con%20el%20Chatbot,%20por%20eso%20te%20hemos%20derivado%20a%20ti%20humano!
 ✉️ Email: contacto@maikostudios.com
 📝 Formulario: Usa el formulario de contacto en la página`;
 
@@ -791,7 +791,7 @@ function getFallbackResponse(mensaje) {
     (mensajeLower.includes("dame") &&
       (mensajeLower.includes("numero") || mensajeLower.includes("contacto")))
   ) {
-    return "📱 ¡Por supuesto! Nuestro WhatsApp es: +56 9 8383 3148\n\nTambién puedes contactarnos por email: contacto@maikostudios.com";
+    return "📱 ¡Por supuesto! Nuestro WhatsApp es: +56 9 2064 8446\n\nTambién puedes contactarnos por email: contacto@maikostudios.com";
   }
 
   if (mensajeLower.includes("servicio") || mensajeLower.includes("qué hacen")) {
