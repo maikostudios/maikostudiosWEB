@@ -24,7 +24,7 @@
             </ul>
         </div>
         <div class="flex flex-col gap-3">
-            <a href="https://wa.me/56983833148" target="_blank" rel="noopener"
+            <a href="https://wa.me/56920648446" target="_blank" rel="noopener"
                 :class="[
                     'rounded-lg px-6 py-3 text-center font-semibold transition-colors duration-200 flex items-center justify-center gap-2',
                     highlight ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'

@@ -3,7 +3,7 @@
         <h2>Contacto</h2>
         <p><strong>Email:</strong> m.saezc@maikostudios.com</p>
         <p><strong>Dirección:</strong> Chile | maikostudios.com</p>
-        <p><strong>Teléfono:</strong> +56983833148</p>
+        <p><strong>Teléfono:</strong> +56920648446</p>
         <p><strong>Fecha de nacimiento:</strong> 19 Oct, 1994</p>
         <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/me-saezc/">linkedin.com/in/me-saezc</a></p>
         <p><strong>GitHub:</strong> <a href="https://github.com/maikostudios">github.com/maikostudios</a></p>

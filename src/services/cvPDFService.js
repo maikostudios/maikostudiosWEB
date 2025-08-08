@@ -476,7 +476,7 @@ class CVPDFService {
       cargo_principal: "Desarrollador Full Stack",
       ubicacion: "Temuco, IX Región, Chile",
       email: "m.saezc@maikostudios.com",
-      telefono: "+56983833148",
+      telefono: "+56920648446",
       linkedin: "https://www.linkedin.com/in/me-saezc/",
       web: "https://maikostudios.com/",
       perfil_profesional:

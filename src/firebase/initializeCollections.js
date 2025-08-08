@@ -108,7 +108,7 @@ export const initializeCollections = async () => {
       id: "ejemplo_conversacion",
       data: {
         nombre: "Usuario Ejemplo",
-        telefono: "+56912345678",
+        telefono: "+56920648446",
         email: "ejemplo@email.com",
         pais_detectado: "Chile",
         region_bloqueada: false,

@@ -150,7 +150,7 @@ export function useSEO() {
       },
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+56-9-8383-3148",
+        telephone: "+56-9-2064-8446",
         contactType: "customer service",
         email: "contacto@maikostudios.com",
       },

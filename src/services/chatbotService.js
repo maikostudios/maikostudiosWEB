@@ -223,7 +223,7 @@ Eres MaikoBot, el asistente virtual de Maikostudios, representando a Michael Sá
 INFORMACIÓN DE MAIKOSTUDIOS:
 - Servicios: Desarrollo web, aplicaciones móviles, consultoría tecnológica, mentoría, automatización
 - Tecnologías: Vue.js, React, Node.js, Python, Java, Spring Boot, Firebase, IA/LangChain
-- Contacto: +56 9 8383 3148, contacto@maikostudios.com
+- Contacto: +56 9 2064 8446, contacto@maikostudios.com
 - LinkedIn: linkedin.com/in/me-saezc
 - Ubicación: Temuco, Chile
 - Especialidades: Desarrollo Full Stack, Integración de IA, Automatización de procesos
@@ -257,7 +257,7 @@ INSTRUCCIONES:
 - Enfócate en generar interés en los servicios
 
 SOLICITUDES DE CONTACTO:
-- Si piden WhatsApp, número, teléfono o contacto, SIEMPRE proporciona: +56 9 8383 3148
+- Si piden WhatsApp, número, teléfono o contacto, SIEMPRE proporciona: +56 9 2064 8446
 - Si piden email o correo, proporciona: contacto@maikostudios.com
 - Estas solicitudes SON VÁLIDAS y relacionadas con Maikostudios
 - Ejemplos válidos: "dame el número", "cuál es el WhatsApp", "necesito contacto"
@@ -582,7 +582,7 @@ async function procesarContacto(mensaje, conversacion) {
     return {
       respuesta: `¡Gracias! 📧 He guardado tu email.
 
-Para contacto directo también puedes escribir a nuestro WhatsApp: +56 9 8383 3148
+Para contacto directo también puedes escribir a nuestro WhatsApp: +56 9 2064 8446
 
 ¿En qué puedo ayudarte hoy con respecto a Maikostudios?`,
       updates: {
@@ -660,7 +660,7 @@ async function procesarDuda(mensaje, conversacion) {
   if (respuestasUsadas === 10) {
     const respuestaIA = await obtenerRespuestaIA(mensaje);
     return {
-      respuesta: `${respuestaIA}\n\n📢 Te recomiendo hablar directamente con un humano para seguir avanzando mejor: https://wa.me/56983833148 o contacto@maikostudios.com`,
+      respuesta: `${respuestaIA}\n\n📢 Te recomiendo hablar directamente con un humano para seguir avanzando mejor: https://wa.me/56920648446 o contacto@maikostudios.com`,
       updates: {
         respuestas_ia_usadas: respuestasUsadas,
       },
@@ -805,7 +805,7 @@ function getFallbackResponse(mensaje) {
     mensajeLower.includes("plan") ||
     mensajeLower.includes("pack")
   ) {
-    return "💰 Puedes ver nuestros packs y planes actualizados en maikostudios.com/precios. Para cotizaciones personalizadas, contacta directamente a Michael al +56 9 8383 3148 o contacto@maikostudios.com";
+    return "💰 Puedes ver nuestros packs y planes actualizados en maikostudios.com/precios. Para cotizaciones personalizadas, contacta directamente a Michael al +56 9 2064 8446 o contacto@maikostudios.com";
   }
 
   if (mensajeLower.includes("cv") || mensajeLower.includes("currículum")) {
@@ -813,7 +813,7 @@ function getFallbackResponse(mensaje) {
   }
 
   if (mensajeLower.includes("contacto") || mensajeLower.includes("hablar")) {
-    return "📞 Puedes contactar a Michael Sáez por WhatsApp: +56 9 8383 3148, email: contacto@maikostudios.com o LinkedIn: linkedin.com/in/me-saezc";
+    return "📞 Puedes contactar a Michael Sáez por WhatsApp: +56 9 2064 8446, email: contacto@maikostudios.com o LinkedIn: linkedin.com/in/me-saezc";
   }
 
   return "🤖 ¡Hola! Soy MaikoBot. Puedo contarte sobre nuestros servicios de desarrollo web, aplicaciones móviles, consultoría tecnológica y automatización. ¿Qué te interesa saber?";

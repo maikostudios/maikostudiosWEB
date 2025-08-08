@@ -5,7 +5,7 @@
 
 class DeepSeekMockService {
   constructor() {
-    this.isDemo = true
+    this.isDemo = true;
   }
 
   /**
@@ -13,39 +13,40 @@ class DeepSeekMockService {
    * @param {string} userPrompt - Prompt del usuario
    * @returns {Promise<Object>} - Resultado simulado
    */
-  async generarCVPersonalizado(userPrompt = '') {
+  async generarCVPersonalizado(userPrompt = "") {
     try {
-      console.log('🤖 [DEMO] Simulando generación con DeepSeek...', { userPrompt })
+      console.log("🤖 [DEMO] Simulando generación con DeepSeek...", {
+        userPrompt,
+      });
 
       // Simular delay de API
-      await this.delay(2000)
+      await this.delay(2000);
 
-      const htmlGenerado = this.generarHTMLDemo(userPrompt)
+      const htmlGenerado = this.generarHTMLDemo(userPrompt);
 
       const resultado = {
         success: true,
         html: htmlGenerado,
         metadata: {
-          candidato: 'Michael Esteban Sáez Contreras',
-          modelo: 'deepseek-chat (DEMO)',
+          candidato: "Michael Esteban Sáez Contreras",
+          modelo: "deepseek-chat (DEMO)",
           timestamp: new Date().toISOString(),
-          plantilla: 'cv_michael_saez_completo',
+          plantilla: "cv_michael_saez_completo",
           prompt: userPrompt,
-          demo: true
+          demo: true,
         },
-        provider: 'deepseek-mock'
-      }
+        provider: "deepseek-mock",
+      };
 
-      console.log('✅ [DEMO] CV generado exitosamente', resultado.metadata)
-      return resultado
-
+      console.log("✅ [DEMO] CV generado exitosamente", resultado.metadata);
+      return resultado;
     } catch (error) {
-      console.error('❌ [DEMO] Error en simulación:', error)
+      console.error("❌ [DEMO] Error en simulación:", error);
       return {
         success: false,
-        error: 'Error en simulación de DeepSeek',
-        provider: 'deepseek-mock'
-      }
+        error: "Error en simulación de DeepSeek",
+        provider: "deepseek-mock",
+      };
     }
   }
 
@@ -55,23 +56,22 @@ class DeepSeekMockService {
    */
   async probarConexion() {
     try {
-      console.log('🔍 [DEMO] Simulando conexión con DeepSeek...')
-      
-      await this.delay(1000)
+      console.log("🔍 [DEMO] Simulando conexión con DeepSeek...");
+
+      await this.delay(1000);
 
       return {
         success: true,
-        message: 'Conexión simulada exitosa (DEMO)',
-        response: 'OK - DeepSeek Mock Service',
-        demo: true
-      }
-
+        message: "Conexión simulada exitosa (DEMO)",
+        response: "OK - DeepSeek Mock Service",
+        demo: true,
+      };
     } catch (error) {
       return {
         success: false,
-        error: 'Error en simulación de conexión',
-        demo: true
-      }
+        error: "Error en simulación de conexión",
+        demo: true,
+      };
     }
   }
 
@@ -81,9 +81,13 @@ class DeepSeekMockService {
    * @returns {string} - HTML generado
    */
   generarHTMLDemo(userPrompt) {
-    const tipoDetectado = this.detectarTipoCV(userPrompt)
-    const perfilPersonalizado = this.generarPerfilPersonalizado(tipoDetectado, userPrompt)
-    const habilidadesDestacadas = this.generarHabilidadesDestacadas(tipoDetectado)
+    const tipoDetectado = this.detectarTipoCV(userPrompt);
+    const perfilPersonalizado = this.generarPerfilPersonalizado(
+      tipoDetectado,
+      userPrompt
+    );
+    const habilidadesDestacadas =
+      this.generarHabilidadesDestacadas(tipoDetectado);
 
     return `<!DOCTYPE html>
 <html lang="es">
@@ -112,7 +116,7 @@ class DeepSeekMockService {
   <header>
     <h1>Michael Esteban Sáez Contreras</h1>
     <div class="sub-header">Desarrollador Full Stack <span class="demo-badge">GENERADO CON DEEPSEEK DEMO</span></div>
-    <div class="sub-header">m.saezc@maikostudios.com | +56983833148 | <a href="https://www.linkedin.com/in/me-saezc/" style="color:white;">LinkedIn</a> | <a href="https://maikostudios.com/" style="color:white;">maikostudios.com</a></div>
+    <div class="sub-header">m.saezc@maikostudios.com | +56920648446 | <a href="https://www.linkedin.com/in/me-saezc/" style="color:white;">LinkedIn</a> | <a href="https://maikostudios.com/" style="color:white;">maikostudios.com</a></div>
     <div class="sub-header">Temuco, IX Región, Chile</div>
   </header>
   <div class="divider"></div>
@@ -129,7 +133,9 @@ class DeepSeekMockService {
       <div class="entry-title">Fundador y Desarrollador</div>
       <div class="entry-company">Maiko Studios</div>
       <div class="entry-period">2024 - Actualidad</div>
-      <p>Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas. ${this.generarDescripcionPersonalizada(tipoDetectado)}</p>
+      <p>Creación de plataformas como DeUna Transferencias, automatizaciones con IA, digitalización para PYMEs y asesorías tecnológicas. ${this.generarDescripcionPersonalizada(
+        tipoDetectado
+      )}</p>
     </div>
     
     <div class="entry">
@@ -156,7 +162,9 @@ class DeepSeekMockService {
   <section>
     <h2>Habilidades Técnicas</h2>
     <div class="skills-grid">
-      ${habilidadesDestacadas.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+      ${habilidadesDestacadas
+        .map((skill) => `<span class="skill-tag">${skill}</span>`)
+        .join("")}
     </div>
   </section>
 
@@ -175,7 +183,7 @@ class DeepSeekMockService {
     <p>Contacto: <a href="mailto:m.saezc@maikostudios.com">m.saezc@maikostudios.com</a> | <a href="https://www.linkedin.com/in/me-saezc/">LinkedIn</a> | <a href="https://maikostudios.com/">maikostudios.com</a></p>
   </div>
 </body>
-</html>`
+</html>`;
   }
 
   /**
@@ -183,19 +191,19 @@ class DeepSeekMockService {
    */
   detectarTipoCV(prompt) {
     const palabrasClave = {
-      frontend: ['frontend', 'vue', 'react', 'angular', 'ui', 'ux'],
-      backend: ['backend', 'api', 'servidor', 'base de datos'],
-      fullstack: ['full stack', 'fullstack', 'completo'],
-      lider: ['líder', 'lead', 'senior', 'arquitecto'],
-      docente: ['profesor', 'facilitador', 'docente', 'enseñanza']
-    }
+      frontend: ["frontend", "vue", "react", "angular", "ui", "ux"],
+      backend: ["backend", "api", "servidor", "base de datos"],
+      fullstack: ["full stack", "fullstack", "completo"],
+      lider: ["líder", "lead", "senior", "arquitecto"],
+      docente: ["profesor", "facilitador", "docente", "enseñanza"],
+    };
 
     for (const [tipo, palabras] of Object.entries(palabrasClave)) {
-      if (palabras.some(palabra => prompt.toLowerCase().includes(palabra))) {
-        return tipo
+      if (palabras.some((palabra) => prompt.toLowerCase().includes(palabra))) {
+        return tipo;
       }
     }
-    return 'general'
+    return "general";
   }
 
   /**
@@ -203,15 +211,21 @@ class DeepSeekMockService {
    */
   generarPerfilPersonalizado(tipo, prompt) {
     const perfiles = {
-      frontend: 'Desarrollador Frontend especializado en Vue.js y React, con experiencia en crear interfaces de usuario modernas y responsivas. Enfocado en UX/UI y optimización de rendimiento.',
-      backend: 'Desarrollador Backend experto en Node.js, Express y bases de datos. Especializado en arquitectura de APIs REST, microservicios y optimización de sistemas.',
-      fullstack: 'Desarrollador Full Stack con dominio completo del ciclo de desarrollo. Experiencia en frontend (Vue.js, React) y backend (Node.js, Python), con enfoque en soluciones integrales.',
-      lider: 'Tech Lead con experiencia en liderazgo de equipos de desarrollo. Especializado en arquitectura de software, mentoría técnica y gestión de proyectos complejos.',
-      docente: 'Facilitador técnico con experiencia comprobada en enseñanza de tecnologías web. Especializado en transmitir conocimientos complejos de manera clara y práctica.',
-      general: 'Desarrollador Full Stack versátil con experiencia en múltiples tecnologías y metodologías ágiles. Enfocado en crear soluciones innovadoras y escalables.'
-    }
+      frontend:
+        "Desarrollador Frontend especializado en Vue.js y React, con experiencia en crear interfaces de usuario modernas y responsivas. Enfocado en UX/UI y optimización de rendimiento.",
+      backend:
+        "Desarrollador Backend experto en Node.js, Express y bases de datos. Especializado en arquitectura de APIs REST, microservicios y optimización de sistemas.",
+      fullstack:
+        "Desarrollador Full Stack con dominio completo del ciclo de desarrollo. Experiencia en frontend (Vue.js, React) y backend (Node.js, Python), con enfoque en soluciones integrales.",
+      lider:
+        "Tech Lead con experiencia en liderazgo de equipos de desarrollo. Especializado en arquitectura de software, mentoría técnica y gestión de proyectos complejos.",
+      docente:
+        "Facilitador técnico con experiencia comprobada en enseñanza de tecnologías web. Especializado en transmitir conocimientos complejos de manera clara y práctica.",
+      general:
+        "Desarrollador Full Stack versátil con experiencia en múltiples tecnologías y metodologías ágiles. Enfocado en crear soluciones innovadoras y escalables.",
+    };
 
-    return perfiles[tipo] || perfiles.general
+    return perfiles[tipo] || perfiles.general;
   }
 
   /**
@@ -219,15 +233,65 @@ class DeepSeekMockService {
    */
   generarHabilidadesDestacadas(tipo) {
     const habilidades = {
-      frontend: ['Vue.js', 'React', 'JavaScript', 'HTML5', 'CSS3', 'Bootstrap', 'Vuetify', 'Responsive Design'],
-      backend: ['Node.js', 'Express.js', 'Python', 'PostgreSQL', 'MongoDB', 'Firebase', 'REST APIs', 'Microservicios'],
-      fullstack: ['Vue.js', 'Node.js', 'JavaScript', 'Python', 'PostgreSQL', 'Firebase', 'Git', 'Docker'],
-      lider: ['Arquitectura de Software', 'Liderazgo de Equipos', 'Scrum', 'Kanban', 'Mentoría', 'Code Review'],
-      docente: ['Facilitación', 'Vue.js', 'JavaScript', 'HTML/CSS', 'Metodologías Ágiles', 'Comunicación'],
-      general: ['Vue.js', 'JavaScript', 'Node.js', 'Python', 'PostgreSQL', 'Firebase', 'Git', 'Scrum']
-    }
+      frontend: [
+        "Vue.js",
+        "React",
+        "JavaScript",
+        "HTML5",
+        "CSS3",
+        "Bootstrap",
+        "Vuetify",
+        "Responsive Design",
+      ],
+      backend: [
+        "Node.js",
+        "Express.js",
+        "Python",
+        "PostgreSQL",
+        "MongoDB",
+        "Firebase",
+        "REST APIs",
+        "Microservicios",
+      ],
+      fullstack: [
+        "Vue.js",
+        "Node.js",
+        "JavaScript",
+        "Python",
+        "PostgreSQL",
+        "Firebase",
+        "Git",
+        "Docker",
+      ],
+      lider: [
+        "Arquitectura de Software",
+        "Liderazgo de Equipos",
+        "Scrum",
+        "Kanban",
+        "Mentoría",
+        "Code Review",
+      ],
+      docente: [
+        "Facilitación",
+        "Vue.js",
+        "JavaScript",
+        "HTML/CSS",
+        "Metodologías Ágiles",
+        "Comunicación",
+      ],
+      general: [
+        "Vue.js",
+        "JavaScript",
+        "Node.js",
+        "Python",
+        "PostgreSQL",
+        "Firebase",
+        "Git",
+        "Scrum",
+      ],
+    };
 
-    return habilidades[tipo] || habilidades.general
+    return habilidades[tipo] || habilidades.general;
   }
 
   /**
@@ -235,24 +299,30 @@ class DeepSeekMockService {
    */
   generarDescripcionPersonalizada(tipo) {
     const descripciones = {
-      frontend: 'Especialización en desarrollo de interfaces modernas con Vue.js y optimización de experiencia de usuario.',
-      backend: 'Enfoque en arquitectura de APIs robustas y optimización de bases de datos para alta concurrencia.',
-      fullstack: 'Desarrollo integral desde frontend hasta backend, incluyendo integración con servicios cloud.',
-      lider: 'Liderazgo técnico en proyectos complejos y mentoría de desarrolladores junior.',
-      docente: 'Desarrollo de material educativo y facilitación de workshops técnicos.',
-      general: 'Implementación de soluciones tecnológicas completas con enfoque en calidad y escalabilidad.'
-    }
+      frontend:
+        "Especialización en desarrollo de interfaces modernas con Vue.js y optimización de experiencia de usuario.",
+      backend:
+        "Enfoque en arquitectura de APIs robustas y optimización de bases de datos para alta concurrencia.",
+      fullstack:
+        "Desarrollo integral desde frontend hasta backend, incluyendo integración con servicios cloud.",
+      lider:
+        "Liderazgo técnico en proyectos complejos y mentoría de desarrolladores junior.",
+      docente:
+        "Desarrollo de material educativo y facilitación de workshops técnicos.",
+      general:
+        "Implementación de soluciones tecnológicas completas con enfoque en calidad y escalabilidad.",
+    };
 
-    return descripciones[tipo] || descripciones.general
+    return descripciones[tipo] || descripciones.general;
   }
 
   /**
    * Simula delay de red
    */
   delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
 // Exportar instancia única
-export default new DeepSeekMockService()
+export default new DeepSeekMockService();

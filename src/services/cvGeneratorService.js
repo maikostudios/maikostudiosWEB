@@ -195,7 +195,7 @@ class CVGeneratorService {
       nombre_completo: "Michael Esteban Sáez Contreras",
       cargo_principal: "Desarrollador Full Stack",
       email: "m.saezc@maikostudios.com",
-      telefono: "+56983833148",
+      telefono: "+56920648446",
     };
 
     return `

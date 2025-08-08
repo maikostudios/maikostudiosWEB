@@ -271,7 +271,7 @@ ${datosJSON}
 
 🔧 CORRECCIONES OBLIGATORIAS DE FORMATO:
 - HEADER debe mostrar: "Desarrollador Full Stack" (CON espacio, no "DesarrolladorFull Stack")
-- HEADER debe mostrar: "m.saezc@maikostudios.com | +56983833148 | LinkedIn"
+- HEADER debe mostrar: "m.saezc@maikostudios.com | +56920648446 | LinkedIn"
 - HEADER debe mostrar: "Chile | maikostudios.com" (NO "Temucą IX Región Chile")
 - FOOTER debe mostrar: "Contacto: m.saezc@maikostudios.com | LinkedIn | maikostudios.com"
 - SIEMPRE incluir el punto en "maikostudios.com" (NUNCA "maikostudioscom")
