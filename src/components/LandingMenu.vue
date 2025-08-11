@@ -122,7 +122,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
-const logoSrc = '/logo_maikostudios_light.svg'
+const logoSrc = '/logo/logo_maikostudio.png'
 
 const UTM = 'utm_source=landing&utm_medium=qr&utm_campaign=conversion'
 
@@ -170,7 +170,10 @@ const abrirChatbot = () => {
 /* Fixed CTA for mobile */
 .fixed-cta-mobile { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 50; display: none; }
 @media (max-width: 600px) {
-  .fixed-cta-mobile { display: block; }
+  /* Reservar espacio inferior y evitar superposición con el botón del chatbot */
+  .landing-menu { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  /* Dejar espacio a la derecha para el botón del chatbot (~72-80px) */
+  .fixed-cta-mobile { display: block; right: calc(16px + 84px); bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
 </style>
 

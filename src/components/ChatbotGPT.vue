@@ -371,7 +371,13 @@ onMounted(() => {
   position: fixed;
   bottom: clamp(0.75em, 4vw, 2em);
   right: clamp(0.75em, 4vw, 2em);
-  z-index: 1000;
+  z-index: 1200; /* sobre ctas */
+  pointer-events: none; /* evitar bloquear clics debajo salvo en elementos propios */
+}
+
+.chatbot-container .v-btn,
+.chatbot-container .chat-window {
+  pointer-events: auto;
 }
 
 .chat-window {
@@ -570,14 +576,19 @@ onMounted(() => {
 
 @media (max-width: 600px) {
   .chatbot-container {
-    bottom: 1.5em;
+    bottom: calc(1.5em + env(safe-area-inset-bottom));
     right: 1.5em;
     left: 0;
     width: 100vw;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end; /* mantener en esquina para coexistir con CTA móvil */
     align-items: flex-end;
-    z-index: 9999;
+    z-index: 1200;
+    pointer-events: none;
+  }
+  .chatbot-container .v-btn,
+  .chatbot-container .chat-window {
+    pointer-events: auto;
   }
 
   .chat-window {
