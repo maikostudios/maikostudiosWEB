@@ -1,121 +1,127 @@
 <template>
-  <section class="landing-menu">
-    <v-container class="py-8">
-      <!-- Logo + Intro -->
-      <div class="text-center mb-6">
-        <img
-          v-if="logoSrc"
-          :src="logoSrc"
-          alt="MaikoStudios"
-          class="mx-auto mb-3 landing-logo"
-          width="120"
-          height="120"
-          loading="eager"
-        />
-        <h1 class="landing-title">Impulsa tu negocio digital</h1>
-        <p class="landing-subtitle">Desarrollo web, marketing digital y automatización con IA</p>
-      </div>
+  <div class="landing-menu">
+    <!-- CTA Principal WhatsApp -->
+    <v-btn
+      size="x-large"
+      block
+      class="mb-4 whatsapp-primary-btn"
+      :href="whatsappHref"
+      target="_blank"
+      rel="noopener"
+      aria-label="Hablar por WhatsApp"
+    >
+      <v-icon start size="24">mdi-whatsapp</v-icon>
+      <span class="cta-text">Hablar por WhatsApp</span>
+    </v-btn>
 
-      <!-- CTA Principal -->
+    <!-- CTAs secundarios en grid -->
+    <div class="secondary-ctas-grid">
       <v-btn
-        color="secondary"
-        size="x-large"
-        block
-        class="mb-3 cta-shadow"
-        :href="whatsappHref"
+        variant="outlined"
+        color="primary"
+        size="large"
+        class="secondary-btn"
+        :href="agendaHref"
         target="_blank"
         rel="noopener"
-        aria-label="Hablar por WhatsApp"
+        aria-label="Agendar reunión"
       >
-        <v-icon start>mdi-whatsapp</v-icon>
-        Hablar por WhatsApp — respondemos en minutos
+        <v-icon start>mdi-calendar-clock</v-icon>
+        <span class="btn-text">Agendar reunión</span>
       </v-btn>
 
-      <!-- CTAs secundarios -->
-      <v-row dense>
-        <v-col cols="12" sm="6">
-          <v-btn
-            color="primary"
-            size="large"
-            block
-            class="mb-3"
-            :href="agendaHref"
-            target="_blank"
-            rel="noopener"
-            aria-label="Agendar una reunión"
-          >
-            <v-icon start>mdi-calendar-clock</v-icon>
-            Agendar una reunión
-          </v-btn>
-        </v-col>
-        <v-col cols="12" sm="6">
-          <v-btn
-            color="primary"
-            size="large"
-            block
-            class="mb-3"
-            :href="mailtoHref"
-            aria-label="Enviar correo"
-          >
-            <v-icon start>mdi-email</v-icon>
-            Enviar correo (sin compromiso)
-          </v-btn>
-        </v-col>
-        <v-col cols="12" sm="6">
-          <RouterLink :to="serviciosTo" custom v-slot="{ navigate }">
-            <v-btn color="surface" size="large" block class="mb-3" @click="navigate" aria-label="Ver servicios">
-              <v-icon start>mdi-briefcase</v-icon>
-              Servicios
-            </v-btn>
-          </RouterLink>
-        </v-col>
-        <v-col cols="12" sm="6">
-          <RouterLink :to="preciosTo" custom v-slot="{ navigate }">
-            <v-btn color="surface" size="large" block class="mb-3" @click="navigate" aria-label="Ver precios">
-              <v-icon start>mdi-currency-usd</v-icon>
-              Precios y planes
-            </v-btn>
-          </RouterLink>
-        </v-col>
-        <v-col cols="12">
-          <RouterLink :to="homeTo" custom v-slot="{ navigate }">
-            <v-btn color="surface" size="large" block class="mb-3" @click="navigate" aria-label="Explorar sitio">
-              <v-icon start>mdi-home</v-icon>
-              Explorar sitio principal
-            </v-btn>
-          </RouterLink>
-        </v-col>
-      </v-row>
-
-      <!-- Acceso directo al chatbot -->
-      <div class="text-center mt-4">
-        <v-btn variant="text" color="secondary" @click="abrirChatbot" aria-label="Abrir chatbot">
-          <v-icon start>mdi-robot</v-icon>
-          ¿Tienes dudas? Pregúntale a MaikoBot
-        </v-btn>
-      </div>
-
-      <!-- Resumen opcional -->
-      <div class="mt-8 landing-summary">
-        <h3 class="mb-2">Soluciones para PYMEs y emprendedores</h3>
-        <ul>
-          <li>Desarrollo web y e-commerce</li>
-          <li>Marketing digital y publicidad online</li>
-          <li>Automatización de procesos con IA</li>
-          <li>Relatorías y cursos</li>
-          <li>Sublimación y personalización</li>
-        </ul>
-      </div>
-    </v-container>
-
-    <!-- Botón flotante solo móvil -->
-    <div class="fixed-cta-mobile">
-      <v-btn :href="whatsappHref" target="_blank" color="secondary" size="large" block rounded="lg" class="cta-shadow">
-        <v-icon start>mdi-whatsapp</v-icon>
-        WhatsApp
+      <v-btn
+        variant="outlined"
+        color="primary"
+        size="large"
+        class="secondary-btn"
+        :href="mailtoHref"
+        aria-label="Enviar correo"
+      >
+        <v-icon start>mdi-email</v-icon>
+        <span class="btn-text">Enviar correo</span>
       </v-btn>
     </div>
-  </section>
+
+    <!-- Navegación interna -->
+    <div class="navigation-section">
+      <RouterLink :to="serviciosTo" custom v-slot="{ navigate }">
+        <v-btn
+          variant="text"
+          color="secondary"
+          size="large"
+          block
+          class="nav-btn"
+          @click="navigate"
+          aria-label="Ver servicios"
+        >
+          <v-icon start>mdi-briefcase</v-icon>
+          <span class="btn-text">Servicios</span>
+        </v-btn>
+      </RouterLink>
+
+      <RouterLink :to="preciosTo" custom v-slot="{ navigate }">
+        <v-btn
+          variant="text"
+          color="secondary"
+          size="large"
+          block
+          class="nav-btn"
+          @click="navigate"
+          aria-label="Ver precios"
+        >
+          <v-icon start>mdi-currency-usd</v-icon>
+          <span class="btn-text">Precios</span>
+        </v-btn>
+      </RouterLink>
+
+      <RouterLink :to="homeTo" custom v-slot="{ navigate }">
+        <v-btn
+          variant="text"
+          color="secondary"
+          size="large"
+          block
+          class="nav-btn"
+          @click="navigate"
+          aria-label="Explorar sitio"
+        >
+          <v-icon start>mdi-home</v-icon>
+          <span class="btn-text">Sitio principal</span>
+        </v-btn>
+      </RouterLink>
+    </div>
+
+    <!-- Acceso al chatbot -->
+    <div class="chatbot-section">
+      <v-btn
+        variant="text"
+        color="secondary"
+        size="medium"
+        block
+        class="chatbot-btn"
+        @click="abrirChatbot"
+        aria-label="Abrir chatbot"
+      >
+        <v-icon start>mdi-robot</v-icon>
+        <span class="btn-text">¿Dudas? Pregúntale a MaikoBot</span>
+      </v-btn>
+    </div>
+
+    <!-- Botón flotante móvil -->
+    <div class="fixed-cta-mobile">
+      <v-btn
+        :href="whatsappHref"
+        target="_blank"
+        size="large"
+        block
+        class="whatsapp-mobile-btn"
+        aria-label="WhatsApp"
+      >
+        <v-icon start size="20">mdi-whatsapp</v-icon>
+        <span class="mobile-btn-text">WhatsApp</span>
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -155,25 +161,186 @@ const abrirChatbot = () => {
 
 <style scoped>
 .landing-menu {
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  background: linear-gradient(135deg, rgba(0, 204, 204, 0.12) 0%, rgba(10, 10, 10, 0.92) 100%);
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  background: transparent;
 }
-.landing-logo { filter: drop-shadow(0 0 12px rgba(0,204,204,0.25)); }
-.landing-title { font-weight: 700; font-size: 1.6rem; }
-.landing-subtitle { color: #a8b3c1; }
-.cta-shadow { box-shadow: 0 12px 32px rgba(0, 204, 204, 0.25); }
-.landing-summary { color: #d9e2ec; opacity: .9; font-size: .95rem; }
-.landing-summary ul { margin: 0; padding-left: 1.2rem; }
 
-/* Fixed CTA for mobile */
-.fixed-cta-mobile { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 50; display: none; }
+/* CTA Principal WhatsApp */
+.whatsapp-primary-btn {
+  background: linear-gradient(135deg, #25D366 0%, #075E54 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  height: 56px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3) !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+}
+
+.whatsapp-primary-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 32px rgba(37, 211, 102, 0.4) !important;
+}
+
+.whatsapp-primary-btn .cta-text {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* CTAs secundarios */
+.secondary-ctas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(0, 102, 255, 0.3) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  height: 48px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+}
+
+.secondary-btn:hover {
+  background: rgba(0, 102, 255, 0.1) !important;
+  border-color: rgba(0, 102, 255, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.secondary-btn .btn-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Navegación interna */
+.navigation-section {
+  margin-bottom: 1.5rem;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #00cccc !important;
+  font-weight: 500 !important;
+  height: 44px !important;
+  margin-bottom: 0.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 204, 204, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.nav-btn .btn-text {
+  font-size: 0.9rem;
+}
+
+/* Chatbot */
+.chatbot-section {
+  margin-bottom: 2rem;
+}
+
+.chatbot-btn {
+  background: transparent !important;
+  color: #00cccc !important;
+  font-weight: 400 !important;
+  height: 40px !important;
+  border-radius: 6px !important;
+  text-transform: none !important;
+  opacity: 0.8;
+}
+
+.chatbot-btn:hover {
+  background: rgba(0, 204, 204, 0.05) !important;
+  opacity: 1;
+}
+
+.chatbot-btn .btn-text {
+  font-size: 0.85rem;
+}
+
+/* Botón flotante móvil */
+.fixed-cta-mobile {
+  position: fixed;
+  left: 16px;
+  right: calc(16px + 84px);
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 50;
+  display: none;
+}
+
+.whatsapp-mobile-btn {
+  background: linear-gradient(135deg, #25D366 0%, #075E54 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
+  text-transform: none !important;
+}
+
+.mobile-btn-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
-  /* Reservar espacio inferior y evitar superposición con el botón del chatbot */
-  .landing-menu { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
-  /* Dejar espacio a la derecha para el botón del chatbot (~72-80px) */
-  .fixed-cta-mobile { display: block; right: calc(16px + 84px); bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .landing-menu {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .fixed-cta-mobile {
+    display: block;
+  }
+
+  .secondary-ctas-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .secondary-btn {
+    height: 44px !important;
+  }
+
+  .secondary-btn .btn-text {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-menu {
+    padding: 0 0.75rem calc(80px + env(safe-area-inset-bottom)) 0.75rem;
+  }
+
+  .whatsapp-primary-btn {
+    height: 52px !important;
+    font-size: 1rem !important;
+  }
+
+  .whatsapp-primary-btn .cta-text {
+    font-size: 0.95rem;
+  }
+}
+
+/* Evitar overflow horizontal */
+* {
+  box-sizing: border-box;
+}
+
+.landing-menu * {
+  max-width: 100%;
+  word-wrap: break-word;
 }
 </style>
 
