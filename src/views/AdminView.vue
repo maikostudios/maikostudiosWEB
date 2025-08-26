@@ -895,9 +895,16 @@ const togglePackActive = async (pack) => {
 const cargarPricingPlans = async () => {
   try {
     loadingPlans.value = true
-    pricingPlans.value = await pricingService.getAllPlansAdmin()
+    const planesData = await pricingService.getAllPlansAdmin()
+    // Clonar profundamente los datos para evitar mutaciones no deseadas
+    pricingPlans.value = planesData.map(plan => ({
+      ...plan,
+      features: [...(plan.features || [])] // Clonar arrays anidados
+    }))
+    console.log('✅ Planes cargados:', pricingPlans.value.length)
   } catch (error) {
     console.error('Error cargando planes:', error)
+    error('Error al cargar los planes')
   } finally {
     loadingPlans.value = false
   }
@@ -905,8 +912,19 @@ const cargarPricingPlans = async () => {
 
 const abrirDialogPlan = (plan = null) => {
   if (plan) {
-    planEditando.value = plan
-    Object.assign(planForm, plan)
+    planEditando.value = { ...plan } // Clonar para evitar mutaciones
+    // Clonación profunda del plan para evitar referencias mutables
+    Object.assign(planForm, {
+      name: plan.name || '',
+      description: plan.description || '',
+      monthlyPrice: plan.monthlyPrice || 0,
+      annualPrice: plan.annualPrice || 0,
+      currency: plan.currency || 'CLP',
+      highlighted: plan.highlighted || false,
+      features: [...(plan.features || [])], // Clonar array
+      active: plan.active !== undefined ? plan.active : true,
+      order: plan.order || 0
+    })
     featuresTextPlan.value = plan.features?.join('\n') || ''
   } else {
     planEditando.value = null
@@ -946,24 +964,38 @@ const guardarPlan = async () => {
     }
 
     // Convertir features de texto a array
-    planForm.features = featuresTextPlan.value
+    const featuresArray = featuresTextPlan.value
       .split('\n')
       .map(f => f.trim())
       .filter(f => f.length > 0)
 
+    // Crear objeto de datos limpio sin referencias mutables
+    const planData = {
+      name: planForm.name,
+      description: planForm.description,
+      monthlyPrice: Number(planForm.monthlyPrice),
+      annualPrice: Number(planForm.annualPrice),
+      currency: planForm.currency,
+      highlighted: Boolean(planForm.highlighted),
+      features: [...featuresArray], // Nueva copia del array
+      active: Boolean(planForm.active),
+      order: Number(planForm.order)
+    }
+
     if (planEditando.value) {
-      await pricingService.updatePlan(planEditando.value.id, planForm)
+      await pricingService.updatePlan(planEditando.value.id, planData)
       success('Plan actualizado correctamente')
     } else {
-      await pricingService.createPlan(planForm)
+      await pricingService.createPlan(planData)
       success('Plan creado correctamente')
     }
 
+    // Recargar datos para mantener consistencia
     await cargarPricingPlans()
     cerrarDialogPlan()
   } catch (err) {
     console.error('Error guardando plan:', err)
-    error('Error al guardar el plan')
+    error('Error al guardar el plan: ' + (err.message || 'Error desconocido'))
   } finally {
     guardandoPlan.value = false
   }
@@ -984,12 +1016,20 @@ const eliminarPlan = async (plan) => {
 
 const togglePlanActive = async (plan) => {
   try {
+    // Crear copia del estado anterior para revertir si es necesario
+    const estadoAnterior = plan.active
+
     await pricingService.updatePlan(plan.id, { active: plan.active })
     success(`Plan ${plan.active ? 'activado' : 'desactivado'} correctamente`)
+
+    // Recargar datos para mantener consistencia
+    await cargarPricingPlans()
   } catch (error) {
     console.error('Error actualizando plan:', error)
     error('Error al actualizar el plan')
-    plan.active = !plan.active // Revertir cambio
+
+    // Revertir cambio en la UI
+    plan.active = !plan.active
   }
 }
 
@@ -1141,12 +1181,21 @@ onMounted(() => {
     if (user && !user.isAnonymous && authService.isAuthorizedEmail(user.email)) {
       // Usuario admin autenticado, cargar datos del panel
       console.log('✅ Usuario admin autenticado:', user.email);
-      cargarDatos();
-      cargarSolicitudes();
-      cargarProyectos();
-      cargarPricingPacks();
-      cargarPricingPlans();
-      await cargarImagenesProyectos();
+
+      // Cargar datos de forma secuencial para evitar conflictos
+      try {
+        await cargarDatos();
+        await cargarSolicitudes();
+        await cargarProyectos();
+        await cargarPricingPacks();
+        await cargarPricingPlans();
+        await cargarImagenesProyectos();
+
+        console.log('✅ Todos los datos del admin cargados correctamente');
+      } catch (error) {
+        console.error('❌ Error cargando datos del admin:', error);
+        error('Error al cargar los datos del panel de administración');
+      }
 
       // Exponer funciones para testing en desarrollo
       if (import.meta.env.DEV) {
@@ -1244,7 +1293,16 @@ onMounted(() => {
       }
     } else {
       // Usuario no autorizado o anónimo
-      console.warn('🚫 Usuario no autorizado en AdminView. Redirigiendo a /login.');
+      if (user && user.isAnonymous) {
+        console.warn('🚫 Usuario anónimo detectado en AdminView. Cerrando sesión anónima...');
+        try {
+          await authService.signOut();
+        } catch (error) {
+          console.error('Error cerrando sesión anónima:', error);
+        }
+      } else {
+        console.warn('🚫 Usuario no autorizado en AdminView.');
+      }
       router.replace('/login');
     }
   });

@@ -10,7 +10,7 @@ let mouseActive = false
 let timeout
 
 function handleMouseMove(e) {
-    if (!spotlight.value) return
+    if (!spotlight.value || !spotlight.value.style) return
 
     mouseActive = true
     clearTimeout(timeout)
@@ -21,14 +21,14 @@ function handleMouseMove(e) {
 
     timeout = setTimeout(() => {
         mouseActive = false
-        if (spotlight.value) {
+        if (spotlight.value && spotlight.value.style) {
             spotlight.value.style.opacity = '0'
         }
     }, 3000)
 }
 
 function animateSpotlight() {
-    if (!mouseActive) {
+    if (!mouseActive && spotlight.value && spotlight.value.style) {
         const x = Math.random() * window.innerWidth
         const y = Math.random() * window.innerHeight
 
@@ -37,7 +37,9 @@ function animateSpotlight() {
         spotlight.value.style.opacity = '1'
 
         setTimeout(() => {
-            spotlight.value.style.opacity = '0'
+            if (spotlight.value && spotlight.value.style) {
+                spotlight.value.style.opacity = '0'
+            }
         }, 2000)
     }
 
