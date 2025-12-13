@@ -8,7 +8,7 @@
 
       <!-- Desktop Navigation -->
       <div class="nav-links">
-        <RouterLink to="/sobre-mi" class="nav-link">Sobre Mí</RouterLink>
+        <RouterLink to="/quienes-somos" class="nav-link">Quiénes Somos</RouterLink>
         <RouterLink to="/servicios" class="nav-link">Servicios</RouterLink>
         <RouterLink to="/portafolio" class="nav-link">Portafolio</RouterLink>
         <RouterLink to="/precios" class="nav-link">Precios</RouterLink>
@@ -35,7 +35,7 @@
 
       <!-- Mobile Menu -->
       <div class="mobile-menu" :class="{ 'is-open': isMenuOpen }">
-        <RouterLink to="/sobre-mi" class="mobile-link" @click="closeMenu">Sobre Mí</RouterLink>
+        <RouterLink to="/quienes-somos" class="mobile-link" @click="closeMenu">Quiénes Somos</RouterLink>
         <RouterLink to="/servicios" class="mobile-link" @click="closeMenu">Servicios</RouterLink>
         <RouterLink to="/portafolio" class="mobile-link" @click="closeMenu">Portafolio</RouterLink>
         <RouterLink to="/precios" class="mobile-link" @click="closeMenu">Precios</RouterLink>

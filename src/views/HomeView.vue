@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 
 import HeroSection from '@/components/HeroSection.vue'
-import SobreMi from '@/components/SobreMi.vue'
+// import SobreMi from '@/components/SobreMi.vue' // Ocultado: Evolución de portafolio personal a empresa
 import Servicios from '@/components/Servicios.vue'
 import ProyectoEstrella from '@/components/ProyectoEstrella.vue'
 import Contacto from '@/components/Contacto.vue'
@@ -21,7 +21,7 @@ onMounted(() => {
   <div class="home-container">
     <Navbar />
     <HeroSection />
-    <SobreMi />
+    <!-- <SobreMi /> --> <!-- Ocultado: Evolución de portafolio personal a empresa -->
     <Servicios />
     <ProyectoEstrella />
     <Contacto />
