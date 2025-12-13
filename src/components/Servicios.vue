@@ -12,20 +12,32 @@
           </div>
           <ul class="servicios-list">
             <li>
-              <strong>Desarrollo Web Empresarial</strong>
+              <strong>🤖 Agentes de IA Personalizados</strong>
+              <p>Asistentes virtuales con ChatGPT y Gemini adaptados a tu negocio</p>
+              <v-chip size="x-small" color="primary" class="mt-1">DESTACADO</v-chip>
+            </li>
+            <li>
+              <strong>🌐 Desarrollo Web a Medida</strong>
               <p>Aplicaciones web escalables con Vue.js, React y Node.js</p>
             </li>
             <li>
-              <strong>Automatización de Procesos</strong>
-              <p>Optimización de flujos de trabajo con IA y herramientas modernas</p>
+              <strong>📊 Consultoría Tecnológica + Analytics</strong>
+              <p>Estrategia digital y configuración de Google Analytics 4</p>
             </li>
             <li>
-              <strong>Sistemas de Gestión</strong>
-              <p>ERP, CRM y plataformas administrativas personalizadas</p>
+              <strong>💬 Automatización de Marketing</strong>
+              <p>WhatsApp Business, redes sociales y generación de leads</p>
+              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
             </li>
             <li>
-              <strong>Integración de APIs</strong>
-              <p>Conexión de sistemas existentes con nuevas tecnologías</p>
+              <strong>📱 Campañas en Redes Sociales</strong>
+              <p>Facebook Ads, Instagram Ads, LinkedIn Ads y Google Ads</p>
+              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
+            </li>
+            <li>
+              <strong>⚖️ Asesoría Legal Empresarial</strong>
+              <p>Derecho comercial, contratos tecnológicos y propiedad intelectual</p>
+              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
             </li>
           </ul>
           <v-btn color="primary" variant="outlined" block to="/servicios">
@@ -41,24 +53,40 @@
           </div>
           <ul class="servicios-list">
             <li>
-              <strong>Sitios Web Profesionales</strong>
-              <p>Landing pages y sitios corporativos responsive</p>
+              <strong>🎨 Diseño Web para Emprendedores</strong>
+              <p>Sitios web profesionales y landing pages responsive</p>
             </li>
             <li>
-              <strong>E-commerce y Tiendas Online</strong>
-              <p>Plataformas de venta con pasarelas de pago integradas</p>
+              <strong>🤖 Asistente Virtual con IA</strong>
+              <p>ChatGPT y Gemini Gems personalizados para tu negocio</p>
+              <v-chip size="x-small" color="secondary" class="mt-1">DESTACADO</v-chip>
             </li>
             <li>
-              <strong>Capacitación Tecnológica</strong>
-              <p>Cursos personalizados de programación y herramientas digitales</p>
+              <strong>🎓 Mentoría Tecnológica</strong>
+              <p>Aprende desarrollo web con sesiones personalizadas</p>
             </li>
             <li>
-              <strong>Consultoría Digital</strong>
-              <p>Estrategias para digitalizar tu emprendimiento</p>
+              <strong>📈 Configuración de Analytics</strong>
+              <p>Google Analytics 4, Tag Manager y dashboards</p>
+              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
             </li>
             <li>
-              <strong>Armado de PC Gamers</strong>
-              <p>Configuraciones personalizadas para gaming, streaming y trabajo profesional con componentes de última generación</p>
+              <strong>💬 Automatización de Contacto</strong>
+              <p>WhatsApp Business, chatbots y formularios inteligentes</p>
+              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
+            </li>
+            <li>
+              <strong>⚖️ Asesoría Legal para Emprendedores</strong>
+              <p>Contratos, constitución de empresas y protección legal</p>
+              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
+            </li>
+            <li>
+              <strong>🛠️ Soporte Técnico</strong>
+              <p>Mantenimiento y actualizaciones de tus proyectos digitales</p>
+            </li>
+            <li>
+              <strong>🎮 Armado de PC Gamers</strong>
+              <p>Configuraciones personalizadas para gaming y trabajo profesional</p>
             </li>
           </ul>
           <v-btn color="secondary" variant="outlined" block to="/contacto">
@@ -134,6 +162,10 @@
 .servicios-list p {
   color: #cccccc;
   margin: 0;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
 }
 
 /* Tablet breakpoint */

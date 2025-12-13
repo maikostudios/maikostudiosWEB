@@ -21,12 +21,32 @@
 
                             <v-card-text>
                                 <div class="servicios-lista">
+                                    <!-- Agentes de IA -->
+                                    <div class="servicio-item destacado">
+                                        <v-icon color="primary" size="32">mdi-robot</v-icon>
+                                        <div>
+                                            <h4>🤖 Agentes de IA Personalizados <v-chip size="x-small" color="primary">DESTACADO</v-chip></h4>
+                                            <p>Asistentes virtuales con ChatGPT y Gemini adaptados a tu modelo de negocio. Automatización de atención al cliente, ventas y soporte técnico con integración a tus sistemas existentes (CRM, bases de datos, APIs).</p>
+                                            <div class="beneficios">
+                                                <p class="beneficio">✓ Atención 24/7 automatizada</p>
+                                                <p class="beneficio">✓ Calificación de leads inteligente</p>
+                                                <p class="beneficio">✓ Reducción de costos operativos</p>
+                                            </div>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">ChatGPT API</v-chip>
+                                                <v-chip size="small">Gemini</v-chip>
+                                                <v-chip size="small">LangChain</v-chip>
+                                                <v-chip size="small">Genkit</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Desarrollo Web -->
                                     <div class="servicio-item">
                                         <v-icon color="primary">mdi-web</v-icon>
                                         <div>
                                             <h4>Desarrollo Web a Medida</h4>
-                                            <p>Aplicaciones web personalizadas que optimizan tus procesos de negocio y
-                                                mejoran la experiencia del usuario.</p>
+                                            <p>Aplicaciones web personalizadas que optimizan tus procesos de negocio y mejoran la experiencia del usuario.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">Vue.js</v-chip>
                                                 <v-chip size="small">React</v-chip>
@@ -35,30 +55,81 @@
                                         </div>
                                     </div>
 
+                                    <!-- Consultoría + Analytics -->
                                     <div class="servicio-item">
                                         <v-icon color="primary">mdi-chart-line</v-icon>
                                         <div>
-                                            <h4>Consultoría Tecnológica</h4>
-                                            <p>Asesoramiento experto para la transformación digital de tu empresa y
-                                                optimización de procesos.</p>
+                                            <h4>📊 Consultoría Tecnológica + Analytics</h4>
+                                            <p>Asesoramiento experto para la transformación digital de tu empresa. Configuración de Google Analytics 4 para análisis de datos y toma de decisiones informadas.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">Análisis</v-chip>
                                                 <v-chip size="small">Estrategia</v-chip>
+                                                <v-chip size="small">GA4</v-chip>
                                                 <v-chip size="small">Implementación</v-chip>
                                             </div>
                                         </div>
                                     </div>
 
+                                    <!-- Integración de Sistemas -->
                                     <div class="servicio-item">
                                         <v-icon color="primary">mdi-cog</v-icon>
                                         <div>
                                             <h4>Integración de Sistemas</h4>
-                                            <p>Conectamos tus aplicaciones existentes con nuevas soluciones para un
-                                                flujo de trabajo eficiente.</p>
+                                            <p>Conectamos tus aplicaciones existentes con nuevas soluciones para un flujo de trabajo eficiente.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">APIs</v-chip>
                                                 <v-chip size="small">Webhooks</v-chip>
                                                 <v-chip size="small">Microservicios</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Automatización de Marketing -->
+                                    <div class="servicio-item">
+                                        <v-icon color="primary">mdi-robot-outline</v-icon>
+                                        <div>
+                                            <h4>💬 Automatización de Marketing <v-chip size="x-small" color="primary">NUEVO</v-chip></h4>
+                                            <p>Automatización de mensajes en WhatsApp y redes sociales para generación de leads y aumento de ventas. Respuestas automáticas y seguimiento de clientes potenciales.</p>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">WhatsApp Business API</v-chip>
+                                                <v-chip size="small">Meta Business Suite</v-chip>
+                                                <v-chip size="small">n8n</v-chip>
+                                                <v-chip size="small">Make</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campañas en Redes Sociales -->
+                                    <div class="servicio-item">
+                                        <v-icon color="primary">mdi-bullhorn</v-icon>
+                                        <div>
+                                            <h4>📱 Campañas en Redes Sociales <v-chip size="x-small" color="primary">NUEVO</v-chip></h4>
+                                            <p>Diseño y gestión de campañas publicitarias en redes sociales para aumentar tu visibilidad y captar clientes potenciales.</p>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">Facebook Ads</v-chip>
+                                                <v-chip size="small">Instagram Ads</v-chip>
+                                                <v-chip size="small">LinkedIn Ads</v-chip>
+                                                <v-chip size="small">Google Ads</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Asesoría Legal Empresarial -->
+                                    <div class="servicio-item legal">
+                                        <v-icon color="secondary" size="32">mdi-scale-balance</v-icon>
+                                        <div>
+                                            <h4>⚖️ Asesoría Legal Empresarial <v-chip size="x-small" color="secondary">NUEVO</v-chip></h4>
+                                            <p>Respaldo jurídico especializado en derecho comercial, contratos tecnológicos y propiedad intelectual. Protege tu negocio digital desde el inicio.</p>
+                                            <div class="beneficios">
+                                                <p class="beneficio">✓ Contratos tecnológicos a medida</p>
+                                                <p class="beneficio">✓ Protección de propiedad intelectual</p>
+                                                <p class="beneficio">✓ Cumplimiento normativo</p>
+                                            </div>
+                                            <div class="tecnologias">
+                                                <v-chip size="small" color="secondary">Derecho Comercial</v-chip>
+                                                <v-chip size="small" color="secondary">Propiedad Intelectual</v-chip>
+                                                <v-chip size="small" color="secondary">Contratos</v-chip>
+                                                <v-chip size="small" color="secondary">Compliance</v-chip>
                                             </div>
                                         </div>
                                     </div>
@@ -86,12 +157,12 @@
 
                             <v-card-text>
                                 <div class="servicios-lista">
+                                    <!-- Diseño Web -->
                                     <div class="servicio-item">
                                         <v-icon color="secondary">mdi-palette</v-icon>
                                         <div>
                                             <h4>Diseño Web para Emprendedores</h4>
-                                            <p>Sitios web profesionales y adaptables que reflejan la identidad de tu
-                                                negocio y atraen clientes.</p>
+                                            <p>Sitios web profesionales y adaptables que reflejan la identidad de tu negocio y atraen clientes.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">Responsive</v-chip>
                                                 <v-chip size="small">SEO</v-chip>
@@ -100,12 +171,31 @@
                                         </div>
                                     </div>
 
+                                    <!-- Asistente Virtual con IA -->
+                                    <div class="servicio-item destacado">
+                                        <v-icon color="secondary" size="32">mdi-robot</v-icon>
+                                        <div>
+                                            <h4>🤖 Asistente Virtual con IA <v-chip size="x-small" color="secondary">DESTACADO</v-chip></h4>
+                                            <p>ChatGPT y Gemini Gems personalizados para tu negocio. Automatiza atención al cliente, reservas, consultas y más con inteligencia artificial.</p>
+                                            <div class="beneficios">
+                                                <p class="beneficio">✓ Configuración personalizada</p>
+                                                <p class="beneficio">✓ Sin conocimientos técnicos</p>
+                                                <p class="beneficio">✓ Soporte continuo</p>
+                                            </div>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">ChatGPT</v-chip>
+                                                <v-chip size="small">Gemini Gems</v-chip>
+                                                <v-chip size="small">Prompts personalizados</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mentoría -->
                                     <div class="servicio-item">
                                         <v-icon color="secondary">mdi-school</v-icon>
                                         <div>
                                             <h4>Mentoría Tecnológica</h4>
-                                            <p>Aprende desarrollo web con sesiones personalizadas y acelera tu carrera
-                                                en tecnología.</p>
+                                            <p>Aprende desarrollo web con sesiones personalizadas y acelera tu carrera en tecnología.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">JavaScript</v-chip>
                                                 <v-chip size="small">Vue.js</v-chip>
@@ -114,16 +204,77 @@
                                         </div>
                                     </div>
 
+                                    <!-- Configuración de Analytics -->
+                                    <div class="servicio-item">
+                                        <v-icon color="secondary">mdi-google-analytics</v-icon>
+                                        <div>
+                                            <h4>📈 Configuración de Analytics <v-chip size="x-small" color="secondary">NUEVO</v-chip></h4>
+                                            <p>Instalación y configuración de Google Analytics 4 para entender a tus visitantes y mejorar tu estrategia digital.</p>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">GA4</v-chip>
+                                                <v-chip size="small">Tag Manager</v-chip>
+                                                <v-chip size="small">Looker Studio</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Automatización de Contacto -->
+                                    <div class="servicio-item">
+                                        <v-icon color="secondary">mdi-message-processing</v-icon>
+                                        <div>
+                                            <h4>💬 Automatización de Contacto <v-chip size="x-small" color="secondary">NUEVO</v-chip></h4>
+                                            <p>Respuestas automáticas en WhatsApp Business y captura de leads con chatbots y formularios inteligentes.</p>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">WhatsApp Business</v-chip>
+                                                <v-chip size="small">Chatbots</v-chip>
+                                                <v-chip size="small">Formularios</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Asesoría Legal -->
+                                    <div class="servicio-item legal">
+                                        <v-icon color="primary" size="32">mdi-scale-balance</v-icon>
+                                        <div>
+                                            <h4>⚖️ Asesoría Legal para Emprendedores <v-chip size="x-small" color="primary">NUEVO</v-chip></h4>
+                                            <p>Asesoría legal especializada para formalizar tu emprendimiento, proteger tu marca y crear contratos seguros.</p>
+                                            <div class="beneficios">
+                                                <p class="beneficio">✓ Constitución de empresas</p>
+                                                <p class="beneficio">✓ Contratos estándar</p>
+                                                <p class="beneficio">✓ Protección de marca</p>
+                                            </div>
+                                            <div class="tecnologias">
+                                                <v-chip size="small" color="primary">Derecho Emprendedor</v-chip>
+                                                <v-chip size="small" color="primary">Contratos</v-chip>
+                                                <v-chip size="small" color="primary">Propiedad Intelectual</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Soporte Técnico -->
                                     <div class="servicio-item">
                                         <v-icon color="secondary">mdi-tools</v-icon>
                                         <div>
                                             <h4>Soporte Técnico</h4>
-                                            <p>Asistencia dedicada para mantener tus proyectos digitales funcionando de
-                                                manera óptima.</p>
+                                            <p>Asistencia dedicada para mantener tus proyectos digitales funcionando de manera óptima.</p>
                                             <div class="tecnologias">
                                                 <v-chip size="small">Mantenimiento</v-chip>
                                                 <v-chip size="small">Actualizaciones</v-chip>
                                                 <v-chip size="small">Monitoreo</v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Armado de PC Gamers -->
+                                    <div class="servicio-item">
+                                        <v-icon color="secondary">mdi-desktop-tower</v-icon>
+                                        <div>
+                                            <h4>🎮 Armado de PC Gamers</h4>
+                                            <p>Configuraciones personalizadas para gaming, streaming y trabajo profesional con componentes de última generación.</p>
+                                            <div class="tecnologias">
+                                                <v-chip size="small">Gaming</v-chip>
+                                                <v-chip size="small">Streaming</v-chip>
+                                                <v-chip size="small">Workstation</v-chip>
                                             </div>
                                         </div>
                                     </div>
@@ -263,18 +414,53 @@ import BaseLayout from '@/components/BaseLayout.vue'
     display: flex;
     gap: 1rem;
     align-items: flex-start;
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.servicio-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.servicio-item.destacado {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 204, 204, 0.08));
+    border: 1px solid rgba(0, 204, 204, 0.2);
+}
+
+.servicio-item.legal {
+    background: linear-gradient(135deg, rgba(0, 204, 204, 0.08), rgba(0, 102, 255, 0.08));
+    border: 1px solid rgba(0, 102, 255, 0.2);
 }
 
 .servicio-item h4 {
     color: var(--color-text);
     margin: 0 0 0.5rem 0;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .servicio-item p {
     color: #cccccc;
     margin: 0 0 1rem 0;
     line-height: 1.6;
+}
+
+.beneficios {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid var(--color-primary);
+}
+
+.beneficio {
+    color: #e0e0e0;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
 }
 
 .tecnologias {
