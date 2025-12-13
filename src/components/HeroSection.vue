@@ -1,22 +1,44 @@
 <template>
     <section class="hero-section">
         <div class="hero-content">
-            <img src="/logo/logo_maikostudio.png" alt="Logo Maiko Studios" class="hero-logo" />
+            <img src="/logo/logo_maikostudio.png" alt="MaikoStudios - Soluciones Digitales Inteligentes" class="hero-logo" />
 
-            <h1 class="hero-title">¡Bienvenido a Maiko Studios!</h1>
+            <h1 class="hero-title">Transformamos tu Negocio con Tecnología e Inteligencia Artificial</h1>
             <p class="hero-subtitle">
-                Aprende, crea y digitaliza tu mundo
+                Desarrollo web, agentes de IA personalizados, automatización de marketing y asesoría legal especializada para empresas y emprendedores
             </p>
 
-            <v-btn color="primary" class="mt-4" @click="scrollToContent">
-                Conoce más
-            </v-btn>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">🤖</div>
+                    <div class="stat-label">Agentes de IA</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">💼</div>
+                    <div class="stat-label">Soluciones Empresariales</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">⚖️</div>
+                    <div class="stat-label">Asesoría Legal</div>
+                </div>
+            </div>
+
+            <div class="hero-buttons">
+                <v-btn color="primary" size="large" class="cta-button" @click="scrollToContent">
+                    <v-icon left>mdi-rocket-launch</v-icon>
+                    Conoce Nuestros Servicios
+                </v-btn>
+                <v-btn color="secondary" variant="outlined" size="large" class="cta-button" to="/quienes-somos">
+                    <v-icon left>mdi-account-group</v-icon>
+                    Nuestro Equipo
+                </v-btn>
+            </div>
         </div>
     </section>
 </template>
 
 <script setup>
-import { VBtn } from 'vuetify/components'
+import { VBtn, VIcon } from 'vuetify/components'
 
 function scrollToContent() {
     const el = document.getElementById('servicios')
@@ -58,29 +80,131 @@ function scrollToContent() {
 }
 
 .hero-title {
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #ffffff 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .hero-subtitle {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-top: 0.5rem;
-    color: #ccc;
+    margin-bottom: 2rem;
+    color: #e0e0e0;
     font-weight: 300;
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.cta-button {
+    min-width: 200px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.5px;
 }
 
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .hero-subtitle {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .hero-logo {
         width: 180px;
+    }
+
+    .hero-stats {
+        gap: 2rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 4rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-stats {
+        gap: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
     }
 }
 
@@ -91,11 +215,19 @@ function scrollToContent() {
     }
 
     .hero-title {
-        font-size: 4rem;
+        font-size: 3.5rem;
     }
 
     .hero-subtitle {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
     }
 }
 </style>
