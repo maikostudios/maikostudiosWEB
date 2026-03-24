@@ -59,8 +59,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebase/config'
+import { authService } from '@/services/authService'
 import { useMainStore } from '@/stores/main'
 import SpotlightEffect from '@/components/SpotlightEffect.vue'
 
