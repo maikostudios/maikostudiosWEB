@@ -10,15 +10,21 @@
 
             <div class="hero-stats">
                 <div class="stat-item">
-                    <div class="stat-number">🤖</div>
+                    <div class="stat-icon">
+                        <img src="/maiko_icons/svg/agentes_ia.svg" alt="Agentes de IA" class="stat-svg" />
+                    </div>
                     <div class="stat-label">Agentes de IA</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">💼</div>
+                    <div class="stat-icon">
+                        <img src="/maiko_icons/svg/soluciones_empresariales.svg" alt="Soluciones Empresariales" class="stat-svg" />
+                    </div>
                     <div class="stat-label">Soluciones Empresariales</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">⚖️</div>
+                    <div class="stat-icon">
+                        <img src="/maiko_icons/svg/asesoria_legal.svg" alt="Asesoría Legal" class="stat-svg" />
+                    </div>
                     <div class="stat-label">Asesoría Legal</div>
                 </div>
             </div>
@@ -119,10 +125,23 @@ function scrollToContent() {
     transform: translateY(-5px);
 }
 
-.stat-number {
-    font-size: 3rem;
-    font-weight: bold;
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 0.5rem;
+}
+
+.stat-svg {
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 0 8px rgba(0, 204, 204, 0.3));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.stat-item:hover .stat-svg {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 16px rgba(0, 204, 204, 0.5));
 }
 
 .stat-label {
@@ -163,8 +182,9 @@ function scrollToContent() {
         gap: 2rem;
     }
 
-    .stat-number {
-        font-size: 2.5rem;
+    .stat-svg {
+        width: 52px;
+        height: 52px;
     }
 
     .stat-label {
@@ -199,8 +219,9 @@ function scrollToContent() {
         gap: 1.5rem;
     }
 
-    .stat-number {
-        font-size: 2rem;
+    .stat-svg {
+        width: 44px;
+        height: 44px;
     }
 
     .stat-label {
@@ -222,8 +243,9 @@ function scrollToContent() {
         font-size: 1.5rem;
     }
 
-    .stat-number {
-        font-size: 3.5rem;
+    .stat-svg {
+        width: 72px;
+        height: 72px;
     }
 
     .stat-label {

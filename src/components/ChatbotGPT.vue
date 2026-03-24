@@ -1,10 +1,28 @@
 <template>
   <div class="chatbot-container">
-    <!-- Botón flotante para abrir/cerrar chat -->
-    <v-btn v-if="!chatAbierto" class="chat-toggle-btn" color="primary" size="large" icon elevation="8"
-      @click="abrirChat">
-      <v-icon size="28">mdi-chat</v-icon>
-    </v-btn>
+    <!-- Contenedor de botones flotantes -->
+    <div v-if="!chatAbierto" class="floating-buttons-wrapper">
+      <!-- Botón de WhatsApp -->
+      <v-btn
+        class="whatsapp-toggle-btn"
+        color="#25D366"
+        size="large"
+        icon
+        elevation="8"
+        :href="whatsappUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar por WhatsApp"
+      >
+        <v-icon color="white" size="32">mdi-whatsapp</v-icon>
+      </v-btn>
+
+      <!-- Botón flotante para abrir/cerrar chat -->
+      <v-btn class="chat-toggle-btn" color="primary" size="large" icon elevation="8"
+        @click="abrirChat">
+        <v-icon size="28">mdi-chat</v-icon>
+      </v-btn>
+    </div>
 
     <!-- Ventana del chat -->
     <v-card v-if="chatAbierto" class="chat-window" elevation="12">
@@ -142,6 +160,11 @@ import {
   crearConversacion,
   manejarMensajeUsuario
 } from '@/services/chatbotService'
+
+// URL para WhatsApp
+const whatsappNumber = '56920648446'
+const whatsappMessage = 'Hola te estoy contactando desde tu página web de maikostudios y estoy interesado en contratar uno de tus servicios !'
+const whatsappUrl = computed(() => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`)
 
 // Estado del chatbot mejorado
 const chatAbierto = ref(false)
@@ -373,6 +396,22 @@ onMounted(() => {
   right: clamp(0.75em, 4vw, 2em);
   z-index: 1200; /* sobre ctas */
   pointer-events: none; /* evitar bloquear clics debajo salvo en elementos propios */
+}
+
+.floating-buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.whatsapp-toggle-btn {
+  transition: transform 0.3s ease;
+}
+
+.whatsapp-toggle-btn:hover {
+  transform: scale(1.1);
 }
 
 .chatbot-container .v-btn,

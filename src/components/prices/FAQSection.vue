@@ -14,8 +14,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase/config';
 
 interface FAQ {
     pregunta: string;
@@ -25,11 +23,25 @@ interface FAQ {
 const faqs = ref<FAQ[]>([]);
 
 const fetchFAQs = async () => {
-    const snapshot = await getDocs(collection(db, 'faq'));
-    faqs.value = [];
-    snapshot.forEach((doc) => {
-        faqs.value.push(doc.data() as FAQ);
-    });
+    // Array estático de preguntas frecuentes
+    faqs.value = [
+        {
+            pregunta: "¿Cuánto tiempo toma desarrollar un sitio web?",
+            respuesta: "Dependiendo de la complejidad, un sitio corporativo tradicional toma entre 2 a 4 semanas. Proyectos a medida, aplicaciones y tiendas online suelen llevar entre 1 y 3 meses de trabajo continuo."
+        },
+        {
+            pregunta: "¿Ofrecen servicios de mantención?",
+            respuesta: "Sí, todos nuestros sitios incluyen mantención básica, pero ofrecemos planes de suscripción para soporte continuo, integraciones extra, resolución de tickets 24/7 y mejoras visuales constantes."
+        },
+        {
+            pregunta: "¿Cuáles son las formas de pago?",
+            respuesta: "Aceptamos pago vía transferencia interbancaria, tarjetas de débito/crédito y en casos internacionales admitimos PayPal. Generalmente se solicita un 50% al empezar el contrato y el restante contra-entrega o en cuotas establecidas."
+        },
+        {
+            pregunta: "¿Tienen sistema de facturación o facturan a mi empresa?",
+            respuesta: "Sí. Podemos emitir boleta de honorarios o factura exenta según el requerimiento de la entidad y la naturaleza de los servicios."
+        }
+    ];
 };
 
 onMounted(() => {

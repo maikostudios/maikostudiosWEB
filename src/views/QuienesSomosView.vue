@@ -46,27 +46,26 @@
           </p>
 
           <div class="team-grid">
-            <!-- Michael Sáez -->
-            <div class="team-member">
+            <div v-for="member in equipo" :key="member.id" class="team-member">
               <div class="member-image-container">
                 <img
-                  :src="getMemberImage('michael-saez')"
-                  alt="Michael Sáez"
+                  :src="getMemberImage(member.image)"
+                  :alt="member.name"
                   class="member-image"
                   @error="handleImageError"
                 />
                 <div class="member-overlay">
                   <div class="member-social">
-                    <a
-                      href="https://linkedin.com/in/me-saezc"
+                    <a v-if="member.social?.linkedin"
+                      :href="member.social.linkedin"
                       target="_blank"
                       class="social-icon"
                       title="LinkedIn"
                     >
                       <v-icon color="white">mdi-linkedin</v-icon>
                     </a>
-                    <a
-                      href="https://github.com/maikostudios"
+                    <a v-if="member.social?.github"
+                      :href="member.social.github"
                       target="_blank"
                       class="social-icon"
                       title="GitHub"
@@ -77,90 +76,17 @@
                 </div>
               </div>
               <div class="member-info">
-                <h3 class="member-name">Michael Sáez</h3>
-                <p class="member-role">Founder & CEO | Strategic Product & Technology Lead</p>
-                <p class="member-description">
-                  Líder de MaikoStudios con enfoque en alinear estrategia de negocio y tecnología
-                  para brindar soluciones digitales de alto impacto. Experto en la dirección de
-                  productos, integración tecnológica y generación de valor empresarial a través de
-                  la innovación digital.
-                </p>
+                <h3 class="member-name">{{ member.name }}</h3>
+                <p class="member-role">{{ member.role }}</p>
+                <p class="member-description">{{ member.description }}</p>
                 <div class="member-skills">
-                  <v-chip size="small" color="primary">Digital Product Strategy</v-chip>
-                  <v-chip size="small" color="primary">Technology Leadership</v-chip>
-                  <v-chip size="small" color="primary">Business Automation</v-chip>
-                  <v-chip size="small" color="primary">AI Integration</v-chip>
-                  <v-chip size="small" color="primary">Scalable Web Solutions</v-chip>
-                </div>
-              </div>
-            </div>
-
-            <!-- Christian Calderón -->
-            <div class="team-member">
-              <div class="member-image-container">
-                <img
-                  :src="getMemberImage('christian-calderon')"
-                  alt="Christian Calderón"
-                  class="member-image"
-                  @error="handleImageError"
-                />
-                <div class="member-overlay">
-                  <div class="member-social">
-                    <a href="#" target="_blank" class="social-icon" title="LinkedIn">
-                      <v-icon color="white">mdi-linkedin</v-icon>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="member-info">
-                <h3 class="member-name">Christian Calderón</h3>
-                <p class="member-role">Chief Technology & Architecture Officer (CTAO) – Partner</p>
-                <p class="member-description">
-                  Responsable de la estrategia tecnológica y arquitectónica de la compañía,
-                  definición de infraestructura, integración de sistemas y estimación técnica de
-                  proyectos, alineando tecnología con objetivos de negocio.
-                </p>
-                <div class="member-skills">
-                  <v-chip size="small" color="primary">Arquitectura de Software</v-chip>
-                  <v-chip size="small" color="primary">Infraestructura</v-chip>
-                  <v-chip size="small" color="primary">Integración de Sistemas</v-chip>
-                  <v-chip size="small" color="primary">Estrategia Tecnológica</v-chip>
-                </div>
-              </div>
-            </div>
-
-            <!-- Nataly Denisse Del Pino Ibáñez -->
-            <div class="team-member">
-              <div class="member-image-container">
-                <img
-                  :src="getMemberImage('nataly-delpino')"
-                  alt="Nataly Del Pino"
-                  class="member-image"
-                  @error="handleImageError"
-                />
-                <div class="member-overlay">
-                  <div class="member-social">
-                    <a href="#" target="_blank" class="social-icon" title="LinkedIn">
-                      <v-icon color="white">mdi-linkedin</v-icon>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="member-info">
-                <h3 class="member-name">Nataly Denisse Del Pino Ibáñez</h3>
-                <p class="member-role">Abogada Consultora | Legal Advisor</p>
-                <p class="member-description">
-                  Abogada consultora especializada en derecho comercial y contratos tecnológicos.
-                  Forma parte de la red de profesionales asociados de MaikoStudios, brindando
-                  asesoría legal a clientes que requieren respaldo jurídico en proyectos digitales,
-                  acuerdos comerciales y protección de propiedad intelectual.
-                </p>
-                <div class="member-skills">
-                  <v-chip size="small" color="secondary">Tech Contracts</v-chip>
-                  <v-chip size="small" color="secondary">Commercial Law</v-chip>
-                  <v-chip size="small" color="secondary">Intellectual Property</v-chip>
-                  <v-chip size="small" color="secondary">Legal Consulting</v-chip>
-                  <v-chip size="small" color="secondary">Digital Business Legal Support</v-chip>
+                  <v-chip 
+                    v-for="(skill, index) in member.skills" 
+                    :key="index" 
+                    size="small" 
+                    :color="skill.color">
+                    {{ skill.name }}
+                  </v-chip>
                 </div>
               </div>
             </div>
@@ -224,6 +150,7 @@
 
 <script setup>
 import BaseLayout from '@/components/BaseLayout.vue'
+import { equipo } from '@/data/equipo.js'
 
 // Función para obtener la imagen del miembro o usar placeholder
 const getMemberImage = (memberName) => {

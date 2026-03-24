@@ -1,115 +1,43 @@
 /**
- * Servicio para integración con Gemini 1.5 Flash
- * Generación inteligente de CVs directamente desde frontend
+ * Servicio para integración con Gemini 1.5 Flash usando el Frontend
+ * y enrutando la petición a través del Proxy Seguro de Backend API
  */
-
-const GEMINI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+import apiClient from '@/api/apiClient';
 
 class GeminiService {
   constructor() {
-    this.apiUrl = GEMINI_API_URL;
-    this.apiKey = API_KEY;
+    this.apiUrl = '/ai/gemini';
   }
 
   /**
-   * Genera CV usando Gemini 1.5 Flash
+   * Genera CV usando Gemini
    * @param {string} promptSystem - Prompt del sistema
    * @param {string} promptUser - Prompt del usuario
    * @returns {Promise<string>} - HTML generado
    */
   async generarCV(promptSystem, promptUser) {
-    // Validación de API key
-    if (
-      !this.apiKey ||
-      this.apiKey === "tu_gemini_api_key_aqui" ||
-      this.apiKey.length < 20
-    ) {
-      throw new Error(
-        "API key de Gemini no configurada o inválida. Configura VITE_GEMINI_API_KEY en .env"
-      );
+    if (!promptSystem || typeof promptSystem !== "string" || promptSystem.trim().length === 0) {
+      throw new Error("Prompt del sistema es requerido");
     }
 
-    // Sanitizar y validar prompts
-    if (
-      !promptSystem ||
-      typeof promptSystem !== "string" ||
-      promptSystem.trim().length === 0
-    ) {
-      throw new Error(
-        "Prompt del sistema es requerido y debe ser una cadena válida"
-      );
+    if (!promptUser || typeof promptUser !== "string" || promptUser.trim().length === 0) {
+      throw new Error("Prompt del usuario es requerido");
     }
-
-    if (
-      !promptUser ||
-      typeof promptUser !== "string" ||
-      promptUser.trim().length === 0
-    ) {
-      throw new Error(
-        "Prompt del usuario es requerido y debe ser una cadena válida"
-      );
-    }
-
-    // Limitar longitud de prompts para evitar ataques
-    const maxPromptLength = 50000;
-    if (
-      promptSystem.length > maxPromptLength ||
-      promptUser.length > maxPromptLength
-    ) {
-      throw new Error(
-        `Los prompts no pueden exceder ${maxPromptLength} caracteres`
-      );
-    }
-
-    // Gemini no soporta rol "system", combinamos en un solo mensaje de usuario
-    const promptCombinado = `${promptSystem}\n\n---\n\n${promptUser}`;
-
-    const body = {
-      contents: [{ role: "user", parts: [{ text: promptCombinado }] }],
-    };
 
     try {
-      console.log("🤖 Llamando a Gemini 1.5 Flash...", {
-        url: this.apiUrl,
-        systemPromptLength: promptSystem.length,
-        userPromptLength: promptUser.length,
+      console.log("🤖 Solicitando generación de CV vía Proxy Backend...");
+
+      const response = await apiClient.post(this.apiUrl, {
+        prompt: promptUser,
+        systemPrompt: promptSystem,
+        model: 'gemini-1.5-flash'
       });
 
-      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("❌ Error de Gemini:", error);
-        throw new Error(
-          error.error?.message ||
-            `HTTP ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-      if (!respuesta) {
-        throw new Error("Gemini no devolvió contenido válido");
-      }
-
-      console.log("✅ CV generado con Gemini exitosamente", {
-        responseLength: respuesta.length,
-        model: "gemini-1.5-flash",
-      });
-
-      return respuesta;
+      console.log("✅ CV generado exitosamente");
+      return response.data.text;
     } catch (error) {
-      console.error("❌ Error en Gemini Service:", error);
-      throw error;
+      console.error("❌ Error en Proxy Gemini Service:", error);
+      throw new Error(error.response?.data?.error || "Error al procesar la solicitud de IA");
     }
   }
 

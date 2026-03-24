@@ -1,0 +1,14 @@
+# MaikoStudios Backend - .gitignore
+node_modules/
+.env
+.env.local
+*.log
+dist/
+build/
+
+# Prisma
+prisma/migrations/*.sql.bak
+
+# OS files
+.DS_Store
+Thumbs.db

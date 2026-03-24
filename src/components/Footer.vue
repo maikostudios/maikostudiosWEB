@@ -4,16 +4,15 @@
       <div class="footer-content">
         <div class="footer-brand">
           <img src="/logo/logo_maikostudio.png" alt="Maiko Studios Logo" class="footer-logo" />
-          <p class="tagline">Aprende, crea y digitaliza tu mundo</p>
+          <p class="tagline">Soluciones digitales inteligentes para tu negocio</p>
         </div>
 
         <div class="footer-links">
           <div class="link-group">
             <h4>Navegación</h4>
             <router-link to="/">Inicio</router-link>
-            <router-link to="/sobre-mi">Sobre Mí</router-link>
+            <router-link to="/quienes-somos">Quiénes Somos</router-link>
             <router-link to="/servicios">Servicios</router-link>
-            <router-link to="/portafolio">Portafolio</router-link>
             <router-link to="/precios">Precios</router-link>
             <router-link to="/contacto">Contacto</router-link>
           </div>
@@ -37,7 +36,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2025 Maiko Studios. Todos los derechos reservados.</p>
+        <p>&copy; 2025–2026 Maiko Studios. Todos los derechos reservados.</p>
       </div>
     </v-container>
   </footer>

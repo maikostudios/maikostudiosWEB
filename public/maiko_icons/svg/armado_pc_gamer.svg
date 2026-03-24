@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+    <defs>
+      <linearGradient id="g" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1EE7FF"/>
+        <stop offset="0.55" stop-color="#0C7BFF"/>
+        <stop offset="1" stop-color="#7C5EFF"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="120" y1="80" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#CFE5FF" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="#1EE7FF" stop-opacity="0.7"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <style>
+        .s{stroke:url(#g); stroke-width:20; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .s2{stroke:url(#g2); stroke-width:14; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .f{fill:url(#g);}
+        .f2{fill:url(#g2);}
+        .gl{filter:url(#glow);}
+      </style>
+    </defs>
+    <title>armado_pc_gamer</title>
+    <g class="gl"><rect class="s" x="118" y="136" width="176" height="236" rx="24"/><circle class="s2" cx="206" cy="198" r="44"/><circle class="f2" cx="206" cy="198" r="10"/><line class="s2" x1="206" y1="154" x2="206" y2="242"/><line class="s2" x1="162" y1="198" x2="250" y2="198"/><rect class="s" x="316" y="176" width="84" height="152" rx="14"/><line class="s2" x1="336" y1="224" x2="380" y2="224"/><line class="s2" x1="338" y1="260" x2="378" y2="260"/><line class="s2" x1="144" y1="388" x2="380" y2="388"/></g>
+    </svg>

@@ -3,17 +3,14 @@
  * Generación inteligente de CVs usando Firebase Functions
  */
 
-import { getFunctions, httpsCallable } from "firebase/functions";
-import deepSeekMockService from "./deepSeekMockService";
+import apiClient from '@/api/apiClient';
 
+/**
+ * Servicio para integración con la API de DeepSeek a través del backend local
+ */
 class DeepSeekService {
   constructor() {
-    this.functions = getFunctions();
-    this.generateCV = httpsCallable(this.functions, "generateCVWithDeepSeek");
-    this.testConnection = httpsCallable(
-      this.functions,
-      "testDeepSeekConnection"
-    );
+    this.model = "deepseek-chat";
   }
 
   /**
@@ -25,26 +22,27 @@ class DeepSeekService {
     try {
       console.log("🤖 Iniciando generación con DeepSeek...", { userPrompt });
 
-      const resultado = await this.generateCV({
+      const response = await apiClient.post('/ai/deepseek/generate-cv', {
         userPrompt: userPrompt.trim(),
+        model: this.model
       });
 
-      if (resultado.data.success) {
+      if (response.data.success) {
         console.log("✅ CV generado exitosamente con DeepSeek", {
-          candidato: resultado.data.metadata.candidato,
-          modelo: resultado.data.metadata.modelo,
-          htmlLength: resultado.data.html.length,
+          candidato: response.data.metadata.candidato,
+          modelo: response.data.metadata.modelo,
+          htmlLength: response.data.html.length,
         });
 
         return {
           success: true,
-          html: resultado.data.html,
-          metadata: resultado.data.metadata,
+          html: response.data.html,
+          metadata: response.data.metadata,
           provider: "deepseek",
         };
       } else {
         throw new Error(
-          resultado.data.error || "Error desconocido en DeepSeek"
+          response.data.error || "Error desconocido en DeepSeek"
         );
       }
     } catch (error) {
@@ -64,17 +62,17 @@ class DeepSeekService {
     try {
       console.log("🔍 Probando conexión con DeepSeek...");
 
-      const resultado = await this.testConnection();
+      const response = await apiClient.get('/ai/deepseek/test-connection');
 
-      if (resultado.data.success) {
+      if (response.data.success) {
         console.log("✅ Conexión con DeepSeek exitosa");
         return {
           success: true,
-          message: resultado.data.message,
-          response: resultado.data.response,
+          message: response.data.message,
+          response: response.data.response,
         };
       } else {
-        throw new Error(resultado.data.error);
+        throw new Error(response.data.error);
       }
     } catch (error) {
       console.error("❌ Error probando conexión DeepSeek:", error);

@@ -7,37 +7,24 @@
       <div class="servicios-grid">
         <div class="servicio-card empresarial">
           <div class="card-header">
-            <v-icon size="32" color="primary">mdi-office-building</v-icon>
+            <img src="/maiko_icons/svg/soluciones_empresariales.svg" alt="Para Empresas" class="service-icon-svg" />
             <h3>Para Empresas</h3>
           </div>
           <ul class="servicios-list">
-            <li>
-              <strong>🤖 Agentes de IA Personalizados</strong>
-              <p>Asistentes virtuales con ChatGPT y Gemini adaptados a tu negocio</p>
-              <v-chip size="x-small" color="primary" class="mt-1">DESTACADO</v-chip>
-            </li>
-            <li>
-              <strong>🌐 Desarrollo Web a Medida</strong>
-              <p>Aplicaciones web escalables con Vue.js, React y Node.js</p>
-            </li>
-            <li>
-              <strong>📊 Consultoría Tecnológica + Analytics</strong>
-              <p>Estrategia digital y configuración de Google Analytics 4</p>
-            </li>
-            <li>
-              <strong>💬 Automatización de Marketing</strong>
-              <p>WhatsApp Business, redes sociales y generación de leads</p>
-              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
-            </li>
-            <li>
-              <strong>📱 Campañas en Redes Sociales</strong>
-              <p>Facebook Ads, Instagram Ads, LinkedIn Ads y Google Ads</p>
-              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
-            </li>
-            <li>
-              <strong>⚖️ Asesoría Legal Empresarial</strong>
-              <p>Derecho comercial, contratos tecnológicos y propiedad intelectual</p>
-              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
+            <li v-for="servicio in serviciosEmpresariales.filter(s => !s.hideInLanding)" :key="servicio.id">
+              <strong>
+                <img :src="servicio.icon" alt="" class="inline-icon-svg" /> 
+                {{ servicio.title }}
+              </strong>
+              <p>{{ servicio.description }}</p>
+              <v-chip 
+                v-for="(tag, index) in servicio.tags" 
+                :key="index" 
+                size="x-small" 
+                :color="tag.color" 
+                class="mt-1 mr-1">
+                {{ tag.text }}
+              </v-chip>
             </li>
           </ul>
           <v-btn color="primary" variant="outlined" block to="/servicios">
@@ -48,45 +35,24 @@
         <!-- Servicios Freelance -->
         <div class="servicio-card freelance">
           <div class="card-header">
-            <v-icon size="32" color="secondary">mdi-account-group</v-icon>
+            <img src="/maiko_icons/svg/mentoria_tecnologica.svg" alt="Para Particulares" class="service-icon-svg" />
             <h3>Para Particulares</h3>
           </div>
           <ul class="servicios-list">
-            <li>
-              <strong>🎨 Diseño Web para Emprendedores</strong>
-              <p>Sitios web profesionales y landing pages responsive</p>
-            </li>
-            <li>
-              <strong>🤖 Asistente Virtual con IA</strong>
-              <p>ChatGPT y Gemini Gems personalizados para tu negocio</p>
-              <v-chip size="x-small" color="secondary" class="mt-1">DESTACADO</v-chip>
-            </li>
-            <li>
-              <strong>🎓 Mentoría Tecnológica</strong>
-              <p>Aprende desarrollo web con sesiones personalizadas</p>
-            </li>
-            <li>
-              <strong>📈 Configuración de Analytics</strong>
-              <p>Google Analytics 4, Tag Manager y dashboards</p>
-              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
-            </li>
-            <li>
-              <strong>💬 Automatización de Contacto</strong>
-              <p>WhatsApp Business, chatbots y formularios inteligentes</p>
-              <v-chip size="x-small" color="secondary" class="mt-1">NUEVO</v-chip>
-            </li>
-            <li>
-              <strong>⚖️ Asesoría Legal para Emprendedores</strong>
-              <p>Contratos, constitución de empresas y protección legal</p>
-              <v-chip size="x-small" color="primary" class="mt-1">NUEVO</v-chip>
-            </li>
-            <li>
-              <strong>🛠️ Soporte Técnico</strong>
-              <p>Mantenimiento y actualizaciones de tus proyectos digitales</p>
-            </li>
-            <li>
-              <strong>🎮 Armado de PC Gamers</strong>
-              <p>Configuraciones personalizadas para gaming y trabajo profesional</p>
+            <li v-for="servicio in serviciosParticulares.filter(s => !s.hideInLanding)" :key="servicio.id">
+              <strong>
+                <img :src="servicio.icon" alt="" class="inline-icon-svg" /> 
+                {{ servicio.title }}
+              </strong>
+              <p>{{ servicio.description }}</p>
+              <v-chip 
+                v-for="(tag, index) in servicio.tags" 
+                :key="index" 
+                size="x-small" 
+                :color="tag.color" 
+                class="mt-1 mr-1">
+                {{ tag.text }}
+              </v-chip>
             </li>
           </ul>
           <v-btn color="secondary" variant="outlined" block to="/contacto">
@@ -97,6 +63,11 @@
     </v-container>
   </section>
 </template>
+
+<script setup>
+import { serviciosEmpresariales, serviciosParticulares } from '@/data/servicios.js'
+</script>
+
 
 <style scoped>
 .servicios-section {
@@ -166,6 +137,21 @@
 
 .mt-1 {
   margin-top: 0.25rem;
+}
+
+.service-icon-svg {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(0, 204, 204, 0.3));
+}
+
+.inline-icon-svg {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+  filter: drop-shadow(0 0 3px rgba(0, 204, 204, 0.2));
 }
 
 /* Tablet breakpoint */

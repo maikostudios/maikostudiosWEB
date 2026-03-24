@@ -59,8 +59,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebase/config'
+import { authService } from '@/services/authService'
 import { useMainStore } from '@/stores/main'
 import SpotlightEffect from '@/components/SpotlightEffect.vue'
 
@@ -109,54 +108,24 @@ const iniciarSesion = async () => {
   cargando.value = true
 
   try {
-    // Autenticación real con Firebase
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
+    // Autenticación real con API REST Back-end
+    const result = await authService.signIn(
       credenciales.email,
       credenciales.password
     )
 
-    // Verificar que el usuario es Michael (por email)
-    const emailsAutorizados = [
-      'maikostudios@gmail.com',
-      'm.esteban.saez@gmail.com',
-      'admin@maikostudios.com',
-      'michael@maikostudios.com'
-    ]
-
-    if (!emailsAutorizados.includes(userCredential.user.email)) {
-      throw new Error('Usuario no autorizado para acceder al panel de administración')
+    if (!result.success) {
+      throw new Error(result.error || 'Error de credenciales')
     }
 
     // Guardar usuario en el store
-    store.user = {
-      uid: userCredential.user.uid,
-      email: userCredential.user.email,
-      displayName: userCredential.user.displayName || 'Michael Sáez'
-    }
+    store.user = result.user
 
     mostrarNotificacion('Sesión iniciada correctamente', 'success')
     router.push('/admin')
   } catch (error) {
     console.error('Error al iniciar sesión:', error)
-    let mensaje = 'Error al iniciar sesión'
-    switch (error.code) {
-      case 'auth/user-not-found':
-        mensaje = 'Usuario no encontrado'
-        break
-      case 'auth/wrong-password':
-        mensaje = 'Contraseña incorrecta'
-        break
-      case 'auth/invalid-email':
-        mensaje = 'Email inválido'
-        break
-      case 'auth/too-many-requests':
-        mensaje = 'Demasiados intentos. Intenta más tarde'
-        break
-      default:
-        mensaje = error.message || 'Error desconocido'
-    }
-    mostrarNotificacion(mensaje, 'error')
+    mostrarNotificacion(error.message || 'Error desconocido al iniciar sesión', 'error')
   } finally {
     cargando.value = false
   }

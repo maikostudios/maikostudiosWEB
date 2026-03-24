@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+    <defs>
+      <linearGradient id="g" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1EE7FF"/>
+        <stop offset="0.55" stop-color="#0C7BFF"/>
+        <stop offset="1" stop-color="#8B5CFF"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="120" y1="80" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#CFE5FF" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="#1EE7FF" stop-opacity="0.7"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <style>
+        .s{stroke:url(#g); stroke-width:20; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .s2{stroke:url(#g2); stroke-width:14; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .f{fill:url(#g);}
+        .f2{fill:url(#g2);}
+        .gl{filter:url(#glow);}
+      </style>
+    </defs>
+    <title>consultoria_analytics</title>
+    <g class="gl"><line class="s2" x1="160" y1="336" x2="240" y2="336"/><line class="s" x1="160" y1="290" x2="160" y2="336"/><line class="s" x1="206" y1="254" x2="206" y2="336"/><line class="s" x1="252" y1="214" x2="252" y2="336"/><circle class="s" cx="278" cy="216" r="88"/><line class="s" x1="340" y1="278" x2="404" y2="342"/></g>
+    </svg>

@@ -210,10 +210,16 @@
                 <v-window-item value="planes">
                   <div class="section-header">
                     <h3>Planes de Suscripción</h3>
-                    <v-btn color="secondary" @click="abrirDialogPlan()">
-                      <v-icon left>mdi-plus</v-icon>
-                      Nuevo Plan
-                    </v-btn>
+                    <div class="d-flex gap-2">
+                      <v-btn color="warning" variant="outlined" size="small" @click="corregirOrdenes" :loading="corrigiendoOrdenes">
+                        <v-icon left>mdi-auto-fix</v-icon>
+                        Corregir Órdenes
+                      </v-btn>
+                      <v-btn color="secondary" @click="abrirDialogPlan()">
+                        <v-icon left>mdi-plus</v-icon>
+                        Nuevo Plan
+                      </v-btn>
+                    </div>
                   </div>
 
                   <v-data-table :headers="headersPlanes" :items="pricingPlans" :loading="loadingPlans"
@@ -272,7 +278,7 @@
               <v-data-table :headers="headersSolicitudes" :items="solicitudes" :loading="loading" class="admin-table"
                 item-value="id">
                 <template #item.fecha="{ item }">
-                  {{ formatearFecha(item.fecha?.toDate?.()) }}
+                  {{ formatearFecha(item.fecha) }}
                 </template>
 
                 <template #item.estado="{ item }">
@@ -513,10 +519,8 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { auth } from '@/firebase/config'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { useRouter } from 'vue-router'
 import { authService } from '@/services/authService'
+import { useRouter } from 'vue-router'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useMainStore } from '@/stores/main'
 import { listarSolicitudes, actualizarEstadoSolicitud } from '@/services/firestoreService'
@@ -562,6 +566,7 @@ const packEditando = ref(null)
 const planEditando = ref(null)
 const guardandoPack = ref(false)
 const guardandoPlan = ref(false)
+const corrigiendoOrdenes = ref(false)
 const formValido = ref(false)
 const formPack = ref(null)
 const formPlan = ref(null)
@@ -895,13 +900,24 @@ const togglePackActive = async (pack) => {
 const cargarPricingPlans = async () => {
   try {
     loadingPlans.value = true
+
+    // Validar y corregir órdenes duplicados antes de cargar
+    try {
+      await pricingService.validateAndFixOrders()
+    } catch (validationError) {
+      console.warn('Error en validación de órdenes:', validationError)
+      // Continuar con la carga aunque falle la validación
+    }
+
     const planesData = await pricingService.getAllPlansAdmin()
     // Clonar profundamente los datos para evitar mutaciones no deseadas
     pricingPlans.value = planesData.map(plan => ({
       ...plan,
       features: [...(plan.features || [])] // Clonar arrays anidados
     }))
+
     console.log('✅ Planes cargados:', pricingPlans.value.length)
+    console.log('📊 Órdenes actuales:', pricingPlans.value.map(p => `${p.name}: ${p.order}`))
   } catch (error) {
     console.error('Error cargando planes:', error)
     error('Error al cargar los planes')
@@ -910,7 +926,7 @@ const cargarPricingPlans = async () => {
   }
 }
 
-const abrirDialogPlan = (plan = null) => {
+const abrirDialogPlan = async (plan = null) => {
   if (plan) {
     planEditando.value = { ...plan } // Clonar para evitar mutaciones
     // Clonación profunda del plan para evitar referencias mutables
@@ -923,12 +939,25 @@ const abrirDialogPlan = (plan = null) => {
       highlighted: plan.highlighted || false,
       features: [...(plan.features || [])], // Clonar array
       active: plan.active !== undefined ? plan.active : true,
-      order: plan.order || 0
+      order: plan.order !== undefined ? plan.order : 0 // Preservar orden existente
     })
     featuresTextPlan.value = plan.features?.join('\n') || ''
+    console.log('📝 Editando plan:', plan.name, 'con orden:', plan.order)
   } else {
     planEditando.value = null
-    Object.assign(planForm, pricingService.getEmptyPlan())
+    // Para nuevos planes, obtener el siguiente orden disponible
+    try {
+      const maxOrderPlan = await pricingService.getMaxOrderPlan()
+      const nextOrder = (maxOrderPlan?.order || 0) + 1
+      Object.assign(planForm, {
+        ...pricingService.getEmptyPlan(),
+        order: nextOrder
+      })
+      console.log('➕ Nuevo plan con orden:', nextOrder)
+    } catch (error) {
+      console.error('Error obteniendo orden para nuevo plan:', error)
+      Object.assign(planForm, pricingService.getEmptyPlan())
+    }
     featuresTextPlan.value = ''
   }
   dialogPlan.value = true
@@ -963,6 +992,18 @@ const guardarPlan = async () => {
       return
     }
 
+    // Validar orden único (solo para nuevos planes o si cambió el orden)
+    const ordenActual = Number(planForm.order)
+    if (!planEditando.value || planEditando.value.order !== ordenActual) {
+      const planConMismoOrden = pricingPlans.value.find(p =>
+        p.order === ordenActual && p.id !== planEditando.value?.id
+      )
+      if (planConMismoOrden) {
+        error(`Ya existe un plan con el orden ${ordenActual}: "${planConMismoOrden.name}"`)
+        return
+      }
+    }
+
     // Convertir features de texto a array
     const featuresArray = featuresTextPlan.value
       .split('\n')
@@ -979,15 +1020,19 @@ const guardarPlan = async () => {
       highlighted: Boolean(planForm.highlighted),
       features: [...featuresArray], // Nueva copia del array
       active: Boolean(planForm.active),
-      order: Number(planForm.order)
+      order: ordenActual
     }
+
+    console.log('💾 Guardando plan:', planData.name, 'con orden:', planData.order)
 
     if (planEditando.value) {
       await pricingService.updatePlan(planEditando.value.id, planData)
       success('Plan actualizado correctamente')
+      console.log('✅ Plan actualizado:', planEditando.value.id, 'orden:', planData.order)
     } else {
-      await pricingService.createPlan(planData)
+      const resultado = await pricingService.createPlan(planData)
       success('Plan creado correctamente')
+      console.log('✅ Plan creado:', resultado.id, 'orden:', planData.order)
     }
 
     // Recargar datos para mantener consistencia
@@ -1037,12 +1082,31 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('es-ES').format(price)
 }
 
+const corregirOrdenes = async () => {
+  try {
+    corrigiendoOrdenes.value = true
+    const seCorrigieron = await pricingService.validateAndFixOrders()
+
+    if (seCorrigieron) {
+      success('Órdenes corregidos exitosamente')
+      await cargarPricingPlans() // Recargar datos
+    } else {
+      info('No se encontraron órdenes duplicados para corregir')
+    }
+  } catch (error) {
+    console.error('Error corrigiendo órdenes:', error)
+    error('Error al corregir los órdenes: ' + (error.message || 'Error desconocido'))
+  } finally {
+    corrigiendoOrdenes.value = false
+  }
+}
+
 const cerrarSesion = async () => {
   try {
     console.log('🚪 Cerrando sesión...')
 
-    // Cerrar sesión en Firebase Auth
-    await signOut(auth)
+    // Cerrar sesión en API REST
+    await authService.signOut()
 
     // Limpiar estado local
     store.limpiarEstado()
@@ -1177,8 +1241,8 @@ const crearDatosPrueba = async () => {
 
 // Inicialización
 onMounted(() => {
-  onAuthStateChanged(auth, async (user) => {
-    if (user && !user.isAnonymous && authService.isAuthorizedEmail(user.email)) {
+  authService.onAuthStateChange(async (user) => {
+    if (user && !user.isAnonymous && authService.isAuthorizedEmail(user)) {
       // Usuario admin autenticado, cargar datos del panel
       console.log('✅ Usuario admin autenticado:', user.email);
 

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+    <defs>
+      <linearGradient id="g" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1EE7FF"/>
+        <stop offset="0.55" stop-color="#0C7BFF"/>
+        <stop offset="1" stop-color="#7C5EFF"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="120" y1="80" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#CFE5FF" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="#1EE7FF" stop-opacity="0.7"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <style>
+        .s{stroke:url(#g); stroke-width:20; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .s2{stroke:url(#g2); stroke-width:14; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .f{fill:url(#g);}
+        .f2{fill:url(#g2);}
+        .gl{filter:url(#glow);}
+      </style>
+    </defs>
+    <title>mentoria_tecnologica</title>
+    <g class="gl"><path class="s" d="M256 120 C202 120 158 162 158 214 C158 252 180 278 198 296 C214 312 220 326 222 344 H290 C292 326 298 312 314 296 C332 278 354 252 354 214 C354 162 310 120 256 120 Z"/><line class="s2" x1="232" y1="376" x2="280" y2="376"/><line class="s2" x1="228" y1="408" x2="284" y2="408"/><path class="s2" d="M236 344 H276"/><path class="s2" d="M242 214 L256 184 L270 214 L300 220 L276 242 L282 274 L256 258 L230 274 L236 242 L212 220 Z"/></g>
+    </svg>

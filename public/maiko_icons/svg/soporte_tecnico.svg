@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+    <defs>
+      <linearGradient id="g" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1EE7FF"/>
+        <stop offset="0.55" stop-color="#0C7BFF"/>
+        <stop offset="1" stop-color="#4B74FF"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="120" y1="80" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#CFE5FF" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="#1EE7FF" stop-opacity="0.7"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <style>
+        .s{stroke:url(#g); stroke-width:20; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .s2{stroke:url(#g2); stroke-width:14; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .f{fill:url(#g);}
+        .f2{fill:url(#g2);}
+        .gl{filter:url(#glow);}
+      </style>
+    </defs>
+    <title>soporte_tecnico</title>
+    <g class="gl"><circle class="s" cx="256" cy="214" r="74"/><path class="s2" d="M182 214 Q182 138 256 138 Q330 138 330 214"/><line class="s2" x1="182" y1="214" x2="182" y2="278"/><line class="s2" x1="330" y1="214" x2="330" y2="278"/><line class="s2" x1="182" y1="278" x2="214" y2="278"/><line class="s2" x1="298" y1="278" x2="330" y2="278"/><line class="s2" x1="238" y1="244" x2="274" y2="244"/><circle class="s" cx="178" cy="298" r="20"/><circle class="s" cx="334" cy="298" r="20"/><line class="s2" x1="256" y1="288" x2="256" y2="352"/><path class="s2" d="M224 352 H288"/><circle class="s" cx="256" cy="382" r="22"/></g>
+    </svg>

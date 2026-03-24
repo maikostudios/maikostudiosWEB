@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+    <defs>
+      <linearGradient id="g" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1EE7FF"/>
+        <stop offset="0.55" stop-color="#0C7BFF"/>
+        <stop offset="1" stop-color="#8B5CFF"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="120" y1="80" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#CFE5FF" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="#1EE7FF" stop-opacity="0.7"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <style>
+        .s{stroke:url(#g); stroke-width:20; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .s2{stroke:url(#g2); stroke-width:14; stroke-linecap:round; stroke-linejoin:round; fill:none;}
+        .f{fill:url(#g);}
+        .f2{fill:url(#g2);}
+        .gl{filter:url(#glow);}
+      </style>
+    </defs>
+    <title>agentes_ia</title>
+    <g class="gl"><rect class="s" x="136" y="142" width="240" height="190" rx="54"/><circle class="s2" cx="206" cy="224" r="18"/><circle class="s2" cx="306" cy="224" r="18"/><path class="s2" d="M190 282 Q256 314 322 282"/><line class="s" x1="256" y1="106" x2="256" y2="142"/><circle class="f" cx="256" cy="86" r="14"/><line class="s" x1="170" y1="332" x2="150" y2="386"/><line class="s" x1="342" y1="332" x2="362" y2="386"/><line class="s2" x1="136" y1="206" x2="102" y2="194"/><line class="s2" x1="376" y1="206" x2="410" y2="194"/><line class="s2" x1="108" y1="194" x2="86" y2="214"/><line class="s2" x1="404" y1="194" x2="426" y2="214"/><path class="s2" d="M256 52 L270 72 L292 74 L276 92 L281 116 L256 103 L231 116 L236 92 L220 74 L242 72 Z"/></g>
+    </svg>

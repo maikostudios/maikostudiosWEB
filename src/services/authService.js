@@ -1,91 +1,37 @@
-// Servicio de autenticación para Maiko Studios
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  signInAnonymously,
-} from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/firebase/config";
-
-// Lista de emails autorizados para acceder al panel de administración
-const ADMIN_EMAILS = [
-  "maikostudios@gmail.com",
-  "m.esteban.saez@gmail.com",
-  "admin@maikostudios.com",
-];
+// Servicio de autenticación REST con Axios para Maiko Studios
+import apiClient from '@/api/apiClient';
 
 export const authService = {
-  // Autenticación anónima para nuevos visitantes
+  // Autenticación anónima para nuevos visitantes (en backend propio puede simplemente no requerir token,
+  // pero mantendremos un placeholder si es necesario para compatibilidad).
   async autenticarAnonimo() {
     try {
-      if (!auth || !isFirebaseConfigured()) {
-        console.warn(
-          "Firebase no configurado, omitiendo autenticación anónima."
-        );
-        return { success: false, error: "Firebase not configured" };
-      }
-
-      // Si ya hay un usuario (incluso anónimo), no hacer nada
-      if (auth.currentUser) {
-        return { success: true, user: auth.currentUser };
-      }
-
-      const userCredential = await signInAnonymously(auth);
-      return { success: true, user: userCredential.user };
+      // Por ahora para no romper el flujo del chatbot que pide un UID, 
+      // generaremos un guest ID temporal
+      const guestId = 'guest_' + Math.random().toString(36).substr(2, 9);
+      console.log("✅ Usuario anónimo (local) pseudo-autenticado:", guestId);
+      return { success: true, user: { uid: guestId, isAnonymous: true } };
     } catch (error) {
-      console.error("Error en la autenticación anónima:", error);
-      return { success: false, error };
+      console.error("❌ Error al autenticar anónimamente:", error);
+      return { success: false, error: error.message };
     }
   },
-  // Iniciar sesión (correo/contraseña)
+
+  // Iniciar sesión (correo/contraseña) vía API REST
   async signIn(email, password) {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+      const response = await apiClient.post('/auth/login', { email, password });
+      const { token, user } = response.data;
 
-      if (!ADMIN_EMAILS.includes(user.email)) {
-        await signOut(auth);
-        throw new Error(
-          "Usuario no autorizado para acceder al panel de administración"
-        );
-      }
+      // Guardar el token en localStorage para el interceptor de Axios
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || "Michael Sáez",
-      };
-
-      return { success: true, user: userData };
+      return { success: true, user };
     } catch (error) {
-      console.error("Error en signIn:", error);
-
-      let message = "Error al iniciar sesión";
-      switch (error.code) {
-        case "auth/user-not-found":
-          message = "Usuario no encontrado";
-          break;
-        case "auth/wrong-password":
-          message = "Contraseña incorrecta";
-          break;
-        case "auth/invalid-email":
-          message = "Email inválido";
-          break;
-        case "auth/too-many-requests":
-          message = "Demasiados intentos fallidos. Intenta más tarde";
-          break;
-        case "auth/network-request-failed":
-          message = "Error de conexión. Verifica tu internet";
-          break;
-        default:
-          message = error.message || "Error desconocido";
-      }
-
+      console.error("Error en signIn (REST):", error);
+      
+      const message = error.response?.data?.error || "Error al iniciar sesión. Verifica tus credenciales.";
       return { success: false, error: message };
     }
   },
@@ -93,9 +39,11 @@ export const authService = {
   // Cerrar sesión
   async signOut() {
     try {
-      if (auth && isFirebaseConfigured()) {
-        await signOut(auth);
-      }
+      // Llamada opcional al backend si hay lógica de invalidación
+      // await apiClient.post('/auth/logout');
+      
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       return { success: true };
     } catch (error) {
       console.error("Error en signOut:", error);
@@ -103,67 +51,70 @@ export const authService = {
     }
   },
 
-  // Escuchar cambios de sesión (para panel de admin)
-  onAuthStateChange(callback) {
-    if (auth && isFirebaseConfigured()) {
-      return onAuthStateChanged(auth, (user) => {
-        if (user && this.isAuthorizedEmail(user.email)) {
-          const userData = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || "Michael Sáez",
-          };
-          callback(userData);
-        } else {
-          callback(null);
-        }
-      });
-    } else {
-      callback(null);
+  // Obtener el usuario actual sincronamente desde localStorage
+  getCurrentUserSync() {
+    try {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    } catch (e) {
+      return null;
     }
   },
 
-  // Verifica si el email está autorizado para el panel
-  isAuthorizedEmail(email) {
-    return ADMIN_EMAILS.includes(email);
+  // Obtener/Verificar usuario contra el backend
+  async verifyAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+      const response = await apiClient.get('/auth/me');
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data.user;
+    } catch (error) {
+      // Si el token falló, limpiar
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return null;
+    }
+  },
+
+  // Compatibilidad: Escuchar cambios de sesión
+  onAuthStateChange(callback) {
+    // En JWT standard no hay un listener en tiempo real de conexión como en Firebase.
+    // Simularemos la carga inicial verificando al backend.
+    this.verifyAuth().then(user => {
+      callback(user);
+    });
+    
+    // Devolvemos una función vacía que emula el unsubscribe de onAuthStateChanged
+    return () => {};
+  },
+
+  // Verifica si el rol en backend es admin
+  isAuthorizedEmail(user) {
+    if (!user) return false;
+    // Si la info viene de backend propio, validamos por rol
+    if (user.role === 'admin') return true;
+    
+    // Fallback de compatibilidad
+    const ADMIN_EMAILS = [
+      "maikostudios@gmail.com",
+      "m.esteban.saez@gmail.com",
+      "admin@maikostudios.com",
+    ];
+    return ADMIN_EMAILS.includes(user.email);
   },
 
   // Restablecer contraseña
   async resetPassword(email) {
     try {
-      if (!auth || !isFirebaseConfigured()) {
-        throw new Error(
-          "Restablecimiento de contraseña no disponible en modo local"
-        );
-      }
-
-      if (!this.isAuthorizedEmail(email)) {
-        throw new Error("Email no autorizado");
-      }
-
-      await sendPasswordResetEmail(auth, email);
-      return { success: true, message: "Email de restablecimiento enviado" };
+      // Falta endpoint real de reset, pero devolvemos error manejable
+      throw new Error("El restablecimiento de contraseñas vía backend aún no está implementado.");
     } catch (error) {
       console.error("Error en resetPassword:", error);
       return { success: false, error: error.message };
     }
-  },
-
-  // ✅ Nueva función: Autenticación anónima para usuarios normales (chatbot u otros)
-  async autenticarAnonimo() {
-    try {
-      const result = await signInAnonymously(auth);
-      console.log("✅ Usuario anónimo autenticado:", result.user.uid);
-      return { success: true, user: result.user };
-    } catch (error) {
-      console.error(
-        "❌ Error al autenticar anónimamente:",
-        error.code,
-        error.message
-      );
-      return { success: false, error: error.message };
-    }
-  },
+  }
 };
 
 export default authService;

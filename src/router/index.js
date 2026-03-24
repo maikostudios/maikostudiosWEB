@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { auth } from "@/firebase/config";
-import { onAuthStateChanged } from "firebase/auth";
 import { authService } from "@/services/authService";
 import NotFoundView from "@/views/NotFoundView.vue";
 
@@ -21,12 +19,13 @@ const routes = [
     name: "QuienesSomos",
     component: () => import("@/views/QuienesSomosView.vue"),
   },
-  {
-    path: "/portafolio",
-    name: "Portafolio",
-    component: () => import("@/views/PortafolioView.vue"),
-  },
-  { path: "/cv", name: "CV", component: () => import("@/views/CvView.vue") },
+  // Ocultado: Transformación de portafolio personal a agencia
+  // {
+  //   path: "/portafolio",
+  //   name: "Portafolio",
+  //   component: () => import("@/views/PortafolioView.vue"),
+  // },
+  // { path: "/cv", name: "CV", component: () => import("@/views/CvView.vue") },
   {
     path: "/servicios",
     name: "Servicios",
@@ -83,19 +82,9 @@ const router = createRouter({
   routes,
 });
 
-// Helper para obtener el estado de autenticación actual de forma asíncrona y segura.
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    // onAuthStateChanged devuelve una función para desuscribirse del observador.
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (user) => {
-        unsubscribe(); // Nos desuscribimos inmediatamente para evitar memory leaks.
-        resolve(user); // Resolvemos la promesa con el usuario (o null).
-      },
-      reject // Rechazamos la promesa si hay un error.
-    );
-  });
+// Helper para obtener el estado de autenticación actual de forma segura.
+const getCurrentUser = async () => {
+  return await authService.verifyAuth();
 };
 
 // Guard de navegación para rutas protegidas
@@ -103,14 +92,11 @@ router.beforeEach(async (to, _from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (requiresAuth) {
+    // Verifica validez de token contra el backend si es ruta protegida
     const user = await getCurrentUser();
 
     // Verificar si hay usuario y si es admin autorizado
-    if (
-      !user ||
-      user.isAnonymous ||
-      !authService.isAuthorizedEmail(user.email)
-    ) {
+    if (!user || user.isAnonymous || !authService.isAuthorizedEmail(user)) {
       console.log("🚫 Acceso denegado a ruta protegida. Redirigiendo a /login");
       next({ name: "Login" });
       return;

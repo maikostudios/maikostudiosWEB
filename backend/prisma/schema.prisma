@@ -1,0 +1,200 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==============================
+// USUARIOS Y AUTENTICACIÓN
+// ==============================
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  displayName  String?   @map("display_name") @db.VarChar(100)
+  role         String    @default("admin") @db.VarChar(20)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastLogin    DateTime? @map("last_login")
+
+  @@map("users")
+}
+
+// ==============================
+// MENSAJES DE CONTACTO (CRM)
+// ==============================
+model ContactMessage {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  email       String    @db.VarChar(255)
+  phone       String?   @db.VarChar(20)
+  company     String?   @db.VarChar(200)
+  subject     String?   @db.VarChar(200)
+  message     String
+  source      String?   @default("web_form") @db.VarChar(50)
+  read        Boolean   @default(false)
+  responded   Boolean   @default(false)
+  readAt      DateTime? @map("read_at")
+  respondedAt DateTime? @map("responded_at")
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+// ==============================
+// CONVERSACIONES DEL CHATBOT
+// ==============================
+model ChatbotConversation {
+  id                String   @id @default(cuid())
+  visitorName       String?  @map("visitor_name") @db.VarChar(100)
+  phone             String?  @db.VarChar(20)
+  email             String?  @db.VarChar(255)
+  country           String?  @db.VarChar(50)
+  regionBlocked     Boolean  @default(false) @map("region_blocked")
+  strikesRemaining  Int      @default(5) @map("strikes_remaining")
+  aiResponsesUsed   Int      @default(0) @map("ai_responses_used")
+  status            String   @default("active") @db.VarChar(30)
+  conversationLog   Json?    @map("conversation_log")
+  metadata          Json?
+  derivedToHuman    Boolean  @default(false) @map("derived_to_human")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("chatbot_conversations")
+}
+
+// ==============================
+// PROYECTOS DEL PORTAFOLIO
+// ==============================
+model Project {
+  id               Int      @id @default(autoincrement())
+  title            String   @db.VarChar(200)
+  description      String?
+  shortDescription String?  @map("short_description") @db.VarChar(500)
+  imageUrl         String?  @map("image_url") @db.VarChar(500)
+  demoUrl          String?  @map("demo_url") @db.VarChar(500)
+  githubUrl        String?  @map("github_url") @db.VarChar(500)
+  technologies     String[] 
+  category         String?  @db.VarChar(50)
+  featured         Boolean  @default(false)
+  homeDisplay      Boolean  @default(false) @map("home_display")
+  active           Boolean  @default(true)
+  displayOrder     Int      @default(0) @map("display_order")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+// ==============================
+// PACKS DE PRECIOS (pago único)
+// ==============================
+model PricingPack {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  subtitle     String?  @db.VarChar(200)
+  description  String?
+  priceMonthly Int?     @map("price_monthly")
+  priceAnnual  Int?     @map("price_annual")
+  currency     String   @default("CLP") @db.VarChar(10)
+  features     String[]
+  active       Boolean  @default(true)
+  displayOrder Int      @default(0) @map("display_order")
+  popular      Boolean  @default(false)
+  color        String?  @db.VarChar(50)
+  icon         String?  @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("pricing_packs")
+}
+
+// ==============================
+// PLANES DE PRECIOS (suscripción)
+// ==============================
+model PricingPlan {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  subtitle     String?  @db.VarChar(200)
+  description  String?
+  priceMonthly Int?     @map("price_monthly")
+  priceAnnual  Int?     @map("price_annual")
+  currency     String   @default("CLP") @db.VarChar(10)
+  features     String[]
+  active       Boolean  @default(true)
+  displayOrder Int      @default(0) @map("display_order")
+  popular      Boolean  @default(false)
+  color        String?  @db.VarChar(50)
+  icon         String?  @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("pricing_plans")
+}
+
+// ==============================
+// SOLICITUDES DE CV
+// ==============================
+model CvRequest {
+  id              Int      @id @default(autoincrement())
+  recruiterName   String?  @map("recruiter_name") @db.VarChar(100)
+  recruiterEmail  String?  @map("recruiter_email") @db.VarChar(255)
+  company         String?  @db.VarChar(200)
+  position        String?  @db.VarChar(200)
+  requiredSkills  String[] @map("required_skills")
+  jobDescription  String?  @map("job_description")
+  aiProvider      String?  @map("ai_provider") @db.VarChar(20)
+  generatedHtml   String?  @map("generated_html")
+  status          String   @default("pending") @db.VarChar(20)
+  customPrompt    String?  @map("custom_prompt")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("cv_requests")
+}
+
+// ==============================
+// ANALYTICS / VISITAS
+// ==============================
+model PageVisit {
+  id         Int      @id @default(autoincrement())
+  page       String   @db.VarChar(100)
+  userAgent  String?  @map("user_agent")
+  referrer   String?
+  ipHash     String?  @map("ip_hash") @db.VarChar(64)
+  visitedAt  DateTime @default(now()) @map("visited_at")
+
+  @@map("page_visits")
+}
+
+// ==============================
+// LOGS DEL SISTEMA
+// ==============================
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  level     String   @db.VarChar(10)
+  message   String
+  metadata  Json?
+  source    String?  @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_logs")
+}
+
+// ==============================
+// CONFIGURACIÓN DEL SITIO
+// ==============================
+model SiteConfig {
+  key       String   @id @db.VarChar(100)
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_config")
+}

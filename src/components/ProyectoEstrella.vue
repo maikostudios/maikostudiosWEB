@@ -1,7 +1,7 @@
 <template>
   <section id="proyectos" class="proyectos-section">
     <v-container>
-      <h2 class="section-title">Proyectos Destacados</h2>
+      <h2 class="section-title">Casos de Éxito</h2>
 
       <!-- Loading state -->
       <div v-if="loading" class="loading-container">
@@ -69,8 +69,8 @@
       </div>
 
       <div class="ver-mas">
-        <v-btn color="primary" size="large" to="/portafolio">
-          Ver Todos los Proyectos
+        <v-btn color="primary" size="large" to="/servicios">
+          Ver Todos los Servicios
           <v-icon right>mdi-arrow-right</v-icon>
         </v-btn>
       </div>

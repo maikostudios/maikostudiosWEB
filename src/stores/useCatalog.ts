@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { pricingService } from '@/services/pricingService';
 
 interface Pack {
   id: string;
@@ -28,20 +27,19 @@ export const useCatalog = defineStore('catalog', {
   }),
   actions: {
     async fetchAll() {
-      this.packs = [];
-      this.plans = [];
-      const snap = await getDocs(collection(db, 'pricing'));
-      snap.forEach((d) => {
-        const data = d.data();
-        if (data.type === 'pack') {
-          this.packs.push({ ...data, id: d.id });
-        } else if (data.type === 'plan') {
-          this.plans.push({ ...data, id: d.id });
-        }
-      });
-      // Sort by order if available
-      this.packs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      this.plans.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      try {
+        const [packsResponse, plansResponse] = await Promise.all([
+          pricingService.getAllPacks(),
+          pricingService.getAllPlans()
+        ]);
+        this.packs = packsResponse || [];
+        this.plans = plansResponse || [];
+        // Sort by order if available
+        this.packs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        this.plans.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      } catch (error) {
+        console.error('Error en fetchAll Catalog:', error);
+      }
     },
   },
 });
