@@ -61,7 +61,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("@/views/loginview.vue"), // Apunta a la vista de Login existente
+    component: () => import("@/views/LoginView.vue"), // Apunta a la vista de Login existente
   },
   {
     path: "/admin",
