@@ -148,6 +148,46 @@
             </div>
           </v-window-item>
 
+          <!-- Tab de Portafolio -->
+          <v-window-item value="portafolio">
+            <div class="tab-content">
+              <div class="section-header">
+                <h2>Gestión del Portafolio</h2>
+                <v-btn color="primary" @click="cargarProyectos">
+                  <v-icon left>mdi-refresh</v-icon>
+                  Actualizar
+                </v-btn>
+              </div>
+              <v-data-table :headers="headersProyectos" :items="proyectos" :loading="loading" class="admin-table" item-value="id">
+                 <template #item.imagen="{ item }">
+                   <img :src="item.imagen || '/placeholder-project.jpg'" alt="Preview" style="max-height: 50px; border-radius: 4px;" />
+                 </template>
+                 <template #item.esEstrella="{ item }">
+                   <v-icon :color="item.esEstrella ? 'warning' : 'grey'">{{ item.esEstrella ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+                 </template>
+                 <template #item.mostrarEnHome="{ item }">
+                   <v-icon :color="item.mostrarEnHome ? 'success' : 'grey'">{{ item.mostrarEnHome ? 'mdi-check-circle' : 'mdi-close-circle' }}</v-icon>
+                 </template>
+                 <template #item.mostrarEnPortafolio="{ item }">
+                   <v-icon :color="item.mostrarEnPortafolio ? 'success' : 'grey'">{{ item.mostrarEnPortafolio ? 'mdi-check-circle' : 'mdi-close-circle' }}</v-icon>
+                 </template>
+                 <template #item.estaPublicado="{ item }">
+                   <v-icon :color="item.estaPublicado ? 'success' : 'grey'">{{ item.estaPublicado ? 'mdi-check-circle' : 'mdi-close-circle' }}</v-icon>
+                 </template>
+                 <template #item.tecnologias="{ item }">
+                   <v-chip v-for="tech in (item.tecnologias || [])" :key="tech" size="x-small" class="ma-1" color="primary" variant="outlined">{{ tech }}</v-chip>
+                 </template>
+                 <template #item.actions="{ item }">
+                   <v-btn icon size="small" color="primary" disabled><v-icon>mdi-pencil</v-icon></v-btn>
+                   <v-btn icon size="small" color="error" class="ml-1" disabled><v-icon>mdi-delete</v-icon></v-btn>
+                 </template>
+              </v-data-table>
+              <v-alert type="info" variant="tonal" class="mt-4">
+                 Nota: La edición del portafolio ha sido desactivada temporalmente mientras se adapta al nuevo Backoffice de Gestión. Puedes actualizar o borrar registros en vivo directamente en la Base de Datos.
+              </v-alert>
+            </div>
+          </v-window-item>
+
           <!-- Tab de Gestión de Precios -->
           <v-window-item value="precios">
             <div class="tab-content">
@@ -384,15 +424,12 @@
             </v-row>
 
             <v-row>
-              <v-col cols="12" md="4">
-                <v-text-field v-model.number="packForm.price.monthly" label="Precio Mensual" type="number" prefix="$"
+              <v-col cols="12" md="6">
+                <!-- Se mapea a monthly en DB, pero representa Precio Único para Packs -->
+                <v-text-field v-model.number="packForm.price.monthly" label="Precio Único" type="number" prefix="$"
                   :rules="[v => v >= 0 || 'Precio debe ser positivo']"></v-text-field>
               </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field v-model.number="packForm.price.annual" label="Precio Anual" type="number"
-                  prefix="$"></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="6">
                 <v-select v-model="packForm.price.currency" :items="['USD', 'CLP', 'EUR']" label="Moneda"></v-select>
               </v-col>
             </v-row>
@@ -526,9 +563,7 @@ import { useMainStore } from '@/stores/main'
 import { listarSolicitudes, actualizarEstadoSolicitud } from '@/services/firestoreService'
 import { pricingService } from '@/services/pricingService'
 import { poblarPricingPacks, limpiarPricingPacks } from '@/scripts/poblarPricingPacks'
-// import { useGitHubAssets } from '@/composables/useGitHubAssets' // Archivo no encontrado.
-// import { poblarFirebaseConProyectos } from '@/scripts/poblarFirebase.js' // Archivo no encontrado.
-// import { globalNotifications } from '@/composables/useNotifications' // Archivo no encontrado.
+import { proyectosService } from '@/services/proyectosService'
 
 // Stubs para notificaciones faltantes. Muestra los mensajes en la consola.
 const globalNotifications = {
@@ -541,10 +576,18 @@ const { success, error, info } = globalNotifications;
 const router = useRouter()
 const store = useMainStore()
 
-// Stubs para la funcionalidad desactivada de useGitHubAssets
 const proyectos = ref([])
-const cargarProyectos = () => console.warn('Funcionalidad de cargar proyectos desactivada (useGitHubAssets no encontrado).')
-const cargarImagenesProyectos = async () => console.warn('Funcionalidad de cargar imágenes desactivada (useGitHubAssets no encontrado).')
+const cargarProyectos = async () => {
+  loading.value = true
+  const res = await proyectosService.obtenerProyectos()
+  if (res.success) {
+    proyectos.value = res.data || []
+  } else {
+    error('Error cargando proyectos del portafolio')
+  }
+  loading.value = false
+}
+const cargarImagenesProyectos = async () => {}
 
 // Estado del componente
 const tabActiva = ref('mensajes')
@@ -844,7 +887,7 @@ const guardarPack = async () => {
     }
 
     if (!packForm.price.monthly || packForm.price.monthly <= 0) {
-      error('El precio mensual debe ser mayor a 0')
+      error('El precio único debe ser mayor a 0')
       return
     }
 

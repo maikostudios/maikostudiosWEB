@@ -5,7 +5,7 @@ export const pricingService = {
   async _fetchEntities(endpoint) {
     try {
       const response = await apiClient.get(endpoint);
-      return response.data || [];
+      return response.data?.data || response.data || [];
     } catch (error) {
       console.error(`Error obteniendo ${endpoint}:`, error);
       throw error;
@@ -28,13 +28,13 @@ export const pricingService = {
   // Crear nuevo pack
   async createPack(packData) {
     const response = await apiClient.post('/pricing/packs', packData);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   // Actualizar pack
   async updatePack(packId, packData) {
     const response = await apiClient.put(`/pricing/packs/${packId}`, packData);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   // Eliminar pack
@@ -59,13 +59,13 @@ export const pricingService = {
   // Crear nuevo plan
   async createPlan(planData) {
     const response = await apiClient.post('/pricing/plans', planData);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   // Actualizar plan
   async updatePlan(planId, planData) {
     const response = await apiClient.put(`/pricing/plans/${planId}`, planData);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   // Eliminar plan
